@@ -23,6 +23,7 @@ async def run_eval(
     benchmark_name: str = "recovery_bench_lite",
     baseline_names: list[str] | None = None,
     pm_path: str | None = None,
+    memory_db_path: str | None = None,
     repeats: int = 5,
     output_path: str | Path | None = None,
 ) -> dict[str, Any]:
@@ -34,7 +35,7 @@ async def run_eval(
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         for baseline_name in baseline_names:
-            spec = build_baseline(baseline_name, pm_path=pm_path)
+            spec = build_baseline(baseline_name, pm_path=pm_path, memory_db_path=memory_db_path)
             records = await _run_baseline(
                 spec_name=spec.name,
                 tasks=tasks,

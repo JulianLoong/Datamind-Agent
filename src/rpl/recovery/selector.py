@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import random
 
+from rpl.experience.memory import ExperienceMemory
 from rpl.pref_model.model import PrefModel
 from rpl.recovery.types import Candidate, ErrorContext
 
@@ -50,3 +51,48 @@ class PMSelector(RecoverySelector):
 
     def last_scores(self) -> list[float] | None:
         return self._last_scores
+
+
+class MemoryPriorSelector(RecoverySelector):
+    """Add a retrieval-based prior to another selector or use memory directly."""
+
+    def __init__(
+        self,
+        memory: ExperienceMemory,
+        base_selector: RecoverySelector | None = None,
+        *,
+        memory_weight: float = 1.0,
+    ) -> None:
+        self.memory = memory
+        self.base_selector = base_selector
+        self.memory_weight = memory_weight
+        self._last_scores: list[float] | None = None
+
+    async def select(self, ctx: ErrorContext, candidates: list[Candidate]) -> tuple[int, Candidate]:
+        if not candidates:
+            raise ValueError("Cannot select from empty candidates")
+
+        base_scores = [0.0 for _ in candidates]
+        if self.base_selector is not None:
+            await self.base_selector.select(ctx, candidates)
+            base_scores = self.base_selector.last_scores() or base_scores
+
+        memory_scores = [
+            self._candidate_memory_score(ctx, candidate)
+            for candidate in candidates
+        ]
+        self._last_scores = [
+            base_score + self.memory_weight * memory_score
+            for base_score, memory_score in zip(base_scores, memory_scores, strict=True)
+        ]
+        best_idx = max(range(len(candidates)), key=lambda idx: self._last_scores[idx])
+        return best_idx, candidates[best_idx]
+
+    def last_scores(self) -> list[float] | None:
+        return self._last_scores
+
+    def _candidate_memory_score(self, ctx: ErrorContext, candidate: Candidate) -> float:
+        matches = self.memory.retrieve(ctx, candidate=candidate, top_k=3)
+        if not matches:
+            return 0.0
+        return matches[0][1]

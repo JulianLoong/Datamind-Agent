@@ -17,6 +17,7 @@ def main() -> None:
         help="Baselines to run",
     )
     parser.add_argument("--pm-path", default=None, help="Checkpoint for lightweight_pm baseline")
+    parser.add_argument("--memory-db", default=None, help="Trajectory DB used to load successful recovery experiences")
     parser.add_argument("--repeats", type=int, default=5)
     parser.add_argument("--out", default="data/eval/recovery_bench_lite.json")
     args = parser.parse_args()
@@ -25,6 +26,7 @@ def main() -> None:
         benchmark_name=args.benchmark,
         baseline_names=args.baselines,
         pm_path=args.pm_path,
+        memory_db_path=args.memory_db,
         repeats=args.repeats,
         output_path=args.out,
     )
