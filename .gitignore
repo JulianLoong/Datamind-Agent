@@ -21,6 +21,10 @@ data/eval/*
 !data/eval/
 !data/eval/*.json
 !data/eval/*.md
+data/eval/baselines.*
+data/eval/dpo_path_regression.*
+data/eval/quick_check.*
+data/pref_pairs_outcomes/
 
 data/pm_checkpoints/*
 !data/pm_checkpoints/
