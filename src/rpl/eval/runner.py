@@ -11,7 +11,7 @@ from rpl.agent_engine.executor import Executor
 from rpl.agent_engine.planner import RuleBasedPlanner
 from rpl.eval.baselines import build_baseline
 from rpl.eval.benchmarks import BenchmarkTask, get_benchmark
-from rpl.eval.metrics import TaskEvalRecord, summarize_records, task_record
+from rpl.eval.metrics import TaskEvalRecord, summarize_records, summarize_records_by_split, task_record
 from rpl.recovery import CandidateDedup, CandidateGenerator, CandidateValidator, ErrorContextBuilder, RecoveryPipeline
 from rpl.tools.builtin import build_builtin_registry
 from rpl.trajectory.collector import TrajectoryCollector
@@ -50,6 +50,12 @@ async def run_eval(
         "benchmark": benchmark_name,
         "repeats": repeats,
         "summaries": summaries,
+        "split_summaries": {
+            baseline: summarize_records_by_split(
+                [record for record in all_records if record.baseline == baseline]
+            )
+            for baseline in summaries
+        },
         "records": [asdict(record) for record in all_records],
     }
     if output_path is not None:

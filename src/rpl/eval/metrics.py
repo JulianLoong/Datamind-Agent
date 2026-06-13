@@ -56,6 +56,13 @@ def summarize_records(records: list[TaskEvalRecord]) -> dict[str, float | int | 
     }
 
 
+def summarize_records_by_split(records: list[TaskEvalRecord]) -> dict[str, dict[str, float | int | str]]:
+    grouped: dict[str, list[TaskEvalRecord]] = {}
+    for record in records:
+        grouped.setdefault(record.split, []).append(record)
+    return {split: summarize_records(split_records) for split, split_records in sorted(grouped.items())}
+
+
 def _avg(values) -> float:
     items = list(values)
     return sum(items) / len(items) if items else 0.0

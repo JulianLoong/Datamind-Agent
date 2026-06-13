@@ -1,0 +1,335 @@
+{
+  "benchmark": "recovery_bench_lite",
+  "repeats": 1,
+  "summaries": {
+    "no_recovery": {
+      "tasks": 9,
+      "success_rate": 0.3333333333333333,
+      "failure_tasks": 6,
+      "recovery_success_rate": 0.0,
+      "avg_recovery_attempts": 0.0,
+      "avg_tool_calls": 1.0,
+      "avg_tokens": 0.0,
+      "avg_latency_ms": 0.023166771926399734
+    },
+    "first": {
+      "tasks": 9,
+      "success_rate": 0.3333333333333333,
+      "failure_tasks": 6,
+      "recovery_success_rate": 0.0,
+      "avg_recovery_attempts": 0.6666666666666666,
+      "avg_tool_calls": 1.6666666666666667,
+      "avg_tokens": 0.0,
+      "avg_latency_ms": 0.00933777644402451
+    },
+    "lightweight_pm": {
+      "tasks": 9,
+      "success_rate": 1.0,
+      "failure_tasks": 6,
+      "recovery_success_rate": 1.0,
+      "avg_recovery_attempts": 0.6666666666666666,
+      "avg_tool_calls": 1.6666666666666667,
+      "avg_tokens": 0.0,
+      "avg_latency_ms": 0.006333336285832856
+    }
+  },
+  "records": [
+    {
+      "baseline": "no_recovery",
+      "goal": "calculate math divide by zero",
+      "split": "train",
+      "expected_error_type": "division_by_zero",
+      "status": "failed",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.061458966229110956
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "fetch missing http",
+      "split": "train",
+      "expected_error_type": "not_found",
+      "status": "failed",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.013457960449159145
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "parse invalid json",
+      "split": "train",
+      "expected_error_type": "invalid_json",
+      "status": "failed",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.041791005060076714
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "calculate math divide by zero case 2",
+      "split": "test_seen",
+      "expected_error_type": "division_by_zero",
+      "status": "failed",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.025124987587332726
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "fetch missing http 404",
+      "split": "test_seen",
+      "expected_error_type": "not_found",
+      "status": "failed",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.005834037438035011
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "parse bad json",
+      "split": "test_seen",
+      "expected_error_type": "invalid_json",
+      "status": "failed",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.02575002145022154
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "calculate math",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.017041980754584074
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "fetch http",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.004292000085115433
+    },
+    {
+      "baseline": "no_recovery",
+      "goal": "parse json",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.013749988283962011
+    },
+    {
+      "baseline": "first",
+      "goal": "calculate math divide by zero",
+      "split": "train",
+      "expected_error_type": "division_by_zero",
+      "status": "failed",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.010583025868982077
+    },
+    {
+      "baseline": "first",
+      "goal": "fetch missing http",
+      "split": "train",
+      "expected_error_type": "not_found",
+      "status": "failed",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.002667016815394163
+    },
+    {
+      "baseline": "first",
+      "goal": "parse invalid json",
+      "split": "train",
+      "expected_error_type": "invalid_json",
+      "status": "failed",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.005957961548119783
+    },
+    {
+      "baseline": "first",
+      "goal": "calculate math divide by zero case 2",
+      "split": "test_seen",
+      "expected_error_type": "division_by_zero",
+      "status": "failed",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.007040973287075758
+    },
+    {
+      "baseline": "first",
+      "goal": "fetch missing http 404",
+      "split": "test_seen",
+      "expected_error_type": "not_found",
+      "status": "failed",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.0029579969123005867
+    },
+    {
+      "baseline": "first",
+      "goal": "parse bad json",
+      "split": "test_seen",
+      "expected_error_type": "invalid_json",
+      "status": "failed",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.00604201341047883
+    },
+    {
+      "baseline": "first",
+      "goal": "calculate math",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.035999983083456755
+    },
+    {
+      "baseline": "first",
+      "goal": "fetch http",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.005041016265749931
+    },
+    {
+      "baseline": "first",
+      "goal": "parse json",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.0077500008046627045
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "calculate math divide by zero",
+      "split": "train",
+      "expected_error_type": "division_by_zero",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.010917021427303553
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "fetch missing http",
+      "split": "train",
+      "expected_error_type": "not_found",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.0032919924706220627
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "parse invalid json",
+      "split": "train",
+      "expected_error_type": "invalid_json",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.004332978278398514
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "calculate math divide by zero case 2",
+      "split": "test_seen",
+      "expected_error_type": "division_by_zero",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.009458046406507492
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "fetch missing http 404",
+      "split": "test_seen",
+      "expected_error_type": "not_found",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.0027919886633753777
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "parse bad json",
+      "split": "test_seen",
+      "expected_error_type": "invalid_json",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 0.004667032044380903
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "calculate math",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.011999974958598614
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "fetch http",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.0036660348996520042
+    },
+    {
+      "baseline": "lightweight_pm",
+      "goal": "parse json",
+      "split": "clean",
+      "expected_error_type": null,
+      "status": "success",
+      "recovery_attempts": 0,
+      "tool_calls": 1,
+      "tokens": 0,
+      "latency_ms": 0.005874957423657179
+    }
+  ]
+}

@@ -43,6 +43,9 @@ def _summary_markdown(report: dict) -> str:
         "",
         f"repeats: {report['repeats']}",
         "",
+        "Note: controlled synthetic benchmarks validate the recovery pipeline and ranking behavior; "
+        "split-level results should be used when discussing generalization.",
+        "",
         "| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls |",
         "|---|---:|---:|---:|---:|",
     ]
@@ -56,6 +59,32 @@ def _summary_markdown(report: dict) -> str:
                 calls=summary["avg_tool_calls"],
             )
         )
+    split_summaries = report.get("split_summaries", {})
+    split_names = sorted({split for splits in split_summaries.values() for split in splits})
+    for split in split_names:
+        lines.extend(
+            [
+                "",
+                f"## Split: {split}",
+                "",
+                "| baseline | tasks | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls |",
+                "|---|---:|---:|---:|---:|---:|",
+            ]
+        )
+        for baseline, splits in split_summaries.items():
+            summary = splits.get(split)
+            if summary is None:
+                continue
+            lines.append(
+                "| {baseline} | {tasks} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {calls:.3f} |".format(
+                    baseline=baseline,
+                    tasks=summary["tasks"],
+                    success=summary["success_rate"],
+                    recovery=summary["recovery_success_rate"],
+                    attempts=summary["avg_recovery_attempts"],
+                    calls=summary["avg_tool_calls"],
+                )
+            )
     return "\n".join(lines) + "\n"
 
 

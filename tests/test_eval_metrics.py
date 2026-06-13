@@ -1,0 +1,19 @@
+from __future__ import annotations
+
+from rpl.eval.metrics import TaskEvalRecord, summarize_records_by_split
+
+
+def test_summarize_records_by_split() -> None:
+    records = [
+        TaskEvalRecord("pm", "a", "train", "division_by_zero", "success", 1, 2, 0, 1.0),
+        TaskEvalRecord("pm", "b", "train", "not_found", "failed", 1, 2, 0, 1.0),
+        TaskEvalRecord("pm", "c", "clean", None, "success", 0, 1, 0, 1.0),
+    ]
+
+    summary = summarize_records_by_split(records)
+
+    assert summary["train"]["tasks"] == 2
+    assert summary["train"]["success_rate"] == 0.5
+    assert summary["train"]["recovery_success_rate"] == 0.5
+    assert summary["clean"]["tasks"] == 1
+    assert summary["clean"]["recovery_success_rate"] == 0.0
