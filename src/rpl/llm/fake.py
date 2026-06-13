@@ -50,6 +50,16 @@ class FakeLLMClient(LLMClient):
                     "tool_params": {**tool_params, "text": repaired_text},
                 }
             )
+        elif error_type == "missing_field":
+            repaired_text = self._repair_missing_field(tool_params)
+            candidates.append(
+                {
+                    "reasoning": "The parsed object misses the requested field; add that field and retry.",
+                    "action": "add_missing_json_field",
+                    "tool_name": failed_tool,
+                    "tool_params": {**tool_params, "text": repaired_text},
+                }
+            )
         elif error_type == "division_by_zero":
             expr = str(tool_params.get("expression", ""))
             candidates.append(
@@ -57,7 +67,7 @@ class FakeLLMClient(LLMClient):
                     "reasoning": "The expression divides by zero; replace the zero denominator.",
                     "action": "avoid_zero_division",
                     "tool_name": failed_tool,
-                    "tool_params": {**tool_params, "expression": expr.replace("/0", "/1")},
+                    "tool_params": {**tool_params, "expression": self._repair_division_by_zero(expr)},
                 }
             )
         elif error_type == "not_found":
@@ -77,6 +87,26 @@ class FakeLLMClient(LLMClient):
         if isinstance(field, str) and field:
             return json.dumps({field: None}, ensure_ascii=False)
         return "{}"
+
+    @staticmethod
+    def _repair_missing_field(tool_params: dict[str, Any]) -> str:
+        field = tool_params.get("field")
+        if not isinstance(field, str) or not field:
+            field = "value"
+        try:
+            value = json.loads(str(tool_params.get("text", "{}")))
+        except json.JSONDecodeError:
+            value = {}
+        if not isinstance(value, dict):
+            value = {}
+        value[field] = None
+        return json.dumps(value, ensure_ascii=False)
+
+    @staticmethod
+    def _repair_division_by_zero(expression: str) -> str:
+        if "/0" in expression:
+            return expression.replace("/0", "/1")
+        return "1"
 
     @staticmethod
     def _extract_field(prompt: str, field: str) -> str:

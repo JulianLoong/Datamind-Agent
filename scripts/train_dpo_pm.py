@@ -22,6 +22,9 @@ def main() -> None:
     parser.add_argument("--lora-r", type=int, default=16)
     parser.add_argument("--lora-alpha", type=int, default=32)
     parser.add_argument("--use-4bit", action="store_true", help="Use bitsandbytes 4-bit loading if available")
+    parser.add_argument("--fp16", action="store_true", help="Enable fp16 training")
+    parser.add_argument("--bf16", action="store_true", help="Enable bf16 training")
+    parser.add_argument("--gradient-checkpointing", action="store_true", help="Reduce VRAM at the cost of speed")
     args = parser.parse_args()
 
     train_path = Path(args.work_dir) / "train.jsonl"
@@ -58,8 +61,12 @@ def main() -> None:
         model_kwargs["device_map"] = "auto"
 
     model = AutoModelForCausalLM.from_pretrained(args.base_model, **model_kwargs)
+    if args.gradient_checkpointing:
+        model.config.use_cache = False
     if args.use_4bit:
         model = prepare_model_for_kbit_training(model)
+    if args.gradient_checkpointing:
+        model.gradient_checkpointing_enable()
 
     peft_config = LoraConfig(
         r=args.lora_r,
@@ -88,8 +95,9 @@ def main() -> None:
         remove_unused_columns=False,
         report_to=[],
         max_length=args.max_length,
-        bf16=False,
-        fp16=False,
+        bf16=args.bf16,
+        fp16=args.fp16,
+        gradient_checkpointing=args.gradient_checkpointing,
     )
 
     trainer = DPOTrainer(

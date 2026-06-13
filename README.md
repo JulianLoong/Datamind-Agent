@@ -60,7 +60,9 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
   --train data/pref_pairs/train.jsonl \
   --val data/pref_pairs/val.jsonl \
   --out data/pm_checkpoints/dpo_pm \
-  --use-4bit
+  --use-4bit \
+  --fp16 \
+  --gradient-checkpointing
 PYTHONPATH=src python3 scripts/run_eval.py \
   --baselines no_recovery first random lightweight_pm dpo_pm \
   --pm-path Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm \
@@ -70,3 +72,60 @@ PYTHONPATH=src python3 scripts/run_eval.py \
 
 The `dpo_pm` selector scores each recovery candidate by the DPO adapter's conditional log
 probability for the candidate text under the error-context prompt.
+
+## Generated benchmark data
+
+For thesis-scale experiments, use the generated benchmark instead of repeatedly running the three
+toy cold-start tasks. It creates parameterized structured tasks across four failure types:
+division-by-zero, HTTP not-found, invalid JSON, and missing JSON field.
+
+```bash
+PYTHONPATH=src python3 scripts/collect_benchmark_data.py \
+  --benchmark recovery_bench_generated \
+  --splits train \
+  --db data/generated_trajectories.db \
+  --out-dir data/pref_pairs_generated \
+  --limit 20000
+
+PYTHONPATH=src python3 scripts/train_pm.py \
+  --train data/pref_pairs_generated/train.jsonl \
+  --val data/pref_pairs_generated/val.jsonl \
+  --out data/pm_checkpoints/lightweight_pm_generated.json
+
+PYTHONPATH=src python3 scripts/export_dpo_data.py \
+  --train data/pref_pairs_generated/train.jsonl \
+  --val data/pref_pairs_generated/val.jsonl \
+  --out-train data/dpo_generated/train.jsonl \
+  --out-val data/dpo_generated/val.jsonl
+
+PYTHONPATH=src python3 scripts/run_eval.py \
+  --benchmark recovery_bench_generated \
+  --baselines no_recovery first random lightweight_pm \
+  --pm-path data/pm_checkpoints/lightweight_pm_generated.json \
+  --repeats 1 \
+  --out data/eval/generated_lightweight.json
+```
+
+The default generated train split currently yields 640 deduplicated preference pairs
+(`512 train / 128 val`) from 320 recovery tasks.
+
+To train DPO on the generated 640-pair dataset:
+
+```bash
+PYTHONPATH=src python3 scripts/train_dpo_pm.py \
+  --base-model Qwen/Qwen2.5-0.5B-Instruct \
+  --train data/pref_pairs_generated/train.jsonl \
+  --val data/pref_pairs_generated/val.jsonl \
+  --work-dir data/dpo_generated \
+  --out data/pm_checkpoints/dpo_pm_generated \
+  --use-4bit \
+  --fp16 \
+  --gradient-checkpointing
+
+PYTHONPATH=src python3 scripts/run_eval.py \
+  --benchmark recovery_bench_generated \
+  --baselines no_recovery first random lightweight_pm dpo_pm \
+  --pm-path Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_generated \
+  --repeats 1 \
+  --out data/eval/generated_dpo_pm.json
+```

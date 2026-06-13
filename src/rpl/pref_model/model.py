@@ -43,6 +43,8 @@ class MockPrefModel(PrefModel):
             score += 5.0
         if error_context.error_type == "invalid_json" and candidate.action == "repair_json_payload":
             score += 5.0
+        if error_context.error_type == "missing_field" and candidate.action == "add_missing_json_field":
+            score += 5.0
         if error_context.error_type == "not_found" and candidate.action == "try_known_fixture":
             score += 5.0
         return score

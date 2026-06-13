@@ -96,6 +96,17 @@ def deterministic_fallback_candidates(ctx: ErrorContext) -> list[Candidate]:
                 raw_text="Replace malformed JSON with a minimal valid object and retry.",
             )
         )
+    elif ctx.error_type == "missing_field":
+        repaired_text = _repair_missing_field(ctx.tool_params)
+        candidates.append(
+            Candidate(
+                reasoning="The parsed JSON lacks the requested field; add it with a null value.",
+                action="add_missing_json_field",
+                tool_name=ctx.tool_name,
+                tool_params={**ctx.tool_params, "text": repaired_text},
+                raw_text="Add the missing JSON field and retry.",
+            )
+        )
     elif ctx.error_type == "division_by_zero":
         expr = str(ctx.tool_params.get("expression", ""))
         candidates.append(
@@ -103,7 +114,7 @@ def deterministic_fallback_candidates(ctx: ErrorContext) -> list[Candidate]:
                 reasoning="The arithmetic expression divides by zero; replace /0 with /1.",
                 action="avoid_zero_division",
                 tool_name=ctx.tool_name,
-                tool_params={**ctx.tool_params, "expression": expr.replace("/0", "/1")},
+                tool_params={**ctx.tool_params, "expression": _repair_division_by_zero(expr)},
                 raw_text="Patch the expression to avoid zero division and retry.",
             )
         )
@@ -125,6 +136,26 @@ def _repair_json_text(tool_params: dict[str, Any]) -> str:
     if isinstance(field, str) and field:
         return json.dumps({field: None}, ensure_ascii=False)
     return "{}"
+
+
+def _repair_missing_field(tool_params: dict[str, Any]) -> str:
+    field = tool_params.get("field")
+    if not isinstance(field, str) or not field:
+        field = "value"
+    try:
+        parsed = json.loads(str(tool_params.get("text", "{}")))
+    except json.JSONDecodeError:
+        parsed = {}
+    if not isinstance(parsed, dict):
+        parsed = {}
+    parsed[field] = None
+    return json.dumps(parsed, ensure_ascii=False)
+
+
+def _repair_division_by_zero(expression: str) -> str:
+    if "/0" in expression:
+        return expression.replace("/0", "/1")
+    return "1"
 
 
 def pad_candidates(candidates: list[Candidate], ctx: ErrorContext, k: int) -> list[Candidate]:
