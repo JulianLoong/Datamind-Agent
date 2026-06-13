@@ -32,10 +32,11 @@ def main() -> None:
         raise SystemExit("No DPO training records found. Run cold_start.py --export first.")
 
     try:
+        import torch
         from datasets import load_dataset
         from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, TrainingArguments
-        from trl import DPOTrainer
+        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+        from trl import DPOConfig, DPOTrainer
     except ModuleNotFoundError as exc:
         raise SystemExit(
             "Missing DPO dependencies. Install on the CUDA machine, for example:\n"
@@ -46,12 +47,12 @@ def main() -> None:
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    model_kwargs = {"trust_remote_code": True}
+    model_kwargs = {"trust_remote_code": True, "torch_dtype": torch.float16}
     if args.use_4bit:
         model_kwargs["quantization_config"] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype="float16",
+            bnb_4bit_compute_dtype=torch.float16,
             bnb_4bit_use_double_quant=True,
         )
         model_kwargs["device_map"] = "auto"
@@ -75,7 +76,7 @@ def main() -> None:
         data_files["validation"] = str(val_path)
     dataset = load_dataset("json", data_files=data_files)
 
-    training_args = TrainingArguments(
+    training_args = DPOConfig(
         output_dir=args.out,
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,
@@ -83,9 +84,12 @@ def main() -> None:
         learning_rate=args.learning_rate,
         logging_steps=1,
         save_strategy="epoch",
-        evaluation_strategy="epoch" if val_count > 0 else "no",
+        eval_strategy="epoch" if val_count > 0 else "no",
         remove_unused_columns=False,
         report_to=[],
+        max_length=args.max_length,
+        bf16=False,
+        fp16=False,
     )
 
     trainer = DPOTrainer(
@@ -94,9 +98,7 @@ def main() -> None:
         args=training_args,
         train_dataset=dataset["train"],
         eval_dataset=dataset.get("validation"),
-        tokenizer=tokenizer,
-        max_length=args.max_length,
-        max_prompt_length=args.max_prompt_length,
+        processing_class=tokenizer,
     )
     trainer.train()
     trainer.save_model(args.out)
