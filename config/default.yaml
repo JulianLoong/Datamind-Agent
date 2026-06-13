@@ -1,0 +1,30 @@
+paths:
+  trajectory_db: data/trajectories.db
+
+agent:
+  max_steps: 20
+  max_retries_per_step: 3
+
+recovery:
+  candidate_count: 3
+  default_selector: first
+  selector: default
+
+llm:
+  provider: fake
+
+tools:
+  random_seed: 42
+  json_parse:
+    error_rate: 0.0
+    error_types: [invalid_json, missing_field]
+  math_calc:
+    error_rate: 0.0
+    error_types: [division_by_zero, invalid_expression]
+  file_read:
+    error_rate: 0.0
+    error_types: [file_not_found, permission_denied]
+    sandbox_dir: data/sandbox
+  http_request:
+    error_rate: 0.0
+    error_types: [timeout, not_found, invalid_response]
