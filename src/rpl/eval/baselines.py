@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from rpl.experience import ExperienceMemory
 from rpl.pref_model import LightweightPrefModel, MockPrefModel
-from rpl.recovery import DefaultSelector, MemoryPriorSelector, PMSelector, RecoverySelector
+from rpl.recovery import DefaultSelector, FixedRetrySelector, MemoryPriorSelector, PMSelector, RecoverySelector
 from rpl.trajectory.store import TrajectoryStore
 
 
@@ -21,12 +21,29 @@ def build_baseline(
     pm_path: str | None = None,
     memory_db_path: str | None = None,
 ) -> BaselineSpec:
+    base_name, retry_override = _parse_retry_suffix(name)
+    spec = _build_base_baseline(base_name, pm_path=pm_path, memory_db_path=memory_db_path)
+    if retry_override is None:
+        return spec
+    if base_name == "no_recovery" and retry_override > 0:
+        raise ValueError("no_recovery cannot use a positive retry suffix")
+    return BaselineSpec(name=name, selector=spec.selector, max_retries_per_step=retry_override)
+
+
+def _build_base_baseline(
+    name: str,
+    *,
+    pm_path: str | None = None,
+    memory_db_path: str | None = None,
+) -> BaselineSpec:
     if name == "no_recovery":
         return BaselineSpec(name=name, selector=DefaultSelector("first"), max_retries_per_step=0)
     if name == "first":
         return BaselineSpec(name=name, selector=DefaultSelector("first"), max_retries_per_step=1)
     if name == "random":
         return BaselineSpec(name=name, selector=DefaultSelector("random"), max_retries_per_step=1)
+    if name == "fixed_retry":
+        return BaselineSpec(name=name, selector=FixedRetrySelector(), max_retries_per_step=3)
     if name == "mock_pm":
         return BaselineSpec(name=name, selector=PMSelector(MockPrefModel()), max_retries_per_step=1)
     if name == "memory_mock_pm":
@@ -69,6 +86,15 @@ def build_baseline(
             max_retries_per_step=1,
         )
     raise ValueError(f"Unknown baseline: {name}")
+
+
+def _parse_retry_suffix(name: str) -> tuple[str, int | None]:
+    if "_r" not in name:
+        return name, None
+    base_name, raw_retries = name.rsplit("_r", 1)
+    if not raw_retries.isdigit():
+        return name, None
+    return base_name, int(raw_retries)
 
 
 def _parse_dpo_path(pm_path: str) -> tuple[str, str]:

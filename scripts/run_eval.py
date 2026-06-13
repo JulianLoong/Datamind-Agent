@@ -48,16 +48,17 @@ def _summary_markdown(report: dict) -> str:
         "Note: controlled synthetic benchmarks validate the recovery pipeline and ranking behavior; "
         "split-level results should be used when discussing generalization.",
         "",
-        "| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls |",
-        "|---|---:|---:|---:|---:|",
+        "| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls |",
+        "|---|---:|---:|---:|---:|---:|",
     ]
     for baseline, summary in report["summaries"].items():
         lines.append(
-            "| {baseline} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {calls:.3f} |".format(
+            "| {baseline} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} |".format(
                 baseline=baseline,
                 success=summary["success_rate"],
                 recovery=summary["recovery_success_rate"],
                 attempts=summary["avg_recovery_attempts"],
+                recovered_attempts=summary["avg_recovery_attempts_on_recovered"],
                 calls=summary["avg_tool_calls"],
             )
         )
@@ -69,8 +70,8 @@ def _summary_markdown(report: dict) -> str:
                 "",
                 f"## Split: {split}",
                 "",
-                "| baseline | tasks | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls |",
-                "|---|---:|---:|---:|---:|---:|",
+                "| baseline | tasks | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls |",
+                "|---|---:|---:|---:|---:|---:|---:|",
             ]
         )
         for baseline, splits in split_summaries.items():
@@ -78,12 +79,13 @@ def _summary_markdown(report: dict) -> str:
             if summary is None:
                 continue
             lines.append(
-                "| {baseline} | {tasks} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {calls:.3f} |".format(
+                "| {baseline} | {tasks} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} |".format(
                     baseline=baseline,
                     tasks=summary["tasks"],
                     success=summary["success_rate"],
                     recovery=summary["recovery_success_rate"],
                     attempts=summary["avg_recovery_attempts"],
+                    recovered_attempts=summary["avg_recovery_attempts_on_recovered"],
                     calls=summary["avg_tool_calls"],
                 )
             )
