@@ -23,6 +23,8 @@ def main() -> None:
     parser.add_argument("--llm-model", default=None, help="LLM model name for real candidate generation")
     parser.add_argument("--llm-base-url", default=None, help="Base URL for OpenAI-compatible LLM API")
     parser.add_argument("--llm-api-key", default=None, help="API key for OpenAI-compatible LLM API")
+    parser.add_argument("--splits", nargs="+", default=None, help="Optional benchmark splits to include")
+    parser.add_argument("--max-tasks", type=int, default=0, help="Maximum tasks after split filtering; 0 means no limit")
     parser.add_argument("--repeats", type=int, default=5)
     parser.add_argument("--out", default="data/eval/recovery_bench_lite.json")
     args = parser.parse_args()
@@ -36,6 +38,8 @@ def main() -> None:
         llm_model=args.llm_model,
         llm_base_url=args.llm_base_url,
         llm_api_key=args.llm_api_key,
+        splits=args.splits,
+        max_tasks=args.max_tasks,
         repeats=args.repeats,
         output_path=args.out,
     )

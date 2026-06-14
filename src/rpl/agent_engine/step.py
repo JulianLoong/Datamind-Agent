@@ -28,6 +28,8 @@ class RecoveryAttempt:
     initial_result: ToolResult | None = None
     final_result: ToolResult | None = None
     pm_scores: list[float] | None = None
+    candidate_tokens: int = 0
+    candidate_latency_ms: float = 0.0
 
 
 @dataclass
@@ -49,3 +51,5 @@ class TaskResult:
     steps: list[Step]
     total_tokens: int = 0
     total_latency_ms: float = 0.0
+    recovery_tokens: int = 0
+    recovery_latency_ms: float = 0.0

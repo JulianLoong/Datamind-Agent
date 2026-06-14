@@ -52,4 +52,6 @@ class RecoveryPipeline:
             error_context=ctx,
             initial_result=step.result,
             pm_scores=pm_scores,
+            candidate_tokens=self.candidate_gen.last_tokens_used,
+            candidate_latency_ms=self.candidate_gen.last_latency_ms,
         )

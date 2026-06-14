@@ -22,6 +22,8 @@ def main() -> None:
     parser.add_argument("--llm-model", default=None)
     parser.add_argument("--llm-base-url", default=None)
     parser.add_argument("--llm-api-key", default=None)
+    parser.add_argument("--splits", nargs="+", default=None)
+    parser.add_argument("--max-tasks", type=int, default=0, help="Maximum tasks after split filtering; 0 means no limit")
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--out", default="data/eval/real_llm_recovery.json")
     args = parser.parse_args()
@@ -35,6 +37,8 @@ def main() -> None:
         llm_model=args.llm_model,
         llm_base_url=args.llm_base_url,
         llm_api_key=args.llm_api_key,
+        splits=args.splits,
+        max_tasks=args.max_tasks,
         repeats=args.repeats,
         output_path=args.out,
     )

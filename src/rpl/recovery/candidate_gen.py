@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from typing import Any
 
 from rpl.llm import FakeLLMClient, LLMClient, LLMRequest, OpenAICompatibleLLMClient
@@ -19,12 +20,27 @@ class CandidateGenerator:
     and reproducible. A real LLM client can later be injected without changing the recovery flow.
     """
 
-    def __init__(self, llm_client: LLMClient | None = None) -> None:
+    def __init__(
+        self,
+        llm_client: LLMClient | None = None,
+        *,
+        temperature: float = 0.2,
+        max_tokens: int = 512,
+    ) -> None:
         self.llm_client = llm_client or FakeLLMClient()
+        self.temperature = temperature
+        self.max_tokens = max_tokens
+        self.last_tokens_used = 0
+        self.last_latency_ms = 0.0
 
     async def generate(self, ctx: ErrorContext, k: int = 3) -> list[Candidate]:
         prompt = self.build_prompt(ctx, k)
-        response = await self.llm_client.complete(LLMRequest(prompt=prompt, temperature=0.7))
+        started = time.perf_counter()
+        response = await self.llm_client.complete(
+            LLMRequest(prompt=prompt, temperature=self.temperature, max_tokens=self.max_tokens)
+        )
+        self.last_tokens_used = response.tokens_used
+        self.last_latency_ms = (time.perf_counter() - started) * 1000
         try:
             candidates = parse_candidates(response.text)
         except CandidateParseError:
@@ -44,7 +60,9 @@ class CandidateGenerator:
             f"Tool Params: {json.dumps(ctx.tool_params, ensure_ascii=False)}\n"
             f"Error Type: {ctx.error_type}\n"
             f"Error Message: {ctx.error_message}\n"
-            "Each item must contain reasoning, action, tool_name, tool_params."
+            "Each item must contain reasoning, action, tool_name, tool_params.\n"
+            "Return valid JSON only. Do not wrap the answer in markdown or prose.\n"
+            "Use null for missing tool_name or tool_params."
         )
 
 
@@ -65,8 +83,24 @@ def build_llm_client(
         return OpenAICompatibleLLMClient(
             model=resolved_model,
             base_url=resolved_base_url,
+            api_path="/v1/chat/completions",
             api_key=resolved_api_key,
             api_key_env=api_key_env,
+        )
+    if provider in {"zhipu", "zhipu_compatible", "glm"}:
+        resolved_model = model or os.environ.get("RPL_LLM_MODEL") or "glm-5.1"
+        resolved_base_url = base_url or os.environ.get("RPL_LLM_BASE_URL") or "https://open.bigmodel.cn/api/paas/v4"
+        resolved_api_key = api_key or os.environ.get("ZHIPU_API_KEY") or os.environ.get("GLM_API_KEY") or os.environ.get(api_key_env)
+        return OpenAICompatibleLLMClient(
+            model=resolved_model,
+            base_url=resolved_base_url,
+            api_path="/chat/completions",
+            api_key=resolved_api_key,
+            api_key_env="ZHIPU_API_KEY",
+            extra_body={
+                "thinking": {"type": "disabled"},
+                "response_format": {"type": "json_object"},
+            },
         )
     raise ValueError(f"Unknown LLM provider: {provider}")
 

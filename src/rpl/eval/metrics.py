@@ -17,6 +17,8 @@ class TaskEvalRecord:
     tool_calls: int
     tokens: int
     latency_ms: float
+    recovery_tokens: int
+    recovery_latency_ms: float
 
 
 def task_record(
@@ -39,6 +41,8 @@ def task_record(
         tool_calls=sum(1 + len(step.recovery_attempts) for step in result.steps),
         tokens=result.total_tokens,
         latency_ms=result.total_latency_ms,
+        recovery_tokens=result.recovery_tokens,
+        recovery_latency_ms=result.recovery_latency_ms,
     )
 
 
@@ -63,6 +67,8 @@ def summarize_records(records: list[TaskEvalRecord]) -> dict[str, float | int | 
         "avg_tool_calls_on_recovered": _avg(record.tool_calls for record in recovered_tasks),
         "avg_tokens": _avg(record.tokens for record in records),
         "avg_latency_ms": _avg(record.latency_ms for record in records),
+        "avg_recovery_tokens": _avg(record.recovery_tokens for record in records),
+        "avg_recovery_latency_ms": _avg(record.recovery_latency_ms for record in records),
     }
 
 

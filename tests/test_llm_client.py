@@ -20,6 +20,13 @@ def test_build_llm_client_can_create_openai_compatible_client() -> None:
     assert client.model == "gpt-test"
 
 
+def test_build_llm_client_can_create_zhipu_client() -> None:
+    client = build_llm_client(provider="glm", model="glm-5.1", api_key="secret")
+
+    assert isinstance(client, OpenAICompatibleLLMClient)
+    assert client.model == "glm-5.1"
+
+
 def test_openai_compatible_extract_helpers_handle_chat_payload() -> None:
     response = {
         "choices": [{"message": {"content": "hello"}}],

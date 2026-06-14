@@ -75,17 +75,18 @@ probability for the candidate text under the error-context prompt.
 
 ## Real LLM candidate evaluation
 
-To validate recovery ranking under a non-deterministic candidate generator, point the runtime at
-an OpenAI-compatible chat completions API. This is the P5 entry point for comparing PM and memory
-behavior when candidate generation is no longer deterministic:
+To validate recovery ranking under a non-deterministic candidate generator, point the runtime at an
+OpenAI-compatible chat completions API. Zhipu GLM 5.1 is supported through the same path. This is
+the P5 entry point for comparing PM and memory behavior when candidate generation is no longer
+deterministic:
 
 ```bash
-export OPENAI_API_KEY=...
+export ZHIPU_API_KEY=...
 PYTHONPATH=src python3 scripts/run_real_llm_eval.py \
   --benchmark recovery_gym \
-  --llm-provider openai_compatible \
-  --llm-model gpt-4o-mini \
-  --llm-base-url https://api.openai.com \
+  --llm-provider glm \
+  --llm-model glm-5.1 \
+  --llm-base-url https://open.bigmodel.cn/api/paas/v4 \
   --memory-db data/trajectories.db \
   --repeats 1 \
   --out data/eval/real_llm_recovery.json
@@ -93,6 +94,9 @@ PYTHONPATH=src python3 scripts/run_real_llm_eval.py \
 
 The same `PMSelector` and `MemoryPriorSelector` paths are used; only the candidate generator
 changes.
+
+For GLM 5.1, the real path should disable thinking and request JSON output. The current Zhipu
+provider does this automatically.
 
 ## Generated benchmark data
 

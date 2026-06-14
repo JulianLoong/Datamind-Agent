@@ -33,6 +33,8 @@ class Executor:
         steps = self.planner.plan(task_goal, self.registry.list_tools())[:max_steps]
         total_tokens = 0
         total_latency_ms = 0.0
+        recovery_tokens = 0
+        recovery_latency_ms = 0.0
         task_status = "success"
 
         for step in steps:
@@ -47,6 +49,9 @@ class Executor:
             if step.result is not None:
                 total_tokens += step.result.tokens_used
                 total_latency_ms += step.result.latency_ms
+            for attempt in step.recovery_attempts:
+                recovery_tokens += attempt.candidate_tokens
+                recovery_latency_ms += attempt.candidate_latency_ms
             if not success:
                 task_status = "failed"
                 break
@@ -58,6 +63,8 @@ class Executor:
             steps=steps,
             total_tokens=total_tokens,
             total_latency_ms=total_latency_ms,
+            recovery_tokens=recovery_tokens,
+            recovery_latency_ms=recovery_latency_ms,
         )
         self.collector.on_task_end(result)
         return result

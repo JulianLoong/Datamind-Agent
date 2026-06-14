@@ -36,10 +36,13 @@ async def run_eval(
     llm_model: str | None = None,
     llm_base_url: str | None = None,
     llm_api_key: str | None = None,
+    splits: list[str] | None = None,
+    max_tasks: int = 0,
     repeats: int = 5,
     output_path: str | Path | None = None,
 ) -> dict[str, Any]:
     tasks = get_benchmark(benchmark_name)
+    tasks = _filter_tasks(tasks, splits=splits, max_tasks=max_tasks)
     baseline_names = baseline_names or ["no_recovery", "first", "random"]
     all_records: list[TaskEvalRecord] = []
     summaries: dict[str, dict[str, float | int | str]] = {}
@@ -68,6 +71,9 @@ async def run_eval(
     report = {
         "benchmark": benchmark_name,
         "repeats": repeats,
+        "splits": splits or [],
+        "max_tasks": max_tasks,
+        "task_count": len(tasks),
         "summaries": summaries,
         "split_summaries": {
             baseline: summarize_records_by_split(
@@ -145,3 +151,18 @@ async def _run_baseline(
 
 def run_eval_sync(**kwargs: Any) -> dict[str, Any]:
     return asyncio.run(run_eval(**kwargs))
+
+
+def _filter_tasks(
+    tasks: list[BenchmarkTask],
+    *,
+    splits: list[str] | None = None,
+    max_tasks: int = 0,
+) -> list[BenchmarkTask]:
+    filtered = list(tasks)
+    if splits:
+        split_filter = set(splits)
+        filtered = [task for task in filtered if task.split in split_filter]
+    if max_tasks > 0:
+        filtered = filtered[:max_tasks]
+    return filtered

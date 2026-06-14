@@ -24,6 +24,7 @@ class OpenAICompatibleLLMClient(LLMClient):
     api_key_env: str = "OPENAI_API_KEY"
     timeout: float = 60.0
     extra_headers: dict[str, str] = field(default_factory=dict)
+    extra_body: dict[str, Any] = field(default_factory=dict)
 
     async def complete(self, request: LLMRequest) -> LLMResponse:
         payload = {
@@ -32,6 +33,7 @@ class OpenAICompatibleLLMClient(LLMClient):
             "temperature": request.temperature,
             "max_tokens": request.max_tokens,
         }
+        payload.update(self.extra_body)
         raw_response = self._post_json(payload)
         return LLMResponse(
             text=_extract_completion_text(raw_response),

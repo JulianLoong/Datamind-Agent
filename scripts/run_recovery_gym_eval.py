@@ -13,6 +13,8 @@ def main() -> None:
     parser.add_argument("--baselines", nargs="+", default=["no_recovery", "fixed_retry", "mock_pm"])
     parser.add_argument("--pm-path", default=None)
     parser.add_argument("--memory-db", default=None)
+    parser.add_argument("--splits", nargs="+", default=None)
+    parser.add_argument("--max-tasks", type=int, default=0, help="Maximum tasks after split filtering; 0 means no limit")
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--out", default="data/eval/recovery_gym.json")
     args = parser.parse_args()
@@ -22,6 +24,8 @@ def main() -> None:
         baseline_names=args.baselines,
         pm_path=args.pm_path,
         memory_db_path=args.memory_db,
+        splits=args.splits,
+        max_tasks=args.max_tasks,
         repeats=args.repeats,
         output_path=args.out,
     )

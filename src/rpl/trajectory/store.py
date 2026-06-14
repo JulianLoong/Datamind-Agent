@@ -61,6 +61,8 @@ class TrajectoryStore:
                     status TEXT NOT NULL,
                     total_tokens INTEGER DEFAULT 0,
                     total_latency_ms REAL DEFAULT 0,
+                    recovery_tokens INTEGER DEFAULT 0,
+                    recovery_latency_ms REAL DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
 
@@ -93,6 +95,7 @@ class TrajectoryStore:
                 """
             )
             self._ensure_recovery_columns(conn)
+            self._ensure_task_columns(conn)
 
     def _ensure_recovery_columns(self, conn: sqlite3.Connection) -> None:
         existing = {
@@ -108,12 +111,22 @@ class TrajectoryStore:
             if column not in existing:
                 conn.execute(f"ALTER TABLE recovery_attempts ADD COLUMN {column} {column_type}")
 
+    def _ensure_task_columns(self, conn: sqlite3.Connection) -> None:
+        existing = {row["name"] for row in conn.execute("PRAGMA table_info(tasks)").fetchall()}
+        columns = {
+            "recovery_tokens": "INTEGER DEFAULT 0",
+            "recovery_latency_ms": "REAL DEFAULT 0",
+        }
+        for column, column_sql in columns.items():
+            if column not in existing:
+                conn.execute(f"ALTER TABLE tasks ADD COLUMN {column} {column_sql}")
+
     def save_task(self, result: TaskResult) -> None:
         with self.connect() as conn:
             conn.execute(
                 """
-                INSERT OR REPLACE INTO tasks (id, goal, status, total_tokens, total_latency_ms)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT OR REPLACE INTO tasks (id, goal, status, total_tokens, total_latency_ms, recovery_tokens, recovery_latency_ms)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     result.task_id,
@@ -121,6 +134,8 @@ class TrajectoryStore:
                     result.status,
                     result.total_tokens,
                     result.total_latency_ms,
+                    result.recovery_tokens,
+                    result.recovery_latency_ms,
                 ),
             )
             for step in result.steps:
