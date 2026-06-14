@@ -16,3 +16,4 @@ def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
     assert "no_recovery" in report["summaries"]
     assert "first" in report["summaries"]
     assert report["summaries"]["first"]["success_rate"] >= report["summaries"]["no_recovery"]["success_rate"]
+    assert "first" in report["failure_family_summaries"]

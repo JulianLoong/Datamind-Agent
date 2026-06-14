@@ -14,6 +14,7 @@ from rpl.eval.benchmarks import BenchmarkTask, get_benchmark
 from rpl.eval.metrics import (
     TaskEvalRecord,
     summarize_records,
+    summarize_records_by_failure_family,
     summarize_records_by_failure_type,
     summarize_records_by_split,
     task_record,
@@ -69,6 +70,12 @@ async def run_eval(
             )
             for baseline in summaries
         },
+        "failure_family_summaries": {
+            baseline: summarize_records_by_failure_family(
+                [record for record in all_records if record.baseline == baseline]
+            )
+            for baseline in summaries
+        },
         "records": [asdict(record) for record in all_records],
     }
     if output_path is not None:
@@ -117,6 +124,7 @@ async def _run_baseline(
                     goal=task.goal,
                     split=task.split,
                     expected_error_type=task.expected_error_type,
+                    failure_family=task.failure_family,
                     result=result,
                 )
             )

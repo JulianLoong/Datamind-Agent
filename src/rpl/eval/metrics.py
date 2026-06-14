@@ -11,6 +11,7 @@ class TaskEvalRecord:
     goal: str
     split: str
     expected_error_type: str | None
+    failure_family: str | None
     status: str
     recovery_attempts: int
     tool_calls: int
@@ -24,6 +25,7 @@ def task_record(
     goal: str,
     split: str,
     expected_error_type: str | None,
+    failure_family: str | None = None,
     result: TaskResult,
 ) -> TaskEvalRecord:
     return TaskEvalRecord(
@@ -31,6 +33,7 @@ def task_record(
         goal=goal,
         split=split,
         expected_error_type=expected_error_type,
+        failure_family=failure_family,
         status=result.status,
         recovery_attempts=sum(len(step.recovery_attempts) for step in result.steps),
         tool_calls=sum(1 + len(step.recovery_attempts) for step in result.steps),
@@ -76,6 +79,14 @@ def summarize_records_by_failure_type(records: list[TaskEvalRecord]) -> dict[str
         key = record.expected_error_type or "clean"
         grouped.setdefault(key, []).append(record)
     return {error_type: summarize_records(type_records) for error_type, type_records in sorted(grouped.items())}
+
+
+def summarize_records_by_failure_family(records: list[TaskEvalRecord]) -> dict[str, dict[str, float | int | str]]:
+    grouped: dict[str, list[TaskEvalRecord]] = {}
+    for record in records:
+        key = record.failure_family or ("clean" if record.expected_error_type is None else "unlabeled_failure")
+        grouped.setdefault(key, []).append(record)
+    return {family: summarize_records(family_records) for family, family_records in sorted(grouped.items())}
 
 
 def _avg(values) -> float:

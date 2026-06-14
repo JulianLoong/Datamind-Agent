@@ -25,9 +25,11 @@ def test_summary_markdown_includes_split_and_failure_type_tables() -> None:
         "summaries": {"mock_pm": summary},
         "split_summaries": {"mock_pm": {"train": summary}},
         "failure_type_summaries": {"mock_pm": {"division_by_zero": summary}},
+        "failure_family_summaries": {"mock_pm": {"semantic_param_error": summary}},
     }
 
     markdown = summary_markdown(report)
 
     assert "## Split: train" in markdown
     assert "## Failure Type: division_by_zero" in markdown
+    assert "## Failure Family: semantic_param_error" in markdown

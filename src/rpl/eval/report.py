@@ -39,6 +39,13 @@ def summary_markdown(report: dict) -> str:
         attempts_key="avg_recovery_attempts_on_failure_tasks",
         calls_key="avg_tool_calls_on_failure_tasks",
     )
+    _append_grouped_table(
+        lines,
+        title_prefix="Failure Family",
+        grouped=report.get("failure_family_summaries", {}),
+        attempts_key="avg_recovery_attempts_on_failure_tasks",
+        calls_key="avg_tool_calls_on_failure_tasks",
+    )
     return "\n".join(lines) + "\n"
 
 

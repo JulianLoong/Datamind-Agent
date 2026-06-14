@@ -10,6 +10,8 @@ class BenchmarkTask:
     goal: str
     expected_error_type: str | None = None
     split: str = "test"
+    failure_family: str | None = None
+    metadata: dict[str, Any] | None = None
 
 
 RECOVERY_BENCH_LITE: list[BenchmarkTask] = [
@@ -30,7 +32,59 @@ def get_benchmark(name: str = "recovery_bench_lite") -> list[BenchmarkTask]:
         return list(RECOVERY_BENCH_LITE)
     if name == "recovery_bench_generated":
         return generate_recovery_bench()
+    if name == "recovery_gym":
+        return generate_recovery_gym()
     raise ValueError(f"Unknown benchmark: {name}")
+
+
+def generate_recovery_gym(
+    *,
+    train_per_family: int = 12,
+    test_per_family: int = 4,
+    clean_per_tool: int = 4,
+) -> list[BenchmarkTask]:
+    """Build executable recovery episodes with explicit generalization splits.
+
+    The gym is still deterministic and local, but each task is annotated with a failure family so
+    evaluation can separate parameter-level generalization from new messages and same-family tools.
+    """
+
+    tasks: list[BenchmarkTask] = []
+    for i in range(train_per_family):
+        tasks.extend(_recovery_gym_family_tasks(i, "seen_template_unseen_params", offset=0))
+    for i in range(test_per_family):
+        tasks.extend(_recovery_gym_family_tasks(i, "seen_tool_new_error_message", offset=10_000))
+        tasks.extend(_recovery_gym_new_tool_same_family_tasks(i, offset=20_000))
+
+    for i in range(clean_per_tool):
+        tasks.extend(
+            [
+                _math_clean_task(i),
+                _http_clean_task(i),
+                _json_clean_task(i),
+            ]
+        )
+    return tasks
+
+
+def _recovery_gym_family_tasks(idx: int, split: str, *, offset: int) -> list[BenchmarkTask]:
+    item = offset + idx
+    return [
+        _gym_math_semantic_param_task(item, split),
+        _gym_json_malformed_input_task(item, split),
+        _gym_json_schema_task(item, split),
+        _gym_http_unavailable_resource_task(item, split),
+        _gym_http_schema_task(item, split),
+        _gym_file_permission_task(item, split),
+    ]
+
+
+def _recovery_gym_new_tool_same_family_tasks(idx: int, *, offset: int) -> list[BenchmarkTask]:
+    item = offset + idx
+    return [
+        _gym_file_unavailable_resource_task(item, "new_tool_same_family"),
+        _gym_math_malformed_input_task(item, "new_tool_same_family"),
+    ]
 
 
 def generate_recovery_bench(
@@ -154,4 +208,140 @@ def _json_clean_task(idx: int) -> BenchmarkTask:
         ),
         None,
         "clean",
+    )
+
+
+def _gym_task(
+    *,
+    description: str,
+    tool_name: str,
+    params: dict[str, Any],
+    expected_error_type: str,
+    split: str,
+    failure_family: str,
+    idx: int,
+) -> BenchmarkTask:
+    return BenchmarkTask(
+        _structured_goal(description, tool_name, params),
+        expected_error_type,
+        split,
+        failure_family,
+        {
+            "gym": "recovery_gym",
+            "idx": idx,
+            "tool_name": tool_name,
+            "description": description,
+        },
+    )
+
+
+def _gym_math_semantic_param_task(idx: int, split: str) -> BenchmarkTask:
+    expressions = [
+        f"{idx + 5}/0",
+        f"({idx + 7})/(3-3)",
+        f"({idx + 2} * 4)/(8-8)",
+    ]
+    return _gym_task(
+        description="Evaluate arithmetic expression with semantic parameter failure",
+        tool_name="math_calc",
+        params={"expression": expressions[idx % len(expressions)]},
+        expected_error_type="division_by_zero",
+        split=split,
+        failure_family="semantic_param_error",
+        idx=idx,
+    )
+
+
+def _gym_math_malformed_input_task(idx: int, split: str) -> BenchmarkTask:
+    expressions = [
+        f"{idx}+",
+        f"sqrt({idx})",
+        f"{idx} + unknown",
+    ]
+    return _gym_task(
+        description="Evaluate malformed arithmetic expression",
+        tool_name="math_calc",
+        params={"expression": expressions[idx % len(expressions)]},
+        expected_error_type="invalid_expression",
+        split=split,
+        failure_family="malformed_input",
+        idx=idx,
+    )
+
+
+def _gym_json_malformed_input_task(idx: int, split: str) -> BenchmarkTask:
+    field = f"value_{idx}"
+    payloads = [
+        f'{{"{field}": ',
+        f"{{broken_{idx}: true",
+        f'{{"{field}" null}}',
+    ]
+    return _gym_task(
+        description="Parse malformed JSON payload",
+        tool_name="json_parse",
+        params={"text": payloads[idx % len(payloads)], "field": field},
+        expected_error_type="invalid_json",
+        split=split,
+        failure_family="malformed_input",
+        idx=idx,
+    )
+
+
+def _gym_json_schema_task(idx: int, split: str) -> BenchmarkTask:
+    return _gym_task(
+        description="Parse JSON with wrong parameter type",
+        tool_name="json_parse",
+        params={"text": {"value": idx}},
+        expected_error_type="validation_error",
+        split=split,
+        failure_family="schema_error",
+        idx=idx,
+    )
+
+
+def _gym_http_unavailable_resource_task(idx: int, split: str) -> BenchmarkTask:
+    return _gym_task(
+        description="Fetch unavailable mock HTTP fixture",
+        tool_name="http_request",
+        params={"url": f"https://example.test/archive/{idx}"},
+        expected_error_type="not_found",
+        split=split,
+        failure_family="unavailable_resource",
+        idx=idx,
+    )
+
+
+def _gym_http_schema_task(idx: int, split: str) -> BenchmarkTask:
+    return _gym_task(
+        description="Fetch HTTP fixture with unsupported method",
+        tool_name="http_request",
+        params={"url": "https://example.test/health", "method": "POST"},
+        expected_error_type="validation_error",
+        split=split,
+        failure_family="schema_error",
+        idx=idx,
+    )
+
+
+def _gym_file_permission_task(idx: int, split: str) -> BenchmarkTask:
+    return _gym_task(
+        description="Read file path that escapes sandbox",
+        tool_name="file_read",
+        params={"path": f"../secret_{idx}.txt"},
+        expected_error_type="permission_denied",
+        split=split,
+        failure_family="permission_error",
+        idx=idx,
+    )
+
+
+def _gym_file_unavailable_resource_task(idx: int, split: str) -> BenchmarkTask:
+    return _gym_task(
+        description="Read missing sandbox file",
+        tool_name="file_read",
+        params={"path": f"missing/{idx}.txt"},
+        expected_error_type="file_not_found",
+        split=split,
+        failure_family="unavailable_resource",
+        idx=idx,
     )
