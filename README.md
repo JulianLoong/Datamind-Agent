@@ -69,6 +69,26 @@ The existing `data/pm_checkpoints/dpo_pm` checkpoint is an early recovery-bench-
 next DPO_PM milestone is to retrain on the newer generated/outcome-ranked data and evaluate on
 `recovery_bench_generated`; see `DPO_PM主线实验计划.md` for the current mainline commands.
 
+Current mainline status as of 2026-06-15:
+
+- Branch: `dpo-pm-mainline` tracking `origin/codex/dpo-pm-mainline`.
+- Outcome-ranked data was collected with `scripts/collect_candidate_outcomes.py` on
+  `recovery_bench_generated` train split: `960` preference pairs, split into
+  `768 train / 192 val` under `data/pref_pairs_outcomes`.
+- `DPO_PM` was trained from the outcome-ranked pairs with
+  `Qwen/Qwen2.5-0.5B-Instruct`, QLoRA 4-bit loading, bf16 precision, and gradient
+  checkpointing. The saved adapter is `data/pm_checkpoints/dpo_pm_outcomes`, and
+  the training log is `data/logs/dpo_pm_outcomes_train_bf16.log`.
+- The generated benchmark evaluation result is checked in as
+  `data/eval/dpo_pm_outcomes_generated.json` and `.md`.
+- On `recovery_bench_generated` with splits `test_unseen clean`, `dpo_pm` reached
+  `success_rate=1.000` and `recovery_success_rate=1.000`. It matched
+  `fixed_retry` recovery success while reducing failure-task recovery attempts
+  from `2.0` to `1.0` and tool calls from `3.0` to `2.0`.
+
+The RTX 5060 local environment required CUDA 12.8 PyTorch and `--bf16` for stable DPO training.
+The original `--fp16` run failed during AMP gradient unscale with bf16 gradients.
+
 Recommended first demo:
 
 - RTX 5060 8GB: `Qwen/Qwen2.5-0.5B-Instruct`

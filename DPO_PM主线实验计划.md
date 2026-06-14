@@ -122,3 +122,63 @@ RecoveryGym 只作为补充。若 DPO_PM 表现不佳，应重点分析候选覆
 - 如果 DPO_PM 只强于 random、不强于 fixed_retry：`DPO_PM 学到有效候选排序，但当前数据和候选覆盖还不足以全面超过规则策略。`
 
 第一版不写 memory 消融为主结论。
+
+## 5. Execution update: 2026-06-15
+
+The mainline DPO_PM run has been completed on branch `dpo-pm-mainline`, which tracks
+`origin/codex/dpo-pm-mainline`.
+
+Completed items:
+
+- Pulled the remote mainline branch from `origin/codex/dpo-pm-mainline`.
+- Installed DPO dependencies in the local `pytorch` Conda environment.
+- Upgraded PyTorch to `2.11.0+cu128` so the RTX 5060 (`sm_120`) can run CUDA kernels.
+- Collected outcome-ranked preference data with:
+  `scripts/collect_candidate_outcomes.py --benchmark recovery_bench_generated --splits train --candidate-count 3 --out-dir data/pref_pairs_outcomes`.
+- Collection result: `960` total `outcome_multi_candidate` pairs, split into
+  `768 train / 192 val`.
+- Trained `DPO_PM` from `data/pref_pairs_outcomes` using
+  `Qwen/Qwen2.5-0.5B-Instruct`, QLoRA 4-bit loading, bf16 precision, and gradient checkpointing.
+- Saved the adapter and tokenizer under `data/pm_checkpoints/dpo_pm_outcomes`.
+- Saved the training log under `data/logs/dpo_pm_outcomes_train_bf16.log`.
+- Ran the generated benchmark evaluation and saved:
+  `data/eval/dpo_pm_outcomes_generated.json`
+  and `data/eval/dpo_pm_outcomes_generated.md`.
+- Pushed the evaluation output, checkpoint directory, and training log to
+  `origin/codex/dpo-pm-mainline`.
+
+Important training note:
+
+- The original fp16 command reached the first optimizer step but failed with
+  `NotImplementedError: "_amp_foreach_non_finite_check_and_unscale_cuda" not implemented for 'BFloat16'`.
+- Re-running the same training with `--bf16` completed successfully.
+- Final training summary from the log: `train_runtime=1567`, `train_loss=0.00429`,
+  `epoch=3`; final eval summary included `eval_loss=6.959e-06` and
+  `eval_rewards/accuracies=1`.
+
+Main generated benchmark result:
+
+```text
+benchmark: recovery_bench_generated
+splits: test_unseen clean
+repeats: 1
+checkpoint: Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes
+```
+
+| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls |
+|---|---:|---:|---:|---:|
+| no_recovery | 0.273 | 0.000 | 0.000 | 1.000 |
+| random | 0.491 | 0.300 | 0.727 | 1.727 |
+| fixed_retry | 1.000 | 1.000 | 1.455 | 2.455 |
+| dpo_pm | 1.000 | 1.000 | 0.727 | 1.727 |
+
+On failure tasks only, `dpo_pm` matched `fixed_retry` recovery success (`1.000`) while
+using fewer recovery attempts (`1.0` vs `2.0`) and fewer tool calls (`2.0` vs `3.0`).
+This supports the current first-version claim: DPO_PM can preserve recovery capability
+while reducing invalid recovery rounds in the controlled synthetic setting.
+
+Remaining work:
+
+- Run the same `dpo_pm_outcomes` checkpoint on RecoveryGym as a supplemental generalization check.
+- Run a small real-LLM candidate smoke test with `dpo_pm`.
+- Keep memory ablations separate from the first DPO_PM claim.
