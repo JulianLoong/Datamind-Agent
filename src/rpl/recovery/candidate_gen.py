@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
 from typing import Any
 
-from rpl.llm import FakeLLMClient, LLMClient, LLMRequest
+from rpl.llm import FakeLLMClient, LLMClient, LLMRequest, OpenAICompatibleLLMClient
 from rpl.recovery.types import Candidate, ErrorContext
 
 
@@ -45,6 +46,29 @@ class CandidateGenerator:
             f"Error Message: {ctx.error_message}\n"
             "Each item must contain reasoning, action, tool_name, tool_params."
         )
+
+
+def build_llm_client(
+    *,
+    provider: str = "fake",
+    model: str | None = None,
+    base_url: str | None = None,
+    api_key: str | None = None,
+    api_key_env: str = "OPENAI_API_KEY",
+) -> LLMClient:
+    if provider == "fake":
+        return FakeLLMClient()
+    if provider in {"openai", "openai_compatible"}:
+        resolved_model = model or os.environ.get("RPL_LLM_MODEL") or "gpt-4o-mini"
+        resolved_base_url = base_url or os.environ.get("RPL_LLM_BASE_URL") or "https://api.openai.com"
+        resolved_api_key = api_key or os.environ.get(api_key_env)
+        return OpenAICompatibleLLMClient(
+            model=resolved_model,
+            base_url=resolved_base_url,
+            api_key=resolved_api_key,
+            api_key_env=api_key_env,
+        )
+    raise ValueError(f"Unknown LLM provider: {provider}")
 
 
 def parse_candidates(text: str) -> list[Candidate]:

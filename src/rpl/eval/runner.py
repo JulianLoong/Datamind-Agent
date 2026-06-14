@@ -19,6 +19,7 @@ from rpl.eval.metrics import (
     summarize_records_by_split,
     task_record,
 )
+from rpl.recovery.candidate_gen import build_llm_client
 from rpl.recovery import CandidateDedup, CandidateGenerator, CandidateValidator, ErrorContextBuilder, RecoveryPipeline
 from rpl.tools.builtin import build_builtin_registry
 from rpl.trajectory.collector import TrajectoryCollector
@@ -31,6 +32,10 @@ async def run_eval(
     baseline_names: list[str] | None = None,
     pm_path: str | None = None,
     memory_db_path: str | None = None,
+    llm_provider: str | None = None,
+    llm_model: str | None = None,
+    llm_base_url: str | None = None,
+    llm_api_key: str | None = None,
     repeats: int = 5,
     output_path: str | Path | None = None,
 ) -> dict[str, Any]:
@@ -50,6 +55,12 @@ async def run_eval(
                 max_retries_per_step=spec.max_retries_per_step,
                 selector=spec.selector,
                 db_path=tmp_path / f"{spec.name}.db",
+                llm_client=build_llm_client(
+                    provider=llm_provider or "fake",
+                    model=llm_model,
+                    base_url=llm_base_url,
+                    api_key=llm_api_key,
+                ),
             )
             all_records.extend(records)
             summaries[spec.name] = summarize_records(records)
@@ -93,6 +104,7 @@ async def _run_baseline(
     max_retries_per_step: int,
     selector,
     db_path: Path,
+    llm_client,
 ) -> list[TaskEvalRecord]:
     registry = build_builtin_registry()
     store = TrajectoryStore(db_path)
@@ -101,7 +113,7 @@ async def _run_baseline(
         RuleBasedPlanner(),
         RecoveryPipeline(
             ErrorContextBuilder(),
-            CandidateGenerator(),
+            CandidateGenerator(llm_client),
             CandidateDedup(),
             selector,
             candidate_count=3,

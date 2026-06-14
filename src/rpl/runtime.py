@@ -8,6 +8,7 @@ from rpl.config import Settings, load_settings
 from rpl.experience import ExperienceMemory
 from rpl.pref_model import LightweightPrefModel, MockPrefModel
 from rpl.recovery import CandidateDedup, CandidateGenerator, CandidateValidator, DefaultSelector, ErrorContextBuilder, MemoryPriorSelector, PMSelector, RecoveryPipeline
+from rpl.recovery.candidate_gen import build_llm_client
 from rpl.tools.builtin import build_builtin_registry
 from rpl.trajectory.collector import TrajectoryCollector
 from rpl.trajectory.store import TrajectoryStore
@@ -30,6 +31,7 @@ def build_runtime(
     registry = build_builtin_registry(settings.tools)
     store = TrajectoryStore(settings.paths.trajectory_db)
     collector = TrajectoryCollector(store)
+    llm_client = build_llm_client(provider=settings.llm.provider)
     selector = _build_selector(
         selector_name or settings.recovery.selector,
         settings.recovery.default_selector,
@@ -38,7 +40,7 @@ def build_runtime(
     )
     recovery_pipeline = RecoveryPipeline(
         ErrorContextBuilder(),
-        CandidateGenerator(),
+        CandidateGenerator(llm_client),
         CandidateDedup(),
         selector,
         candidate_count=settings.recovery.candidate_count,

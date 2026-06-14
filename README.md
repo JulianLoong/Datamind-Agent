@@ -73,6 +73,27 @@ PYTHONPATH=src python3 scripts/run_eval.py \
 The `dpo_pm` selector scores each recovery candidate by the DPO adapter's conditional log
 probability for the candidate text under the error-context prompt.
 
+## Real LLM candidate evaluation
+
+To validate recovery ranking under a non-deterministic candidate generator, point the runtime at
+an OpenAI-compatible chat completions API. This is the P5 entry point for comparing PM and memory
+behavior when candidate generation is no longer deterministic:
+
+```bash
+export OPENAI_API_KEY=...
+PYTHONPATH=src python3 scripts/run_real_llm_eval.py \
+  --benchmark recovery_gym \
+  --llm-provider openai_compatible \
+  --llm-model gpt-4o-mini \
+  --llm-base-url https://api.openai.com \
+  --memory-db data/trajectories.db \
+  --repeats 1 \
+  --out data/eval/real_llm_recovery.json
+```
+
+The same `PMSelector` and `MemoryPriorSelector` paths are used; only the candidate generator
+changes.
+
 ## Generated benchmark data
 
 For thesis-scale experiments, use the generated benchmark instead of repeatedly running the three

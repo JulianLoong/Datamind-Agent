@@ -19,6 +19,10 @@ def main() -> None:
     )
     parser.add_argument("--pm-path", default=None, help="Checkpoint for lightweight_pm baseline")
     parser.add_argument("--memory-db", default=None, help="Trajectory DB used to load successful recovery experiences")
+    parser.add_argument("--llm-provider", default=None, help="LLM provider for candidate generation (fake, openai_compatible)")
+    parser.add_argument("--llm-model", default=None, help="LLM model name for real candidate generation")
+    parser.add_argument("--llm-base-url", default=None, help="Base URL for OpenAI-compatible LLM API")
+    parser.add_argument("--llm-api-key", default=None, help="API key for OpenAI-compatible LLM API")
     parser.add_argument("--repeats", type=int, default=5)
     parser.add_argument("--out", default="data/eval/recovery_bench_lite.json")
     args = parser.parse_args()
@@ -28,6 +32,10 @@ def main() -> None:
         baseline_names=args.baselines,
         pm_path=args.pm_path,
         memory_db_path=args.memory_db,
+        llm_provider=args.llm_provider,
+        llm_model=args.llm_model,
+        llm_base_url=args.llm_base_url,
+        llm_api_key=args.llm_api_key,
         repeats=args.repeats,
         output_path=args.out,
     )
