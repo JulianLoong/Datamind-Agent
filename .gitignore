@@ -12,6 +12,7 @@ dist/
 data/*.db
 data/dpo/
 data/dpo_generated/
+data/dpo_outcomes/
 data/pref_pairs/
 data/pref_pairs_generated/
 data/pref_pairs_generated_smoke/

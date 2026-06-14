@@ -31,6 +31,7 @@ async def run_eval(
     benchmark_name: str = "recovery_bench_lite",
     baseline_names: list[str] | None = None,
     pm_path: str | None = None,
+    pm_paths: dict[str, str] | None = None,
     memory_db_path: str | None = None,
     llm_provider: str | None = None,
     llm_model: str | None = None,
@@ -50,7 +51,16 @@ async def run_eval(
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         for baseline_name in baseline_names:
-            spec = build_baseline(baseline_name, pm_path=pm_path, memory_db_path=memory_db_path)
+            baseline_pm_path = _resolve_pm_path(
+                baseline_name,
+                default_pm_path=pm_path,
+                pm_paths=pm_paths,
+            )
+            spec = build_baseline(
+                baseline_name,
+                pm_path=baseline_pm_path,
+                memory_db_path=memory_db_path,
+            )
             records = await _run_baseline(
                 spec_name=spec.name,
                 tasks=tasks,
@@ -153,6 +163,20 @@ def run_eval_sync(**kwargs: Any) -> dict[str, Any]:
     return asyncio.run(run_eval(**kwargs))
 
 
+def parse_pm_path_items(items: list[str] | None) -> dict[str, str]:
+    paths: dict[str, str] = {}
+    for item in items or []:
+        if "=" not in item:
+            raise ValueError(f"Invalid PM path item {item!r}; expected baseline=path")
+        baseline, path = item.split("=", 1)
+        baseline = baseline.strip()
+        path = path.strip()
+        if not baseline or not path:
+            raise ValueError(f"Invalid PM path item {item!r}; expected baseline=path")
+        paths[baseline] = path
+    return paths
+
+
 def _filter_tasks(
     tasks: list[BenchmarkTask],
     *,
@@ -166,3 +190,17 @@ def _filter_tasks(
     if max_tasks > 0:
         filtered = filtered[:max_tasks]
     return filtered
+
+
+def _resolve_pm_path(
+    baseline_name: str,
+    *,
+    default_pm_path: str | None,
+    pm_paths: dict[str, str] | None,
+) -> str | None:
+    if not pm_paths:
+        return default_pm_path
+    if baseline_name in pm_paths:
+        return pm_paths[baseline_name]
+    base_name = baseline_name.rsplit("_r", 1)[0] if "_r" in baseline_name else baseline_name
+    return pm_paths.get(base_name, default_pm_path)

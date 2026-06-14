@@ -6,6 +6,7 @@ from pathlib import Path
 
 from rpl.eval import run_eval_sync
 from rpl.eval.report import summary_markdown
+from rpl.eval.runner import parse_pm_path_items
 
 
 def main() -> None:
@@ -18,6 +19,12 @@ def main() -> None:
         help="Baselines to run",
     )
     parser.add_argument("--pm-path", default=None, help="Checkpoint for lightweight_pm baseline")
+    parser.add_argument(
+        "--pm-paths",
+        nargs="*",
+        default=None,
+        help="Per-baseline PM checkpoints, e.g. lightweight_pm=path dpo_pm=base::adapter",
+    )
     parser.add_argument("--memory-db", default=None, help="Trajectory DB used to load successful recovery experiences")
     parser.add_argument("--llm-provider", default=None, help="LLM provider for candidate generation (fake, openai_compatible)")
     parser.add_argument("--llm-model", default=None, help="LLM model name for real candidate generation")
@@ -33,6 +40,7 @@ def main() -> None:
         benchmark_name=args.benchmark,
         baseline_names=args.baselines,
         pm_path=args.pm_path,
+        pm_paths=parse_pm_paths(args.pm_paths),
         memory_db_path=args.memory_db,
         llm_provider=args.llm_provider,
         llm_model=args.llm_model,
@@ -50,6 +58,13 @@ def main() -> None:
     md_path.parent.mkdir(parents=True, exist_ok=True)
     md_path.write_text(summary_markdown(report), encoding="utf-8")
     print(f"wrote {md_path}")
+
+
+def parse_pm_paths(items: list[str] | None) -> dict[str, str]:
+    try:
+        return parse_pm_path_items(items)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 if __name__ == "__main__":

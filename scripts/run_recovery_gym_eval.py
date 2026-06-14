@@ -6,12 +6,19 @@ from pathlib import Path
 
 from rpl.eval import run_eval_sync
 from rpl.eval.report import summary_markdown
+from rpl.eval.runner import parse_pm_path_items
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run RecoveryGym family/split generalization evaluation.")
     parser.add_argument("--baselines", nargs="+", default=["no_recovery", "fixed_retry", "mock_pm"])
     parser.add_argument("--pm-path", default=None)
+    parser.add_argument(
+        "--pm-paths",
+        nargs="*",
+        default=None,
+        help="Per-baseline PM checkpoints, e.g. lightweight_pm=path dpo_pm=base::adapter",
+    )
     parser.add_argument("--memory-db", default=None)
     parser.add_argument("--splits", nargs="+", default=None)
     parser.add_argument("--max-tasks", type=int, default=0, help="Maximum tasks after split filtering; 0 means no limit")
@@ -23,6 +30,7 @@ def main() -> None:
         benchmark_name="recovery_gym",
         baseline_names=args.baselines,
         pm_path=args.pm_path,
+        pm_paths=_parse_pm_paths(args.pm_paths),
         memory_db_path=args.memory_db,
         splits=args.splits,
         max_tasks=args.max_tasks,
@@ -35,6 +43,13 @@ def main() -> None:
     md_path.write_text(summary_markdown(report), encoding="utf-8")
     print(f"wrote {args.out}")
     print(f"wrote {md_path}")
+
+
+def _parse_pm_paths(items: list[str] | None) -> dict[str, str]:
+    try:
+        return parse_pm_path_items(items)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 if __name__ == "__main__":

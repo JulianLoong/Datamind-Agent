@@ -6,13 +6,14 @@ from rpl.eval.metrics import (
     summarize_records_by_failure_type,
     summarize_records_by_split,
 )
-from rpl.eval.runner import run_eval, run_eval_sync
+from rpl.eval.runner import parse_pm_path_items, run_eval, run_eval_sync
 from rpl.eval.report import summary_markdown
 
 __all__ = [
     "BenchmarkTask",
     "TaskEvalRecord",
     "get_benchmark",
+    "parse_pm_path_items",
     "run_eval",
     "run_eval_sync",
     "summary_markdown",
