@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from rpl.eval import run_eval_sync
+from rpl.eval.report import summary_markdown
 
 
 def main() -> None:
@@ -35,61 +36,8 @@ def main() -> None:
 
     md_path = Path(args.out).with_suffix(".md")
     md_path.parent.mkdir(parents=True, exist_ok=True)
-    md_path.write_text(_summary_markdown(report), encoding="utf-8")
+    md_path.write_text(summary_markdown(report), encoding="utf-8")
     print(f"wrote {md_path}")
-
-
-def _summary_markdown(report: dict) -> str:
-    lines = [
-        f"# {report['benchmark']} Results",
-        "",
-        f"repeats: {report['repeats']}",
-        "",
-        "Note: controlled synthetic benchmarks validate the recovery pipeline and ranking behavior; "
-        "split-level results should be used when discussing generalization.",
-        "",
-        "| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls |",
-        "|---|---:|---:|---:|---:|---:|",
-    ]
-    for baseline, summary in report["summaries"].items():
-        lines.append(
-            "| {baseline} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} |".format(
-                baseline=baseline,
-                success=summary["success_rate"],
-                recovery=summary["recovery_success_rate"],
-                attempts=summary["avg_recovery_attempts"],
-                recovered_attempts=summary["avg_recovery_attempts_on_recovered"],
-                calls=summary["avg_tool_calls"],
-            )
-        )
-    split_summaries = report.get("split_summaries", {})
-    split_names = sorted({split for splits in split_summaries.values() for split in splits})
-    for split in split_names:
-        lines.extend(
-            [
-                "",
-                f"## Split: {split}",
-                "",
-                "| baseline | tasks | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls |",
-                "|---|---:|---:|---:|---:|---:|---:|",
-            ]
-        )
-        for baseline, splits in split_summaries.items():
-            summary = splits.get(split)
-            if summary is None:
-                continue
-            lines.append(
-                "| {baseline} | {tasks} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} |".format(
-                    baseline=baseline,
-                    tasks=summary["tasks"],
-                    success=summary["success_rate"],
-                    recovery=summary["recovery_success_rate"],
-                    attempts=summary["avg_recovery_attempts"],
-                    recovered_attempts=summary["avg_recovery_attempts_on_recovered"],
-                    calls=summary["avg_tool_calls"],
-                )
-            )
-    return "\n".join(lines) + "\n"
 
 
 if __name__ == "__main__":

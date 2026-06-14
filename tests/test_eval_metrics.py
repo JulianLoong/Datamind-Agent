@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from rpl.eval.metrics import TaskEvalRecord, summarize_records, summarize_records_by_split
+from rpl.eval.metrics import (
+    TaskEvalRecord,
+    summarize_records,
+    summarize_records_by_failure_type,
+    summarize_records_by_split,
+)
 
 
 def test_summarize_records_includes_recovery_efficiency_metrics() -> None:
@@ -32,3 +37,17 @@ def test_summarize_records_by_split() -> None:
     assert summary["train"]["recovery_success_rate"] == 0.5
     assert summary["clean"]["tasks"] == 1
     assert summary["clean"]["recovery_success_rate"] == 0.0
+
+
+def test_summarize_records_by_failure_type_groups_clean_tasks() -> None:
+    records = [
+        TaskEvalRecord("pm", "a", "train", "division_by_zero", "success", 1, 2, 0, 1.0),
+        TaskEvalRecord("pm", "b", "train", "not_found", "failed", 1, 2, 0, 1.0),
+        TaskEvalRecord("pm", "c", "clean", None, "success", 0, 1, 0, 1.0),
+    ]
+
+    summary = summarize_records_by_failure_type(records)
+
+    assert summary["division_by_zero"]["tasks"] == 1
+    assert summary["not_found"]["failure_tasks"] == 1
+    assert summary["clean"]["failure_tasks"] == 0

@@ -70,6 +70,14 @@ def summarize_records_by_split(records: list[TaskEvalRecord]) -> dict[str, dict[
     return {split: summarize_records(split_records) for split, split_records in sorted(grouped.items())}
 
 
+def summarize_records_by_failure_type(records: list[TaskEvalRecord]) -> dict[str, dict[str, float | int | str]]:
+    grouped: dict[str, list[TaskEvalRecord]] = {}
+    for record in records:
+        key = record.expected_error_type or "clean"
+        grouped.setdefault(key, []).append(record)
+    return {error_type: summarize_records(type_records) for error_type, type_records in sorted(grouped.items())}
+
+
 def _avg(values) -> float:
     items = list(values)
     return sum(items) / len(items) if items else 0.0
