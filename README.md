@@ -65,9 +65,10 @@ reported as a baseline or implementation sanity check, not as the final DPO_PM r
 The repository includes a LoRA DPO training and inference path. DPO dependencies are imported only by
 the DPO scripts/model, so the lightweight loop still runs without PyTorch.
 
-The existing `data/pm_checkpoints/dpo_pm` checkpoint is an early recovery-bench-lite artifact. The
-next DPO_PM milestone is to retrain on the newer generated/outcome-ranked data and evaluate on
-`recovery_bench_generated`; see `DPO_PM主线实验计划.md` for the current mainline commands.
+The older `data/pm_checkpoints/dpo_pm` checkpoint is an early recovery-bench-lite artifact. The
+current thesis-facing checkpoint is `data/pm_checkpoints/dpo_pm_outcomes`, trained from
+outcome-ranked recovery candidates and evaluated on both `recovery_bench_generated` and
+RecoveryGym; see `DPO_PM主线实验计划.md` for the current mainline commands.
 
 Current mainline status as of 2026-06-15:
 
@@ -85,6 +86,12 @@ Current mainline status as of 2026-06-15:
   `success_rate=1.000` and `recovery_success_rate=1.000`. It matched
   `fixed_retry` recovery success while reducing failure-task recovery attempts
   from `2.0` to `1.0` and tool calls from `3.0` to `2.0`.
+- On the full controlled RecoveryGym benchmark, `dpo_pm` matched `fixed_retry`
+  (`success_rate=0.517`, `recovery_success_rate=0.462`) while reducing average
+  recovery attempts from `1.724` to `0.897`, average tool calls from `2.724` to
+  `1.897`, and average recovery tokens from `278.259` to `146.638`.
+  RecoveryGym should be presented as a supplemental generalization and failure-analysis
+  result, not as open-world real-LLM evidence.
 
 The RTX 5060 local environment required CUDA 12.8 PyTorch and `--bf16` for stable DPO training.
 The original `--fp16` run failed during AMP gradient unscale with bf16 gradients.

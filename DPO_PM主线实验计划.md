@@ -179,6 +179,59 @@ while reducing invalid recovery rounds in the controlled synthetic setting.
 
 Remaining work:
 
-- Run the same `dpo_pm_outcomes` checkpoint on RecoveryGym as a supplemental generalization check.
 - Run a small real-LLM candidate smoke test with `dpo_pm`.
+- Keep memory ablations separate from the first DPO_PM claim.
+
+## 6. RecoveryGym update: 2026-07-03
+
+The supplemental RecoveryGym DPO_PM evaluation has now been completed and checked in as:
+
+- `data/eval/dpo_pm_outcomes_recovery_gym_smoke.json` and `.md`
+- `data/eval/dpo_pm_outcomes_recovery_gym.json` and `.md`
+
+Smoke setting:
+
+```text
+benchmark: recovery_gym
+splits: seen_template_unseen_params
+max_tasks: 16
+repeats: 1
+baselines: no_recovery random fixed_retry dpo_pm
+```
+
+Full RecoveryGym setting:
+
+```text
+benchmark: recovery_gym
+task_count: 116
+repeats: 1
+baselines: no_recovery random fixed_retry dpo_pm
+```
+
+Full RecoveryGym result:
+
+| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls | avg_recovery_tokens |
+|---|---:|---:|---:|---:|---:|
+| no_recovery | 0.103 | 0.000 | 0.000 | 1.000 | 0.000 |
+| random | 0.241 | 0.154 | 0.897 | 1.897 | 146.638 |
+| fixed_retry | 0.517 | 0.462 | 1.724 | 2.724 | 278.259 |
+| dpo_pm | 0.517 | 0.462 | 0.897 | 1.897 | 146.638 |
+
+Paper-safe wording:
+
+- RecoveryGym is a controlled synthetic generalization and failure-analysis benchmark.
+- DPO_PM matches fixed-retry recovery success on this benchmark while using fewer recovery
+  attempts, tool calls, and recovery tokens.
+- The gains are concentrated in recoverable families covered by the current candidate generator:
+  `semantic_param_error`, `malformed_input`, and `unavailable_resource`.
+- Cases such as `schema_error`, `permission_error`, `file_not_found`, and `invalid_expression`
+  remain unresolved because the current candidate generator often does not provide a successful
+  executable repair. This should be described as a candidate-coverage limitation rather than a
+  broad failure of preference ranking.
+
+Remaining work:
+
+- Run a small real-LLM candidate smoke test with `dpo_pm` if API/runtime budget allows.
+- Update thesis and slides so RecoveryGym is supplemental evidence, while
+  `recovery_bench_generated` remains the main DPO_PM result.
 - Keep memory ablations separate from the first DPO_PM claim.
