@@ -37,6 +37,7 @@ async def run_eval(
     llm_model: str | None = None,
     llm_base_url: str | None = None,
     llm_api_key: str | None = None,
+    llm_max_tokens: int = 512,
     splits: list[str] | None = None,
     max_tasks: int = 0,
     repeats: int = 5,
@@ -74,6 +75,7 @@ async def run_eval(
                     base_url=llm_base_url,
                     api_key=llm_api_key,
                 ),
+                llm_max_tokens=llm_max_tokens,
             )
             all_records.extend(records)
             summaries[spec.name] = summarize_records(records)
@@ -121,6 +123,7 @@ async def _run_baseline(
     selector,
     db_path: Path,
     llm_client,
+    llm_max_tokens: int = 512,
 ) -> list[TaskEvalRecord]:
     registry = build_builtin_registry()
     store = TrajectoryStore(db_path)
@@ -129,7 +132,7 @@ async def _run_baseline(
         RuleBasedPlanner(),
         RecoveryPipeline(
             ErrorContextBuilder(),
-            CandidateGenerator(llm_client),
+            CandidateGenerator(llm_client, max_tokens=llm_max_tokens),
             CandidateDedup(),
             selector,
             candidate_count=3,
