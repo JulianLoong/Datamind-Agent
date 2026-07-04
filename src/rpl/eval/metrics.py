@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from typing import Any
 
 from rpl.agent_engine.step import TaskResult
 
@@ -19,6 +20,7 @@ class TaskEvalRecord:
     latency_ms: float
     recovery_tokens: int
     recovery_latency_ms: float
+    recovery_trace: list[dict[str, Any]]
 
 
 def task_record(
@@ -43,6 +45,7 @@ def task_record(
         latency_ms=result.total_latency_ms,
         recovery_tokens=result.recovery_tokens,
         recovery_latency_ms=result.recovery_latency_ms,
+        recovery_trace=_recovery_trace(result),
     )
 
 
@@ -98,3 +101,26 @@ def summarize_records_by_failure_family(records: list[TaskEvalRecord]) -> dict[s
 def _avg(values) -> float:
     items = list(values)
     return sum(items) / len(items) if items else 0.0
+
+
+def _recovery_trace(result: TaskResult) -> list[dict[str, Any]]:
+    trace: list[dict[str, Any]] = []
+    for step in result.steps:
+        for attempt_index, attempt in enumerate(step.recovery_attempts):
+            trace.append(
+                {
+                    "step_index": step.index,
+                    "step_description": step.description,
+                    "attempt_index": attempt_index,
+                    "chosen_index": attempt.chosen_index,
+                    "outcome": attempt.outcome.value,
+                    "error_context": asdict(attempt.error_context) if attempt.error_context is not None else None,
+                    "initial_result": asdict(attempt.initial_result) if attempt.initial_result is not None else None,
+                    "final_result": asdict(attempt.final_result) if attempt.final_result is not None else None,
+                    "candidate_tokens": attempt.candidate_tokens,
+                    "candidate_latency_ms": attempt.candidate_latency_ms,
+                    "pm_scores": attempt.pm_scores,
+                    "candidates": [asdict(candidate) for candidate in attempt.candidates],
+                }
+            )
+    return trace

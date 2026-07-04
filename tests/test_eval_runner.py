@@ -22,6 +22,28 @@ def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
     assert "first" in report["failure_family_summaries"]
 
 
+def test_eval_runner_records_recovery_trace(tmp_path) -> None:
+    report = run_eval_sync(
+        baseline_names=["first"],
+        repeats=1,
+        output_path=tmp_path / "eval.json",
+    )
+
+    recovered_records = [
+        record
+        for record in report["records"]
+        if record["recovery_attempts"] > 0
+    ]
+
+    assert recovered_records
+    trace = recovered_records[0]["recovery_trace"]
+    assert trace
+    assert "chosen_index" in trace[0]
+    assert "candidates" in trace[0]
+    assert trace[0]["candidates"]
+    assert "final_result" in trace[0]
+
+
 def test_eval_runner_filters_splits_and_limits_tasks(tmp_path) -> None:
     report = run_eval_sync(
         benchmark_name="recovery_gym",

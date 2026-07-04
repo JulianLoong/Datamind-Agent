@@ -153,6 +153,18 @@ selectors.
 For GLM 5.1, the real path should disable thinking and request JSON output. The current Zhipu
 provider does this automatically.
 
+A small DeepSeek real-LLM DPO_PM smoke result is checked in as
+`data/eval/real_llm_deepseek_dpo_pm_smoke.json` and `.md`. It uses `recovery_bench_lite` with
+`max_tasks=4` and compares `fixed_retry` with `dpo_pm`. Both methods reached
+`success_rate=0.250` and `recovery_success_rate=0.250`, while `dpo_pm` reduced average recovery
+attempts from `1.750` to `1.000`, tool calls from `2.750` to `2.000`, recovery tokens from
+`2966.000` to `1571.250`, and recovery latency from about `49.9s` to `27.1s`. This should be
+presented only as a path-validation smoke test because the sample size is very small.
+
+New evaluation records include a `recovery_trace` field with generated candidates, selected index,
+PM scores, and initial/final tool results. Use this for future real-LLM failure analysis instead of
+inferring candidate quality from aggregate metrics alone.
+
 ## Generated benchmark data
 
 For thesis-scale experiments, use the generated benchmark or RecoveryGym instead of repeatedly
