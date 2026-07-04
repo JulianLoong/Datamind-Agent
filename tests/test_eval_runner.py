@@ -44,6 +44,21 @@ def test_eval_runner_records_recovery_trace(tmp_path) -> None:
     assert "final_result" in trace[0]
 
 
+def test_eval_runner_can_write_llm_cache(tmp_path) -> None:
+    cache_path = tmp_path / "llm_cache.jsonl"
+
+    run_eval_sync(
+        baseline_names=["first", "random"],
+        repeats=1,
+        max_tasks=1,
+        llm_cache_path=cache_path,
+        output_path=tmp_path / "eval.json",
+    )
+
+    assert cache_path.exists()
+    assert cache_path.read_text(encoding="utf-8").strip()
+
+
 def test_eval_runner_filters_splits_and_limits_tasks(tmp_path) -> None:
     report = run_eval_sync(
         benchmark_name="recovery_gym",

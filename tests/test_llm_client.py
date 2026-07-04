@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
-from rpl.llm import FakeLLMClient, LLMRequest, OpenAICompatibleLLMClient
+from rpl.llm import CachedLLMClient, FakeLLMClient, LLMClient, LLMRequest, LLMResponse, OpenAICompatibleLLMClient
 from rpl.llm.openai_compatible import _extract_completion_text, _extract_tokens_used
 from rpl.recovery.candidate_gen import build_llm_client
 
@@ -47,3 +47,26 @@ def test_fake_llm_still_returns_recoverable_candidates() -> None:
     response = asyncio.run(client.complete(request))
 
     assert "avoid_zero_division" in response.text
+
+
+def test_cached_llm_client_replays_identical_requests(tmp_path) -> None:
+    class CountingLLMClient(LLMClient):
+        def __init__(self) -> None:
+            self.calls = 0
+
+        async def complete(self, request: LLMRequest) -> LLMResponse:
+            self.calls += 1
+            return LLMResponse(text=f"response-{self.calls}", tokens_used=7)
+
+    base = CountingLLMClient()
+    cache_path = tmp_path / "llm_cache.jsonl"
+    client = CachedLLMClient(base, cache_path=cache_path, namespace="test")
+    request = LLMRequest(prompt="same prompt", temperature=0.2, max_tokens=12)
+
+    first = asyncio.run(client.complete(request))
+    second = asyncio.run(client.complete(request))
+    replay = asyncio.run(CachedLLMClient(base, cache_path=cache_path, namespace="test").complete(request))
+
+    assert first == second == replay
+    assert base.calls == 1
+    assert cache_path.exists()

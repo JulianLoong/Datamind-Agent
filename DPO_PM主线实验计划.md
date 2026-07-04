@@ -268,10 +268,12 @@ Implementation note:
 - Future eval reports now include `recovery_trace`, which records generated candidates, the chosen
   index, PM scores, and initial/final tool results. Use that field for candidate-level failure
   analysis after rerunning real-LLM evals.
+- Real-LLM eval now supports `--llm-cache path.jsonl`. Use it when comparing selectors so
+  `fixed_retry`, `dpo_pm`, and other baselines replay the same LLM-generated candidate sets.
 
 Remaining work:
 
-- Rerun a small real-LLM eval with `recovery_trace` if detailed failure analysis is needed.
+- Rerun a small real-LLM eval with `--llm-cache` if a stricter selector-level comparison is needed.
 - Update thesis and slides so RecoveryGym and DeepSeek smoke are supplemental evidence, while
   `recovery_bench_generated` remains the main DPO_PM result.
 - Keep memory ablations separate from the first DPO_PM claim.

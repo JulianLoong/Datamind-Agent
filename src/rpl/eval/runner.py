@@ -19,6 +19,7 @@ from rpl.eval.metrics import (
     summarize_records_by_split,
     task_record,
 )
+from rpl.llm import CachedLLMClient
 from rpl.recovery.candidate_gen import build_llm_client
 from rpl.recovery import CandidateDedup, CandidateGenerator, CandidateValidator, ErrorContextBuilder, RecoveryPipeline
 from rpl.tools.builtin import build_builtin_registry
@@ -38,6 +39,7 @@ async def run_eval(
     llm_base_url: str | None = None,
     llm_api_key: str | None = None,
     llm_max_tokens: int = 512,
+    llm_cache_path: str | Path | None = None,
     splits: list[str] | None = None,
     max_tasks: int = 0,
     repeats: int = 5,
@@ -51,6 +53,26 @@ async def run_eval(
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
+        shared_llm_client = build_llm_client(
+            provider=llm_provider or "fake",
+            model=llm_model,
+            base_url=llm_base_url,
+            api_key=llm_api_key,
+        )
+        if llm_cache_path is not None:
+            shared_llm_client = CachedLLMClient(
+                shared_llm_client,
+                cache_path=llm_cache_path,
+                namespace=json.dumps(
+                    {
+                        "provider": llm_provider or "fake",
+                        "model": llm_model,
+                        "base_url": llm_base_url,
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                ),
+            )
         for baseline_name in baseline_names:
             baseline_pm_path = _resolve_pm_path(
                 baseline_name,
@@ -69,12 +91,7 @@ async def run_eval(
                 max_retries_per_step=spec.max_retries_per_step,
                 selector=spec.selector,
                 db_path=tmp_path / f"{spec.name}.db",
-                llm_client=build_llm_client(
-                    provider=llm_provider or "fake",
-                    model=llm_model,
-                    base_url=llm_base_url,
-                    api_key=llm_api_key,
-                ),
+                llm_client=shared_llm_client,
                 llm_max_tokens=llm_max_tokens,
             )
             all_records.extend(records)
@@ -86,6 +103,7 @@ async def run_eval(
         "splits": splits or [],
         "max_tasks": max_tasks,
         "task_count": len(tasks),
+        "llm_cache_path": str(llm_cache_path) if llm_cache_path is not None else None,
         "summaries": summaries,
         "split_summaries": {
             baseline: summarize_records_by_split(

@@ -142,13 +142,14 @@ PYTHONPATH=src python3 scripts/run_real_llm_eval.py \
   --llm-model glm-5.1 \
   --llm-base-url https://open.bigmodel.cn/api/paas/v4 \
   --memory-db data/trajectories.db \
+  --llm-cache data/eval/real_llm_candidates_cache.jsonl \
   --repeats 1 \
   --out data/eval/real_llm_recovery.json
 ```
 
 The same `PMSelector` and `MemoryPriorSelector` paths are used; only the candidate generator
-changes. For fair final comparisons, cache or otherwise reuse the same generated candidates across
-selectors.
+changes. For fair final comparisons, use `--llm-cache` to replay the same real-LLM generated
+candidates across selectors.
 
 For GLM 5.1, the real path should disable thinking and request JSON output. The current Zhipu
 provider does this automatically.
