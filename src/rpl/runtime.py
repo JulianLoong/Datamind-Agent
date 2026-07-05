@@ -40,7 +40,7 @@ def build_runtime(
     )
     recovery_pipeline = RecoveryPipeline(
         ErrorContextBuilder(),
-        CandidateGenerator(llm_client),
+        CandidateGenerator(llm_client, tool_specs=registry.list_tools()),
         CandidateDedup(),
         selector,
         candidate_count=settings.recovery.candidate_count,

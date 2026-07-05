@@ -1,30 +1,30 @@
-# DPO_PM 主线实验计划
+﻿# DPO_PM 涓荤嚎瀹為獙璁″垝
 
-更新时间：2026-06-14
+鏇存柊鏃堕棿锛?026-06-14
 
-## 1. 目标
+## 1. 鐩爣
 
-当前阶段主攻 `DPO_PM`，不优先做完整 memory 消融。第一版目标是产出导师能初步认可的主实验：
+褰撳墠闃舵涓绘敾 `DPO_PM`锛屼笉浼樺厛鍋氬畬鏁?memory 娑堣瀺銆傜涓€鐗堢洰鏍囨槸浜у嚭瀵煎笀鑳藉垵姝ヨ鍙殑涓诲疄楠岋細
 
 ```text
-在一定规模的可执行评测集上，DPO_PM 相比没有 PM 排序的恢复策略更好，
-至少体现在 recovery_success_rate、avg_recovery_attempts 或 avg_tool_calls 上。
+鍦ㄤ竴瀹氳妯＄殑鍙墽琛岃瘎娴嬮泦涓婏紝DPO_PM 鐩告瘮娌℃湁 PM 鎺掑簭鐨勬仮澶嶇瓥鐣ユ洿濂斤紝
+鑷冲皯浣撶幇鍦?recovery_success_rate銆乤vg_recovery_attempts 鎴?avg_tool_calls 涓娿€?
 ```
 
-主 benchmark 使用 `recovery_bench_generated`。`RecoveryGym` 暂作为补充泛化压力测试和失败分析，不作为第一版唯一主结论。
+涓?benchmark 浣跨敤 `recovery_bench_generated`銆俙RecoveryGym` 鏆備綔涓鸿ˉ鍏呮硾鍖栧帇鍔涙祴璇曞拰澶辫触鍒嗘瀽锛屼笉浣滀负绗竴鐗堝敮涓€涓荤粨璁恒€?
 
-## 2. 当前状态
+## 2. 褰撳墠鐘舵€?
 
-- 旧 `data/pm_checkpoints/dpo_pm` 只对应 `recovery_bench_lite` 早期 demo。
-- 当前仓库已有 `data/pref_pairs_generated`：`512 train / 128 val`。
-- 已重新采集 `data/pref_pairs_outcomes`：`768 train / 192 val`，共 `960` 条 `outcome_multi_candidate` 偏好对。
-- 已导出 `data/dpo_outcomes`：`768 train / 192 val`，用于 TRL DPO 训练。
-- 当前本机环境缺少 `torch`、`transformers`、`datasets`、`peft`、`trl`、`bitsandbytes`，不能直接训练 DPO_PM；训练需要在 CUDA/4090 环境执行。
-- `run_eval.py` 已支持 `--pm-paths baseline=path`，可在同一张表里给不同 PM baseline 配不同 checkpoint。
+- 鏃?`data/pm_checkpoints/dpo_pm` 鍙搴?`recovery_bench_lite` 鏃╂湡 demo銆?
+- 褰撳墠浠撳簱宸叉湁 `data/pref_pairs_generated`锛歚512 train / 128 val`銆?
+- 宸查噸鏂伴噰闆?`data/pref_pairs_outcomes`锛歚768 train / 192 val`锛屽叡 `960` 鏉?`outcome_multi_candidate` 鍋忓ソ瀵广€?
+- 宸插鍑?`data/dpo_outcomes`锛歚768 train / 192 val`锛岀敤浜?TRL DPO 璁粌銆?
+- 褰撳墠鏈満鐜缂哄皯 `torch`銆乣transformers`銆乣datasets`銆乣peft`銆乣trl`銆乣bitsandbytes`锛屼笉鑳界洿鎺ヨ缁?DPO_PM锛涜缁冮渶瑕佸湪 CUDA/4090 鐜鎵ц銆?
+- `run_eval.py` 宸叉敮鎸?`--pm-paths baseline=path`锛屽彲鍦ㄥ悓涓€寮犺〃閲岀粰涓嶅悓 PM baseline 閰嶄笉鍚?checkpoint銆?
 
-## 3. 推荐执行顺序
+## 3. 鎺ㄨ崘鎵ц椤哄簭
 
-### Step 1：采集 outcome-ranked 偏好数据
+### Step 1锛氶噰闆?outcome-ranked 鍋忓ソ鏁版嵁
 
 ```bash
 PYTHONPATH=src python3 scripts/collect_candidate_outcomes.py \
@@ -34,16 +34,16 @@ PYTHONPATH=src python3 scripts/collect_candidate_outcomes.py \
   --out-dir data/pref_pairs_outcomes
 ```
 
-验收：
+楠屾敹锛?
 
-- `data/pref_pairs_outcomes/train.jsonl` 非空。
-- `data/pref_pairs_outcomes/val.jsonl` 非空。
-- `data/pref_pairs_outcomes/outcome_report.json` 中 `source_counts` 包含 `outcome_multi_candidate`。
-- 总 pair 数建议不少于 500；不足则使用 `data/pref_pairs_generated` 作为补充或 fallback。
+- `data/pref_pairs_outcomes/train.jsonl` 闈炵┖銆?
+- `data/pref_pairs_outcomes/val.jsonl` 闈炵┖銆?
+- `data/pref_pairs_outcomes/outcome_report.json` 涓?`source_counts` 鍖呭惈 `outcome_multi_candidate`銆?
+- 鎬?pair 鏁板缓璁笉灏戜簬 500锛涗笉瓒冲垯浣跨敤 `data/pref_pairs_generated` 浣滀负琛ュ厖鎴?fallback銆?
 
-### Step 2：训练 DPO_PM
+### Step 2锛氳缁?DPO_PM
 
-首版使用 `Qwen/Qwen2.5-0.5B-Instruct`，输出目录不要覆盖旧 checkpoint。
+棣栫増浣跨敤 `Qwen/Qwen2.5-0.5B-Instruct`锛岃緭鍑虹洰褰曚笉瑕佽鐩栨棫 checkpoint銆?
 
 ```bash
 PYTHONPATH=src python3 scripts/train_dpo_pm.py \
@@ -57,7 +57,7 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
   --gradient-checkpointing
 ```
 
-如果 outcome-ranked pair 数不足 500，改用 generated 数据先跑通：
+濡傛灉 outcome-ranked pair 鏁颁笉瓒?500锛屾敼鐢?generated 鏁版嵁鍏堣窇閫氾細
 
 ```bash
 PYTHONPATH=src python3 scripts/train_dpo_pm.py \
@@ -71,57 +71,57 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
   --gradient-checkpointing
 ```
 
-### Step 3：sanity check
+### Step 3锛歴anity check
 
 ```bash
 PYTHONPATH=src python3 scripts/run_eval.py \
   --benchmark recovery_bench_lite \
-  --baselines no_recovery random fixed_retry dpo_pm \
-  --pm-paths dpo_pm=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
+  --baselines no_recovery random fixed_retry dpo_pm_r3 \
+  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
   --repeats 1 \
   --out data/eval/dpo_pm_outcomes_lite.json
 ```
 
-### Step 4：主实验
+### Step 4锛氫富瀹為獙
 
 ```bash
 PYTHONPATH=src python3 scripts/run_eval.py \
   --benchmark recovery_bench_generated \
-  --baselines no_recovery random fixed_retry dpo_pm \
-  --pm-paths dpo_pm=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
+  --baselines no_recovery random fixed_retry dpo_pm_r3 \
+  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
   --splits test_unseen clean \
   --repeats 1 \
   --out data/eval/dpo_pm_outcomes_generated.json
 ```
 
-主表关注：
+涓昏〃鍏虫敞锛?
 
 - `recovery_success_rate`
 - `avg_recovery_attempts_on_failure_tasks`
 - `avg_tool_calls_on_failure_tasks`
 - split-wise `test_unseen` / `clean`
 
-### Step 5：补充 RecoveryGym
+### Step 5锛氳ˉ鍏?RecoveryGym
 
 ```bash
 PYTHONPATH=src python3 scripts/run_recovery_gym_eval.py \
-  --baselines no_recovery fixed_retry random dpo_pm \
-  --pm-paths dpo_pm=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
+  --baselines no_recovery fixed_retry random dpo_pm_r3 \
+  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
   --repeats 1 \
   --out data/eval/dpo_pm_outcomes_recovery_gym.json
 ```
 
-RecoveryGym 只作为补充。若 DPO_PM 表现不佳，应重点分析候选覆盖、failure family 和数据分布，不直接否定主方法。
+RecoveryGym 鍙綔涓鸿ˉ鍏呫€傝嫢 DPO_PM 琛ㄧ幇涓嶄匠锛屽簲閲嶇偣鍒嗘瀽鍊欓€夎鐩栥€乫ailure family 鍜屾暟鎹垎甯冿紝涓嶇洿鎺ュ惁瀹氫富鏂规硶銆?
 
-## 4. 初稿结果口径
+## 4. 鍒濈缁撴灉鍙ｅ緞
 
-按结果选择表述：
+鎸夌粨鏋滈€夋嫨琛ㄨ堪锛?
 
-- 如果 DPO_PM 成功率最高：`DPO_PM 提高恢复成功率，并降低无效恢复尝试。`
-- 如果 DPO_PM 与 fixed_retry 成功率相近但尝试更少：`DPO_PM 在保持恢复能力的同时减少恢复轮数和工具调用。`
-- 如果 DPO_PM 只强于 random、不强于 fixed_retry：`DPO_PM 学到有效候选排序，但当前数据和候选覆盖还不足以全面超过规则策略。`
+- 濡傛灉 DPO_PM 鎴愬姛鐜囨渶楂橈細`DPO_PM 鎻愰珮鎭㈠鎴愬姛鐜囷紝骞堕檷浣庢棤鏁堟仮澶嶅皾璇曘€俙
+- 濡傛灉 DPO_PM 涓?fixed_retry 鎴愬姛鐜囩浉杩戜絾灏濊瘯鏇村皯锛歚DPO_PM 鍦ㄤ繚鎸佹仮澶嶈兘鍔涚殑鍚屾椂鍑忓皯鎭㈠杞暟鍜屽伐鍏疯皟鐢ㄣ€俙
+- 濡傛灉 DPO_PM 鍙己浜?random銆佷笉寮轰簬 fixed_retry锛歚DPO_PM 瀛﹀埌鏈夋晥鍊欓€夋帓搴忥紝浣嗗綋鍓嶆暟鎹拰鍊欓€夎鐩栬繕涓嶈冻浠ュ叏闈㈣秴杩囪鍒欑瓥鐣ャ€俙
 
-第一版不写 memory 消融为主结论。
+绗竴鐗堜笉鍐?memory 娑堣瀺涓轰富缁撹銆?
 
 ## 5. Execution update: 2026-06-15
 
@@ -168,25 +168,24 @@ checkpoint: Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes
 | baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls |
 |---|---:|---:|---:|---:|
 | no_recovery | 0.273 | 0.000 | 0.000 | 1.000 |
-| random | 0.491 | 0.300 | 0.727 | 1.727 |
+| random | 0.473 | 0.275 | 0.727 | 1.727 |
 | fixed_retry | 1.000 | 1.000 | 1.455 | 2.455 |
-| dpo_pm | 1.000 | 1.000 | 0.727 | 1.727 |
+| dpo_pm_r3 | 1.000 | 1.000 | 0.727 | 1.727 |
 
-On failure tasks only, `dpo_pm` matched `fixed_retry` recovery success (`1.000`) while
+On failure tasks only, `dpo_pm_r3` matched `fixed_retry` recovery success (`1.000`) while
 using fewer recovery attempts (`1.0` vs `2.0`) and fewer tool calls (`2.0` vs `3.0`).
 This supports the current first-version claim: DPO_PM can preserve recovery capability
 while reducing invalid recovery rounds in the controlled synthetic setting.
 
 Remaining work:
 
-- Run a small real-LLM candidate smoke test with `dpo_pm`.
+- Run a small real-LLM candidate smoke test with `dpo_pm_r3`.
 - Keep memory ablations separate from the first DPO_PM claim.
 
 ## 6. RecoveryGym update: 2026-07-03
 
 The supplemental RecoveryGym DPO_PM evaluation has now been completed and checked in as:
 
-- `data/eval/dpo_pm_outcomes_recovery_gym_smoke.json` and `.md`
 - `data/eval/dpo_pm_outcomes_recovery_gym.json` and `.md`
 
 Smoke setting:
@@ -196,7 +195,7 @@ benchmark: recovery_gym
 splits: seen_template_unseen_params
 max_tasks: 16
 repeats: 1
-baselines: no_recovery random fixed_retry dpo_pm
+baselines: no_recovery random fixed_retry dpo_pm_r3
 ```
 
 Full RecoveryGym setting:
@@ -205,7 +204,7 @@ Full RecoveryGym setting:
 benchmark: recovery_gym
 task_count: 116
 repeats: 1
-baselines: no_recovery random fixed_retry dpo_pm
+baselines: no_recovery random fixed_retry dpo_pm_r3
 ```
 
 Full RecoveryGym result:
@@ -213,9 +212,9 @@ Full RecoveryGym result:
 | baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls | avg_recovery_tokens |
 |---|---:|---:|---:|---:|---:|
 | no_recovery | 0.103 | 0.000 | 0.000 | 1.000 | 0.000 |
-| random | 0.241 | 0.154 | 0.897 | 1.897 | 146.638 |
-| fixed_retry | 0.517 | 0.462 | 1.724 | 2.724 | 278.259 |
-| dpo_pm | 0.517 | 0.462 | 0.897 | 1.897 | 146.638 |
+| random | 0.259 | 0.173 | 0.897 | 1.897 | 450.319 |
+| fixed_retry | 0.517 | 0.462 | 1.724 | 2.724 | 862.121 |
+| dpo_pm_r3 | 0.517 | 0.462 | 1.310 | 2.310 | 653.871 |
 
 Paper-safe wording:
 
@@ -229,29 +228,29 @@ Paper-safe wording:
   executable repair. This should be described as a candidate-coverage limitation rather than a
   broad failure of preference ranking.
 
-## 7. DeepSeek real-LLM smoke update: 2026-07-04
+## 7. DeepSeek real-LLM smoke update: 2026-07-05
 
 A small real-LLM DPO_PM smoke evaluation has now been completed and checked in as:
 
-- `data/eval/real_llm_deepseek_dpo_pm_smoke.json`
-- `data/eval/real_llm_deepseek_dpo_pm_smoke.md`
+- `data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json`
+- `data/eval/real_llm_deepseek_dpo_pm_r3_smoke.md`
 
 Setting:
 
 ```text
 benchmark: recovery_bench_lite
-max_tasks: 4
+max_tasks: 8
 repeats: 1
 candidate generator: DeepSeek through the OpenAI-compatible path
-baselines: fixed_retry dpo_pm
+baselines: fixed_retry dpo_pm_r3
 ```
 
 Result:
 
 | baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_tool_calls | avg_recovery_tokens | avg_recovery_latency_ms |
 |---|---:|---:|---:|---:|---:|---:|
-| fixed_retry | 0.250 | 0.250 | 1.750 | 2.750 | 2966.000 | 49892.170 |
-| dpo_pm | 0.250 | 0.250 | 1.000 | 2.000 | 1571.250 | 27095.702 |
+| fixed_retry | 0.625 | 0.500 | 1.500 | 2.500 | 1154.750 | 3916.607 |
+| dpo_pm_r3 | 0.625 | 0.500 | 1.250 | 2.250 | 967.000 | 967.692 |
 
 Paper-safe wording:
 
@@ -260,8 +259,9 @@ Paper-safe wording:
   generated by an external LLM.
 - The trend is consistent with the main controlled experiments: DPO_PM matches fixed-retry
   success while reducing recovery attempts, tool calls, token cost, and latency.
-- Because the sample size is only four tasks and candidate sets are not cached across baselines,
-  this result should not be used for a strong generalization claim.
+- Because the sample size is small, this result should not be used for a strong generalization
+  claim. It is a path-validation smoke test with equal retry budgets; use `baseline_configs` to
+  verify both `fixed_retry` and `dpo_pm_r3` use `max_retries_per_step=3`.
 
 Implementation note:
 
@@ -269,11 +269,17 @@ Implementation note:
   index, PM scores, and initial/final tool results. Use that field for candidate-level failure
   analysis after rerunning real-LLM evals.
 - Real-LLM eval now supports `--llm-cache path.jsonl`. Use it when comparing selectors so
-  `fixed_retry`, `dpo_pm`, and other baselines replay the same LLM-generated candidate sets.
+  `fixed_retry`, `dpo_pm_r3`, and other baselines replay the same LLM-generated candidate sets.
+- The 2026-07-05 eval wrapper defaults to `fixed_retry` versus `dpo_pm_r3`, records
+  `baseline_configs`, and constrains real-LLM candidate prompts with the available tool schemas.
 
 Remaining work:
 
-- Rerun a small real-LLM eval with `--llm-cache` if a stricter selector-level comparison is needed.
+- Rerun a small real-LLM eval with `--llm-cache` and equal retry budgets if a stricter
+  selector-level comparison is needed.
 - Update thesis and slides so RecoveryGym and DeepSeek smoke are supplemental evidence, while
   `recovery_bench_generated` remains the main DPO_PM result.
+- Keep real-LLM trace-derived DPO retraining as future work: use `recovery_trace` for analysis now,
+  and later convert production/real-LLM trajectories into outcome-ranked preference pairs.
 - Keep memory ablations separate from the first DPO_PM claim.
+

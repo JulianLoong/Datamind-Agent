@@ -50,6 +50,7 @@ async def run_eval(
     baseline_names = baseline_names or ["no_recovery", "first", "random"]
     all_records: list[TaskEvalRecord] = []
     summaries: dict[str, dict[str, float | int | str]] = {}
+    baseline_configs: dict[str, dict[str, int]] = {}
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
@@ -84,6 +85,9 @@ async def run_eval(
                 pm_path=baseline_pm_path,
                 memory_db_path=memory_db_path,
             )
+            baseline_configs[spec.name] = {
+                "max_retries_per_step": spec.max_retries_per_step,
+            }
             records = await _run_baseline(
                 spec_name=spec.name,
                 tasks=tasks,
@@ -104,6 +108,7 @@ async def run_eval(
         "max_tasks": max_tasks,
         "task_count": len(tasks),
         "llm_cache_path": str(llm_cache_path) if llm_cache_path is not None else None,
+        "baseline_configs": baseline_configs,
         "summaries": summaries,
         "split_summaries": {
             baseline: summarize_records_by_split(
@@ -150,7 +155,11 @@ async def _run_baseline(
         RuleBasedPlanner(),
         RecoveryPipeline(
             ErrorContextBuilder(),
-            CandidateGenerator(llm_client, max_tokens=llm_max_tokens),
+            CandidateGenerator(
+                llm_client,
+                max_tokens=llm_max_tokens,
+                tool_specs=registry.list_tools(),
+            ),
             CandidateDedup(),
             selector,
             candidate_count=3,

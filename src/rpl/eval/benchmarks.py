@@ -315,7 +315,7 @@ def _gym_http_schema_task(idx: int, split: str) -> BenchmarkTask:
     return _gym_task(
         description="Fetch HTTP fixture with unsupported method",
         tool_name="http_request",
-        params={"url": "https://example.test/health", "method": "POST"},
+        params={"url": f"https://example.test/health/{idx}", "method": "POST"},
         expected_error_type="validation_error",
         split=split,
         failure_family="schema_error",

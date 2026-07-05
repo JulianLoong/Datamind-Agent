@@ -7,6 +7,7 @@ from typing import Any
 
 from rpl.llm import FakeLLMClient, LLMClient, LLMRequest, OpenAICompatibleLLMClient
 from rpl.recovery.types import Candidate, ErrorContext
+from rpl.tools.base import BaseTool
 
 
 class CandidateParseError(ValueError):
@@ -26,15 +27,17 @@ class CandidateGenerator:
         *,
         temperature: float = 0.2,
         max_tokens: int = 512,
+        tool_specs: list[BaseTool] | None = None,
     ) -> None:
         self.llm_client = llm_client or FakeLLMClient()
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.tool_specs = tool_specs or []
         self.last_tokens_used = 0
         self.last_latency_ms = 0.0
 
     async def generate(self, ctx: ErrorContext, k: int = 3) -> list[Candidate]:
-        prompt = self.build_prompt(ctx, k)
+        prompt = self.build_prompt(ctx, k, tool_specs=self.tool_specs)
         started = time.perf_counter()
         response = await self.llm_client.complete(
             LLMRequest(prompt=prompt, temperature=self.temperature, max_tokens=self.max_tokens)
@@ -50,7 +53,13 @@ class CandidateGenerator:
         return pad_candidates(candidates, ctx, k)[:k]
 
     @staticmethod
-    def build_prompt(ctx: ErrorContext, k: int) -> str:
+    def build_prompt(
+        ctx: ErrorContext,
+        k: int,
+        *,
+        tool_specs: list[BaseTool] | None = None,
+    ) -> str:
+        tool_contract = _format_tool_contract(tool_specs or [])
         return (
             "You are an agent recovery expert. Generate recovery candidates as a JSON array.\n"
             f"Candidate Count: {k}\n"
@@ -60,9 +69,15 @@ class CandidateGenerator:
             f"Tool Params: {json.dumps(ctx.tool_params, ensure_ascii=False)}\n"
             f"Error Type: {ctx.error_type}\n"
             f"Error Message: {ctx.error_message}\n"
+            f"{tool_contract}"
             "Each item must contain reasoning, action, tool_name, tool_params.\n"
             "Return valid JSON only. Do not wrap the answer in markdown or prose.\n"
-            "Use null for missing tool_name or tool_params."
+            "Use null for missing tool_name or tool_params.\n"
+            "Only use tool_name values listed above. Do not invent tools.\n"
+            "tool_params must satisfy the listed JSON schema exactly, including required fields "
+            "and additionalProperties=false when present.\n"
+            "If no listed tool can make progress, return a give_up candidate with null tool_name "
+            "instead of naming an unavailable tool."
         )
 
 
@@ -139,6 +154,24 @@ def parse_candidates(text: str) -> list[Candidate]:
     if not candidates:
         raise CandidateParseError("No valid candidates found")
     return candidates
+
+
+def _format_tool_contract(tool_specs: list[BaseTool]) -> str:
+    if not tool_specs:
+        return ""
+    items = [
+        {
+            "name": tool.name,
+            "description": tool.description,
+            "schema": tool.schema,
+        }
+        for tool in sorted(tool_specs, key=lambda item: item.name)
+    ]
+    return (
+        "Available Tools JSON:\n"
+        f"{json.dumps(items, ensure_ascii=False, sort_keys=True)}\n"
+        "Unavailable tool names are invalid.\n"
+    )
 
 
 def deterministic_fallback_candidates(ctx: ErrorContext) -> list[Candidate]:

@@ -82,14 +82,14 @@ Current mainline status as of 2026-06-15:
   the training log is `data/logs/dpo_pm_outcomes_train_bf16.log`.
 - The generated benchmark evaluation result is checked in as
   `data/eval/dpo_pm_outcomes_generated.json` and `.md`.
-- On `recovery_bench_generated` with splits `test_unseen clean`, `dpo_pm` reached
+- On `recovery_bench_generated` with splits `test_unseen clean`, `dpo_pm_r3` reached
   `success_rate=1.000` and `recovery_success_rate=1.000`. It matched
   `fixed_retry` recovery success while reducing failure-task recovery attempts
   from `2.0` to `1.0` and tool calls from `3.0` to `2.0`.
-- On the full controlled RecoveryGym benchmark, `dpo_pm` matched `fixed_retry`
+- On the full controlled RecoveryGym benchmark, `dpo_pm_r3` matched `fixed_retry`
   (`success_rate=0.517`, `recovery_success_rate=0.462`) while reducing average
-  recovery attempts from `1.724` to `0.897`, average tool calls from `2.724` to
-  `1.897`, and average recovery tokens from `278.259` to `146.638`.
+  recovery attempts from `1.724` to `1.310`, average tool calls from `2.724` to
+  `2.310`, and average recovery tokens from `862.121` to `653.871`.
   RecoveryGym should be presented as a supplemental generalization and failure-analysis
   result, not as open-world real-LLM evidence.
 
@@ -118,7 +118,7 @@ PYTHONPATH=src python3 scripts/run_eval.py \
   --baselines no_recovery first random dpo_pm \
   --pm-paths dpo_pm=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm \
   --repeats 5 \
-  --out data/eval/dpo_pm.json
+  --out data/eval/local_dpo_pm_legacy_smoke.json
 ```
 
 The `dpo_pm` selector scores each recovery candidate by the DPO adapter's conditional log
@@ -151,20 +151,41 @@ The same `PMSelector` and `MemoryPriorSelector` paths are used; only the candida
 changes. For fair final comparisons, use `--llm-cache` to replay the same real-LLM generated
 candidates across selectors.
 
+On this Windows workspace, run DPO_PM real-LLM evals through the project virtual environment instead
+of relying on the active shell's `python` or `python3`. The wrapper below pins execution to
+`.venv\Scripts\python.exe`, sets `PYTHONPATH`, and verifies that `torch`, `transformers`, and `peft`
+come from the DPO-capable environment before the eval starts:
+
+```powershell
+$env:DEEPSEEK_API_KEY="..."
+.\scripts\run_real_llm_dpo_pm_eval.ps1 `
+  -LlmModel deepseek-chat `
+  -LlmBaseUrl https://api.deepseek.com `
+  -LlmCache data/eval/real_llm_deepseek_candidates_v3.jsonl `
+  -MaxTasks 8 `
+  -Out data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json
+```
+
+The wrapper defaults to `fixed_retry` versus `dpo_pm_r3`, so both methods use the same
+three-retry recovery budget. DPO_PM is re-scored after each failed recovery attempt against the new
+`ErrorContext` and the newly generated, validator-filtered candidates.
+
 For GLM 5.1, the real path should disable thinking and request JSON output. The current Zhipu
 provider does this automatically.
 
 A small DeepSeek real-LLM DPO_PM smoke result is checked in as
-`data/eval/real_llm_deepseek_dpo_pm_smoke.json` and `.md`. It uses `recovery_bench_lite` with
-`max_tasks=4` and compares `fixed_retry` with `dpo_pm`. Both methods reached
-`success_rate=0.250` and `recovery_success_rate=0.250`, while `dpo_pm` reduced average recovery
-attempts from `1.750` to `1.000`, tool calls from `2.750` to `2.000`, recovery tokens from
-`2966.000` to `1571.250`, and recovery latency from about `49.9s` to `27.1s`. This should be
-presented only as a path-validation smoke test because the sample size is very small.
+`data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json` and `.md`. It uses `recovery_bench_lite` with
+`max_tasks=8` and compares `fixed_retry` with `dpo_pm_r3` under the same three-retry budget. Both
+methods reached `success_rate=0.625` and `recovery_success_rate=0.500`, while `dpo_pm_r3` reduced
+average recovery attempts from `1.500` to `1.250`, tool calls from `2.500` to `2.250`, and recovery
+tokens from `1154.750` to `967.000`. This should be presented only as a path-validation smoke test
+because the sample size is very small; the report's `baseline_configs` field records the effective
+retry budget for each baseline.
 
 New evaluation records include a `recovery_trace` field with generated candidates, selected index,
 PM scores, and initial/final tool results. Use this for future real-LLM failure analysis instead of
-inferring candidate quality from aggregate metrics alone.
+inferring candidate quality from aggregate metrics alone. Training DPO_PM directly from real-LLM
+trace data is future work rather than part of the current mainline result.
 
 ## Generated benchmark data
 
