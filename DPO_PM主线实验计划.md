@@ -1,30 +1,30 @@
-﻿# DPO_PM 涓荤嚎瀹為獙璁″垝
+# DPO_PM 主线实验计划
 
-鏇存柊鏃堕棿锛?026-06-14
+更新时间：2026-06-14
 
-## 1. 鐩爣
+## 1. 目标
 
-褰撳墠闃舵涓绘敾 `DPO_PM`锛屼笉浼樺厛鍋氬畬鏁?memory 娑堣瀺銆傜涓€鐗堢洰鏍囨槸浜у嚭瀵煎笀鑳藉垵姝ヨ鍙殑涓诲疄楠岋細
+当前阶段主攻 `DPO_PM`，不优先做完整 memory 消融。第一版目标是产出导师能初步认可的主实验：
 
 ```text
-鍦ㄤ竴瀹氳妯＄殑鍙墽琛岃瘎娴嬮泦涓婏紝DPO_PM 鐩告瘮娌℃湁 PM 鎺掑簭鐨勬仮澶嶇瓥鐣ユ洿濂斤紝
-鑷冲皯浣撶幇鍦?recovery_success_rate銆乤vg_recovery_attempts 鎴?avg_tool_calls 涓娿€?
+在一定规模的可执行评测集上，DPO_PM 相比没有 PM 排序的恢复策略更好，
+至少体现在 recovery_success_rate、avg_recovery_attempts 或 avg_tool_calls 上。
 ```
 
-涓?benchmark 浣跨敤 `recovery_bench_generated`銆俙RecoveryGym` 鏆備綔涓鸿ˉ鍏呮硾鍖栧帇鍔涙祴璇曞拰澶辫触鍒嗘瀽锛屼笉浣滀负绗竴鐗堝敮涓€涓荤粨璁恒€?
+主 benchmark 使用 `recovery_bench_generated`。`RecoveryGym` 暂作为补充泛化压力测试和失败分析，不作为第一版唯一主结论。
 
-## 2. 褰撳墠鐘舵€?
+## 2. 当前状态
 
-- 鏃?`data/pm_checkpoints/dpo_pm` 鍙搴?`recovery_bench_lite` 鏃╂湡 demo銆?
-- 褰撳墠浠撳簱宸叉湁 `data/pref_pairs_generated`锛歚512 train / 128 val`銆?
-- 宸查噸鏂伴噰闆?`data/pref_pairs_outcomes`锛歚768 train / 192 val`锛屽叡 `960` 鏉?`outcome_multi_candidate` 鍋忓ソ瀵广€?
-- 宸插鍑?`data/dpo_outcomes`锛歚768 train / 192 val`锛岀敤浜?TRL DPO 璁粌銆?
-- 褰撳墠鏈満鐜缂哄皯 `torch`銆乣transformers`銆乣datasets`銆乣peft`銆乣trl`銆乣bitsandbytes`锛屼笉鑳界洿鎺ヨ缁?DPO_PM锛涜缁冮渶瑕佸湪 CUDA/4090 鐜鎵ц銆?
-- `run_eval.py` 宸叉敮鎸?`--pm-paths baseline=path`锛屽彲鍦ㄥ悓涓€寮犺〃閲岀粰涓嶅悓 PM baseline 閰嶄笉鍚?checkpoint銆?
+- 旧 `data/pm_checkpoints/dpo_pm` 只对应 `recovery_bench_lite` 早期 demo。
+- 当前仓库已有 `data/pref_pairs_generated`：`512 train / 128 val`。
+- 已重新采集 `data/pref_pairs_outcomes`：`768 train / 192 val`，共 `960` 条 `outcome_multi_candidate` 偏好对。
+- 已导出 `data/dpo_outcomes`：`768 train / 192 val`，用于 TRL DPO 训练。
+- 当前本机环境缺少 `torch`、`transformers`、`datasets`、`peft`、`trl`、`bitsandbytes`，不能直接训练 DPO_PM；训练需要在 CUDA/4090 环境执行。
+- `run_eval.py` 已支持 `--pm-paths baseline=path`，可在同一张表里给不同 PM baseline 配不同 checkpoint。
 
-## 3. 鎺ㄨ崘鎵ц椤哄簭
+## 3. 推荐执行顺序
 
-### Step 1锛氶噰闆?outcome-ranked 鍋忓ソ鏁版嵁
+### Step 1：采集 outcome-ranked 偏好数据
 
 ```bash
 PYTHONPATH=src python3 scripts/collect_candidate_outcomes.py \
@@ -34,16 +34,16 @@ PYTHONPATH=src python3 scripts/collect_candidate_outcomes.py \
   --out-dir data/pref_pairs_outcomes
 ```
 
-楠屾敹锛?
+验收：
 
-- `data/pref_pairs_outcomes/train.jsonl` 闈炵┖銆?
-- `data/pref_pairs_outcomes/val.jsonl` 闈炵┖銆?
-- `data/pref_pairs_outcomes/outcome_report.json` 涓?`source_counts` 鍖呭惈 `outcome_multi_candidate`銆?
-- 鎬?pair 鏁板缓璁笉灏戜簬 500锛涗笉瓒冲垯浣跨敤 `data/pref_pairs_generated` 浣滀负琛ュ厖鎴?fallback銆?
+- `data/pref_pairs_outcomes/train.jsonl` 非空。
+- `data/pref_pairs_outcomes/val.jsonl` 非空。
+- `data/pref_pairs_outcomes/outcome_report.json` 中 `source_counts` 包含 `outcome_multi_candidate`。
+- 总 pair 数建议不少于 500；不足则使用 `data/pref_pairs_generated` 作为补充或 fallback。
 
-### Step 2锛氳缁?DPO_PM
+### Step 2：训练 DPO_PM
 
-棣栫増浣跨敤 `Qwen/Qwen2.5-0.5B-Instruct`锛岃緭鍑虹洰褰曚笉瑕佽鐩栨棫 checkpoint銆?
+首版使用 `Qwen/Qwen2.5-0.5B-Instruct`，输出目录不要覆盖旧 checkpoint。
 
 ```bash
 PYTHONPATH=src python3 scripts/train_dpo_pm.py \
@@ -57,7 +57,7 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
   --gradient-checkpointing
 ```
 
-濡傛灉 outcome-ranked pair 鏁颁笉瓒?500锛屾敼鐢?generated 鏁版嵁鍏堣窇閫氾細
+如果 outcome-ranked pair 数不足 500，改用 generated 数据先跑通：
 
 ```bash
 PYTHONPATH=src python3 scripts/train_dpo_pm.py \
@@ -71,7 +71,7 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
   --gradient-checkpointing
 ```
 
-### Step 3锛歴anity check
+### Step 3：sanity check
 
 ```bash
 PYTHONPATH=src python3 scripts/run_eval.py \
@@ -82,7 +82,7 @@ PYTHONPATH=src python3 scripts/run_eval.py \
   --out data/eval/dpo_pm_outcomes_lite.json
 ```
 
-### Step 4锛氫富瀹為獙
+### Step 4：主实验
 
 ```bash
 PYTHONPATH=src python3 scripts/run_eval.py \
@@ -94,14 +94,14 @@ PYTHONPATH=src python3 scripts/run_eval.py \
   --out data/eval/dpo_pm_outcomes_generated.json
 ```
 
-涓昏〃鍏虫敞锛?
+主表关注：
 
 - `recovery_success_rate`
 - `avg_recovery_attempts_on_failure_tasks`
 - `avg_tool_calls_on_failure_tasks`
 - split-wise `test_unseen` / `clean`
 
-### Step 5锛氳ˉ鍏?RecoveryGym
+### Step 5：补充 RecoveryGym
 
 ```bash
 PYTHONPATH=src python3 scripts/run_recovery_gym_eval.py \
@@ -111,17 +111,17 @@ PYTHONPATH=src python3 scripts/run_recovery_gym_eval.py \
   --out data/eval/dpo_pm_outcomes_recovery_gym.json
 ```
 
-RecoveryGym 鍙綔涓鸿ˉ鍏呫€傝嫢 DPO_PM 琛ㄧ幇涓嶄匠锛屽簲閲嶇偣鍒嗘瀽鍊欓€夎鐩栥€乫ailure family 鍜屾暟鎹垎甯冿紝涓嶇洿鎺ュ惁瀹氫富鏂规硶銆?
+RecoveryGym 只作为补充。若 DPO_PM 表现不佳，应重点分析候选覆盖、failure family 和数据分布，不直接否定主方法。
 
-## 4. 鍒濈缁撴灉鍙ｅ緞
+## 4. 初稿结果口径
 
-鎸夌粨鏋滈€夋嫨琛ㄨ堪锛?
+按结果选择表述：
 
-- 濡傛灉 DPO_PM 鎴愬姛鐜囨渶楂橈細`DPO_PM 鎻愰珮鎭㈠鎴愬姛鐜囷紝骞堕檷浣庢棤鏁堟仮澶嶅皾璇曘€俙
-- 濡傛灉 DPO_PM 涓?fixed_retry 鎴愬姛鐜囩浉杩戜絾灏濊瘯鏇村皯锛歚DPO_PM 鍦ㄤ繚鎸佹仮澶嶈兘鍔涚殑鍚屾椂鍑忓皯鎭㈠杞暟鍜屽伐鍏疯皟鐢ㄣ€俙
-- 濡傛灉 DPO_PM 鍙己浜?random銆佷笉寮轰簬 fixed_retry锛歚DPO_PM 瀛﹀埌鏈夋晥鍊欓€夋帓搴忥紝浣嗗綋鍓嶆暟鎹拰鍊欓€夎鐩栬繕涓嶈冻浠ュ叏闈㈣秴杩囪鍒欑瓥鐣ャ€俙
+- 如果 DPO_PM 成功率最高：`DPO_PM 提高恢复成功率，并降低无效恢复尝试。`
+- 如果 DPO_PM 与 fixed_retry 成功率相近但尝试更少：`DPO_PM 在保持恢复能力的同时减少恢复轮数和工具调用。`
+- 如果 DPO_PM 只强于 random、不强于 fixed_retry：`DPO_PM 学到有效候选排序，但当前数据和候选覆盖还不足以全面超过规则策略。`
 
-绗竴鐗堜笉鍐?memory 娑堣瀺涓轰富缁撹銆?
+第一版不写 memory 消融为主结论。
 
 ## 5. Execution update: 2026-06-15
 
@@ -282,4 +282,3 @@ Remaining work:
 - Keep real-LLM trace-derived DPO retraining as future work: use `recovery_trace` for analysis now,
   and later convert production/real-LLM trajectories into outcome-ranked preference pairs.
 - Keep memory ablations separate from the first DPO_PM claim.
-

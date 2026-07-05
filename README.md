@@ -70,7 +70,7 @@ current thesis-facing checkpoint is `data/pm_checkpoints/dpo_pm_outcomes`, train
 outcome-ranked recovery candidates and evaluated on both `recovery_bench_generated` and
 RecoveryGym; see `DPO_PM主线实验计划.md` for the current mainline commands.
 
-Current mainline status as of 2026-06-15:
+Current mainline status as of 2026-07-05:
 
 - Branch: `dpo-pm-mainline` tracking `origin/codex/dpo-pm-mainline`.
 - Outcome-ranked data was collected with `scripts/collect_candidate_outcomes.py` on
@@ -82,6 +82,8 @@ Current mainline status as of 2026-06-15:
   the training log is `data/logs/dpo_pm_outcomes_train_bf16.log`.
 - The generated benchmark evaluation result is checked in as
   `data/eval/dpo_pm_outcomes_generated.json` and `.md`.
+- The current selector label for equal-budget comparisons is `dpo_pm_r3`, which uses the
+  same three-retry recovery budget as `fixed_retry`.
 - On `recovery_bench_generated` with splits `test_unseen clean`, `dpo_pm_r3` reached
   `success_rate=1.000` and `recovery_success_rate=1.000`. It matched
   `fixed_retry` recovery success while reducing failure-task recovery attempts
@@ -96,33 +98,37 @@ Current mainline status as of 2026-06-15:
 The RTX 5060 local environment required CUDA 12.8 PyTorch and `--bf16` for stable DPO training.
 The original `--fp16` run failed during AMP gradient unscale with bf16 gradients.
 
-Recommended first demo:
+Recommended first demo/training target:
 
 - RTX 5060 8GB: `Qwen/Qwen2.5-0.5B-Instruct`
 - RTX 4090 24GB: `Qwen/Qwen2.5-1.5B-Instruct`
 
-On the CUDA machine:
+On the CUDA machine, train or refresh the current thesis-facing checkpoint from
+`data/pref_pairs_outcomes`:
 
 ```bash
 pip install torch transformers datasets accelerate peft trl bitsandbytes
-PYTHONPATH=src python3 scripts/export_dpo_data.py
 PYTHONPATH=src python3 scripts/train_dpo_pm.py \
   --base-model Qwen/Qwen2.5-0.5B-Instruct \
-  --train data/pref_pairs/train.jsonl \
-  --val data/pref_pairs/val.jsonl \
-  --out data/pm_checkpoints/dpo_pm \
+  --train data/pref_pairs_outcomes/train.jsonl \
+  --val data/pref_pairs_outcomes/val.jsonl \
+  --work-dir data/dpo_outcomes \
+  --out data/pm_checkpoints/dpo_pm_outcomes \
   --use-4bit \
-  --fp16 \
+  --bf16 \
   --gradient-checkpointing
 PYTHONPATH=src python3 scripts/run_eval.py \
-  --baselines no_recovery first random dpo_pm \
-  --pm-paths dpo_pm=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm \
-  --repeats 5 \
-  --out data/eval/local_dpo_pm_legacy_smoke.json
+  --benchmark recovery_bench_generated \
+  --baselines no_recovery random fixed_retry dpo_pm_r3 \
+  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
+  --splits test_unseen clean \
+  --repeats 1 \
+  --out data/eval/dpo_pm_outcomes_generated.json
 ```
 
-The `dpo_pm` selector scores each recovery candidate by the DPO adapter's conditional log
-probability for the candidate text under the error-context prompt.
+The DPO_PM selector scores each recovery candidate by the DPO adapter's conditional log
+probability for the candidate text under the error-context prompt. Use `dpo_pm_r3` in reports when
+comparing against `fixed_retry` under the equal three-retry budget.
 
 `run_eval.py` supports `--pm-paths baseline=path`, so different PM baselines can use different
 checkpoints in one report.
@@ -224,7 +230,9 @@ PYTHONPATH=src python3 scripts/run_eval.py \
 The default generated train split currently yields 640 deduplicated preference pairs
 (`512 train / 128 val`) from 320 recovery tasks.
 
-To train DPO on the generated 640-pair dataset:
+The generated 640-pair dataset remains useful for historical comparison or a fallback smoke run.
+For the current thesis-facing result, prefer the outcome-ranked checkpoint above. If you do run a
+generated-data DPO fallback, keep it separate from `data/pm_checkpoints/dpo_pm_outcomes`:
 
 ```bash
 PYTHONPATH=src python3 scripts/train_dpo_pm.py \
@@ -239,8 +247,9 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
 
 PYTHONPATH=src python3 scripts/run_eval.py \
   --benchmark recovery_bench_generated \
-  --baselines no_recovery first random dpo_pm \
-  --pm-paths dpo_pm=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_generated \
+  --baselines no_recovery random fixed_retry dpo_pm_r3 \
+  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_generated \
+  --splits test_unseen clean \
   --repeats 1 \
-  --out data/eval/generated_dpo_pm.json
+  --out data/eval/generated_dpo_pm_fallback.json
 ```
