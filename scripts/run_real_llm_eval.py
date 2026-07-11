@@ -10,12 +10,20 @@ from rpl.eval.runner import parse_pm_path_items
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run recovery evaluation with a real OpenAI-compatible LLM.")
+    parser = argparse.ArgumentParser(
+        description="Run recovery evaluation with a real OpenAI-compatible LLM."
+    )
     parser.add_argument("--benchmark", default="recovery_gym")
     parser.add_argument(
         "--baselines",
         nargs="+",
-        default=["fixed_retry", "mock_pm", "memory_mock_pm", "lightweight_pm", "memory_lightweight_pm"],
+        default=[
+            "random_r3",
+            "mock_pm",
+            "memory_mock_pm",
+            "lightweight_pm",
+            "memory_lightweight_pm",
+        ],
     )
     parser.add_argument("--pm-path", default=None)
     parser.add_argument(
@@ -30,9 +38,18 @@ def main() -> None:
     parser.add_argument("--llm-base-url", default=None)
     parser.add_argument("--llm-api-key", default=None)
     parser.add_argument("--llm-max-tokens", type=int, default=512)
-    parser.add_argument("--llm-cache", default=None, help="JSONL cache used to replay generated candidates across baselines")
+    parser.add_argument(
+        "--llm-cache",
+        default=None,
+        help="JSONL cache used to replay generated candidates across baselines",
+    )
     parser.add_argument("--splits", nargs="+", default=None)
-    parser.add_argument("--max-tasks", type=int, default=0, help="Maximum tasks after split filtering; 0 means no limit")
+    parser.add_argument(
+        "--max-tasks",
+        type=int,
+        default=0,
+        help="Maximum tasks after split filtering; 0 means no limit",
+    )
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--out", default="data/eval/real_llm_recovery.json")
     args = parser.parse_args()

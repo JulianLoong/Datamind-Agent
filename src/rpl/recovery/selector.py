@@ -52,38 +52,6 @@ class DefaultSelector(RecoverySelector):
         return idx, candidates[idx]
 
 
-class FixedRetrySelector(RecoverySelector):
-    """Deterministic cold-start baseline: retry, then repair, then give up."""
-
-    def __init__(self) -> None:
-        self._attempts_by_context: dict[str, int] = {}
-        self._last_scores: list[float] | None = None
-
-    async def select(self, ctx: ErrorContext, candidates: list[Candidate]) -> tuple[int, Candidate]:
-        if not candidates:
-            raise ValueError("Cannot select from empty candidates")
-
-        key = _context_key(ctx)
-        attempt_no = self._attempts_by_context.get(key, 0)
-        self._attempts_by_context[key] = attempt_no + 1
-
-        if attempt_no == 0:
-            idx = _find_action(candidates, "retry_same_tool")
-        elif attempt_no == 1:
-            idx = _find_executable_repair(candidates)
-        else:
-            idx = _find_action(candidates, "give_up")
-
-        if idx is None:
-            idx = 0
-        self._last_scores = [0.0 for _ in candidates]
-        self._last_scores[idx] = 1.0
-        return idx, candidates[idx]
-
-    def last_scores(self) -> list[float] | None:
-        return self._last_scores
-
-
 class PMSelector(RecoverySelector):
     def __init__(self, pref_model: PrefModel) -> None:
         self.pref_model = pref_model
@@ -234,34 +202,3 @@ class LLMSelfSelector(RecoverySelector):
         if isinstance(raw, bool) or not isinstance(raw, int):
             return 0
         return raw if 0 <= raw < count else 0
-
-
-def _context_key(ctx: ErrorContext) -> str:
-    return json.dumps(
-        {
-            "task_goal": ctx.task_goal,
-            "step_description": ctx.step_description,
-            "tool_name": ctx.tool_name,
-            "tool_params": ctx.tool_params,
-            "error_type": ctx.error_type,
-        },
-        ensure_ascii=False,
-        sort_keys=True,
-    )
-
-
-def _find_action(candidates: list[Candidate], action: str) -> int | None:
-    for idx, candidate in enumerate(candidates):
-        if candidate.action == action:
-            return idx
-    return None
-
-
-def _find_executable_repair(candidates: list[Candidate]) -> int | None:
-    for idx, candidate in enumerate(candidates):
-        if candidate.tool_name is not None and candidate.action not in {
-            "retry_same_tool",
-            "give_up",
-        }:
-            return idx
-    return None

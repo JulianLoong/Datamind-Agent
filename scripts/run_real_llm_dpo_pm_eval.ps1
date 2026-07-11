@@ -1,6 +1,6 @@
 param(
     [string]$Benchmark = "recovery_bench_lite",
-    [string[]]$Baselines = @("fixed_retry", "dpo_pm_r3"),
+    [string[]]$Baselines = @("random_r3", "dpo_pm_r3"),
     [string]$DpoBaseModel = "Qwen/Qwen2.5-0.5B-Instruct",
     [string]$DpoAdapterPath = "data/pm_checkpoints/dpo_pm_outcomes",
     [string]$LlmProvider = "openai_compatible",

@@ -7,7 +7,6 @@ from rpl.llm import LLMClient
 from rpl.pref_model import LightweightPrefModel, MockPrefModel
 from rpl.recovery import (
     DefaultSelector,
-    FixedRetrySelector,
     LLMSelfSelector,
     MemoryPriorSelector,
     PMSelector,
@@ -64,8 +63,6 @@ def _build_base_baseline(
         return BaselineSpec(name=name, selector=DefaultSelector("first"), max_retries_per_step=1)
     if name == "random":
         return BaselineSpec(name=name, selector=DefaultSelector("random"), max_retries_per_step=1)
-    if name == "fixed_retry":
-        return BaselineSpec(name=name, selector=FixedRetrySelector(), max_retries_per_step=3)
     if name == "mock_pm":
         return BaselineSpec(name=name, selector=PMSelector(MockPrefModel()), max_retries_per_step=1)
     if name == "memory_mock_pm":

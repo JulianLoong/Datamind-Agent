@@ -4,7 +4,6 @@ from rpl.recovery.dedup import CandidateDedup
 from rpl.recovery.pipeline import RecoveryPipeline
 from rpl.recovery.selector import (
     DefaultSelector,
-    FixedRetrySelector,
     LLMSelfSelector,
     MemoryPriorSelector,
     PMSelector,
@@ -22,7 +21,6 @@ __all__ = [
     "DefaultSelector",
     "ErrorContext",
     "ErrorContextBuilder",
-    "FixedRetrySelector",
     "LLMSelfSelector",
     "MemoryPriorSelector",
     "PMSelector",

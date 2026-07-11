@@ -21,7 +21,7 @@ added later through the same `BaseTool` and `ToolRegistry` interfaces.
 ## Model roles
 
 `DPO_PM` is the target model for the thesis-facing system. It should be trained from executable
-recovery preference data and evaluated against no-recovery, fixed-retry, random, lightweight, and
+recovery preference data and evaluated against first-candidate, random, lightweight, and
 memory-augmented baselines.
 
 `lightweight_pm` is a dependency-free pairwise ranker. It is useful as a fast local sanity check and
@@ -45,7 +45,7 @@ PYTHONPATH=src python3 scripts/train_pm.py \
   --val data/pref_pairs/val.jsonl \
   --out data/pm_checkpoints/lightweight_pm.json
 PYTHONPATH=src python3 scripts/run_eval.py \
-  --baselines no_recovery first random mock_pm lightweight_pm \
+  --baselines first random mock_pm lightweight_pm \
   --pm-path data/pm_checkpoints/lightweight_pm.json \
   --repeats 5 \
   --out data/eval/recovery_bench_lite.json
@@ -82,16 +82,14 @@ Current mainline status as of 2026-07-05:
   the training log is `data/logs/dpo_pm_outcomes_train_bf16.log`.
 - The generated benchmark evaluation result is checked in as
   `data/eval/dpo_pm_outcomes_generated.json` and `.md`.
-- The current selector label for equal-budget comparisons is `dpo_pm_r3`, which uses the
-  same three-retry recovery budget as `fixed_retry`.
+- The current selector label for multi-round comparisons is `dpo_pm_r3`, which uses a
+  three-retry recovery budget.
 - On `recovery_bench_generated` with splits `test_unseen clean`, `dpo_pm_r3` reached
-  `success_rate=1.000` and `recovery_success_rate=1.000`. It matched
-  `fixed_retry` recovery success while reducing failure-task recovery attempts
-  from `2.0` to `1.0` and tool calls from `3.0` to `2.0`.
-- On the full controlled RecoveryGym benchmark, `dpo_pm_r3` matched `fixed_retry`
-  (`success_rate=0.517`, `recovery_success_rate=0.462`) while reducing average
-  recovery attempts from `1.724` to `1.310`, average tool calls from `2.724` to
-  `2.310`, and average recovery tokens from `862.121` to `653.871`.
+  `success_rate=1.000` and `recovery_success_rate=1.000`.
+- On the full controlled RecoveryGym benchmark, `dpo_pm_r3` reached
+  `success_rate=0.517` and `recovery_success_rate=0.462`, with average recovery
+  attempts of `1.310`, average tool calls of `2.310`, and average recovery tokens
+  of `653.871`.
   RecoveryGym should be presented as a supplemental generalization and failure-analysis
   result, not as open-world real-LLM evidence.
 
@@ -119,7 +117,7 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
   --gradient-checkpointing
 PYTHONPATH=src python3 scripts/run_eval.py \
   --benchmark recovery_bench_generated \
-  --baselines no_recovery random fixed_retry dpo_pm_r3 \
+  --baselines first random_r3 dpo_pm_r3 \
   --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
   --splits test_unseen clean \
   --repeats 1 \
@@ -127,8 +125,8 @@ PYTHONPATH=src python3 scripts/run_eval.py \
 ```
 
 The DPO_PM selector scores each recovery candidate by the DPO adapter's conditional log
-probability for the candidate text under the error-context prompt. Use `dpo_pm_r3` in reports when
-comparing against `fixed_retry` under the equal three-retry budget.
+probability for the candidate text under the error-context prompt. Use `dpo_pm_r3` in reports for
+multi-round evaluation with a three-retry budget.
 
 `run_eval.py` supports `--pm-paths baseline=path`, so different PM baselines can use different
 checkpoints in one report.
@@ -172,7 +170,7 @@ $env:DEEPSEEK_API_KEY="..."
   -Out data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json
 ```
 
-The wrapper defaults to `fixed_retry` versus `dpo_pm_r3`, so both methods use the same
+The wrapper defaults to `random_r3` versus `dpo_pm_r3`, so both methods use the same
 three-retry recovery budget. DPO_PM is re-scored after each failed recovery attempt against the new
 `ErrorContext` and the newly generated, validator-filtered candidates.
 
@@ -180,13 +178,10 @@ For GLM 5.1, the real path should disable thinking and request JSON output. The 
 provider does this automatically.
 
 A small DeepSeek real-LLM DPO_PM smoke result is checked in as
-`data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json` and `.md`. It uses `recovery_bench_lite` with
-`max_tasks=8` and compares `fixed_retry` with `dpo_pm_r3` under the same three-retry budget. Both
-methods reached `success_rate=0.625` and `recovery_success_rate=0.500`, while `dpo_pm_r3` reduced
-average recovery attempts from `1.500` to `1.250`, tool calls from `2.500` to `2.250`, and recovery
-tokens from `1154.750` to `967.000`. This should be presented only as a path-validation smoke test
-because the sample size is very small; the report's `baseline_configs` field records the effective
-retry budget for each baseline.
+`data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json` and `.md`. It is a historical
+`recovery_bench_lite` path-validation artifact with `max_tasks=8`; its retired comparison baseline
+is no longer available in the current evaluation code. The result should not be used as evidence for
+the current evaluation design because the sample size is very small.
 
 New evaluation records include a `recovery_trace` field with generated candidates, selected index,
 PM scores, and initial/final tool results. Use this for future real-LLM failure analysis instead of
@@ -247,7 +242,7 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
 
 PYTHONPATH=src python3 scripts/run_eval.py \
   --benchmark recovery_bench_generated \
-  --baselines no_recovery random fixed_retry dpo_pm_r3 \
+  --baselines first random_r3 dpo_pm_r3 \
   --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_generated \
   --splits test_unseen clean \
   --repeats 1 \

@@ -27,11 +27,9 @@ def test_build_baseline_supports_pm_retry_suffix(tmp_path) -> None:
     assert spec.max_retries_per_step == 3
 
 
-def test_build_baseline_supports_fixed_retry() -> None:
-    spec = build_baseline("fixed_retry")
-
-    assert spec.name == "fixed_retry"
-    assert spec.max_retries_per_step == 3
+def test_build_baseline_rejects_removed_fixed_retry() -> None:
+    with pytest.raises(ValueError, match="Unknown baseline"):
+        build_baseline("fixed_retry")
 
 
 def test_build_baseline_rejects_removed_no_recovery() -> None:

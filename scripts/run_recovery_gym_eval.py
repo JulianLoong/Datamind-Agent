@@ -10,8 +10,10 @@ from rpl.eval.runner import parse_pm_path_items
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run RecoveryGym family/split generalization evaluation.")
-    parser.add_argument("--baselines", nargs="+", default=["fixed_retry", "mock_pm"])
+    parser = argparse.ArgumentParser(
+        description="Run RecoveryGym family/split generalization evaluation."
+    )
+    parser.add_argument("--baselines", nargs="+", default=["random_r3", "mock_pm"])
     parser.add_argument("--pm-path", default=None)
     parser.add_argument(
         "--pm-paths",
@@ -21,7 +23,12 @@ def main() -> None:
     )
     parser.add_argument("--memory-db", default=None)
     parser.add_argument("--splits", nargs="+", default=None)
-    parser.add_argument("--max-tasks", type=int, default=0, help="Maximum tasks after split filtering; 0 means no limit")
+    parser.add_argument(
+        "--max-tasks",
+        type=int,
+        default=0,
+        help="Maximum tasks after split filtering; 0 means no limit",
+    )
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--out", default="data/eval/recovery_gym.json")
     args = parser.parse_args()
