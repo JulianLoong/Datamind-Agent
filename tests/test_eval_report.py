@@ -20,6 +20,8 @@ def test_summary_markdown_includes_split_and_failure_type_tables() -> None:
         "avg_latency_ms": 0.0,
         "avg_recovery_tokens": 12.0,
         "avg_recovery_latency_ms": 34.0,
+        "avg_selector_tokens": 0.0,
+        "avg_selector_evals": 0.0,
     }
     report = {
         "benchmark": "bench",

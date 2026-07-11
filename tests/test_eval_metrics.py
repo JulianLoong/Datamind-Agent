@@ -51,6 +51,22 @@ def test_summarize_records_includes_recovery_efficiency_metrics() -> None:
     assert summary["avg_tool_calls_on_recovered"] == 2.0
 
 
+def test_summarize_records_includes_selector_cost() -> None:
+    records = [
+        _record("a", "train", "division_by_zero", "success", 1, 2),
+        _record("b", "train", "not_found", "failed", 3, 4),
+    ]
+    records[0].selector_tokens = 10
+    records[0].selector_evals = 3
+    records[1].selector_tokens = 20
+    records[1].selector_evals = 1
+
+    summary = summarize_records(records)
+
+    assert summary["avg_selector_tokens"] == 15.0
+    assert summary["avg_selector_evals"] == 2.0
+
+
 def test_summarize_records_by_split() -> None:
     records = [
         _record("a", "train", "division_by_zero", "success", 1, 2),
@@ -83,7 +99,9 @@ def test_summarize_records_by_failure_type_groups_clean_tasks() -> None:
 
 def test_summarize_records_by_failure_family() -> None:
     records = [
-        _record("a", "train", "division_by_zero", "success", 1, 2, failure_family="semantic_param_error"),
+        _record(
+            "a", "train", "division_by_zero", "success", 1, 2, failure_family="semantic_param_error"
+        ),
         _record("b", "train", "validation_error", "failed", 1, 2, failure_family="schema_error"),
         _record("c", "clean", None, "success", 0, 1),
     ]

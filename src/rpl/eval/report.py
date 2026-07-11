@@ -10,12 +10,12 @@ def summary_markdown(report: dict) -> str:
         "Note: controlled synthetic benchmarks validate the recovery pipeline and ranking behavior; "
         "split-level results should be used when discussing generalization.",
         "",
-        "| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls | avg_recovery_tokens | avg_recovery_latency_ms |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls | avg_recovery_tokens | avg_recovery_latency_ms | avg_selector_tokens | avg_selector_evals |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for baseline, summary in report["summaries"].items():
         lines.append(
-            "| {baseline} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} | {recovery_tokens:.3f} | {recovery_latency:.3f} |".format(
+            "| {baseline} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} | {recovery_tokens:.3f} | {recovery_latency:.3f} | {selector_tokens:.3f} | {selector_evals:.3f} |".format(
                 baseline=baseline,
                 success=summary["success_rate"],
                 recovery=summary["recovery_success_rate"],
@@ -24,6 +24,8 @@ def summary_markdown(report: dict) -> str:
                 calls=summary["avg_tool_calls"],
                 recovery_tokens=summary["avg_recovery_tokens"],
                 recovery_latency=summary["avg_recovery_latency_ms"],
+                selector_tokens=summary["avg_selector_tokens"],
+                selector_evals=summary["avg_selector_evals"],
             )
         )
 

@@ -21,15 +21,17 @@ class StepStatus(Enum):
 
 @dataclass
 class RecoveryAttempt:
-    candidates: list["Candidate"]
+    candidates: list[Candidate]
     chosen_index: int
     outcome: StepStatus
-    error_context: "ErrorContext | None" = None
+    error_context: ErrorContext | None = None
     initial_result: ToolResult | None = None
     final_result: ToolResult | None = None
     pm_scores: list[float] | None = None
     candidate_tokens: int = 0
     candidate_latency_ms: float = 0.0
+    selector_tokens: int = 0
+    selector_evals: int = 0
 
 
 @dataclass
@@ -53,3 +55,5 @@ class TaskResult:
     total_latency_ms: float = 0.0
     recovery_tokens: int = 0
     recovery_latency_ms: float = 0.0
+    selector_tokens: int = 0
+    selector_evals: int = 0

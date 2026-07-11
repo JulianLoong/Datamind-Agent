@@ -45,6 +45,7 @@ class RecoveryPipeline:
             ]
         chosen_index, _ = await self.selector.select(ctx, candidates)
         pm_scores = self.selector.last_scores()
+        cost = self.selector.last_cost()
         return RecoveryAttempt(
             candidates=candidates,
             chosen_index=chosen_index,
@@ -54,4 +55,6 @@ class RecoveryPipeline:
             pm_scores=pm_scores,
             candidate_tokens=self.candidate_gen.last_tokens_used,
             candidate_latency_ms=self.candidate_gen.last_latency_ms,
+            selector_tokens=cost.selector_tokens,
+            selector_evals=cost.selector_evals,
         )

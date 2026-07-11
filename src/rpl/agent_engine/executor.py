@@ -35,6 +35,8 @@ class Executor:
         total_latency_ms = 0.0
         recovery_tokens = 0
         recovery_latency_ms = 0.0
+        selector_tokens = 0
+        selector_evals = 0
         task_status = "success"
 
         for step in steps:
@@ -52,6 +54,8 @@ class Executor:
             for attempt in step.recovery_attempts:
                 recovery_tokens += attempt.candidate_tokens
                 recovery_latency_ms += attempt.candidate_latency_ms
+                selector_tokens += attempt.selector_tokens
+                selector_evals += attempt.selector_evals
             if not success:
                 task_status = "failed"
                 break
@@ -65,6 +69,8 @@ class Executor:
             total_latency_ms=total_latency_ms,
             recovery_tokens=recovery_tokens,
             recovery_latency_ms=recovery_latency_ms,
+            selector_tokens=selector_tokens,
+            selector_evals=selector_evals,
         )
         self.collector.on_task_end(result)
         return result
@@ -86,7 +92,9 @@ class Executor:
 
             if pending_recovery is not None:
                 pending_recovery.final_result = result
-                pending_recovery.outcome = StepStatus.SUCCESS if result.success else StepStatus.FAILED
+                pending_recovery.outcome = (
+                    StepStatus.SUCCESS if result.success else StepStatus.FAILED
+                )
                 pending_recovery = None
 
             if result.success:
