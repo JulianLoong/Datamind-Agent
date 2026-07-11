@@ -10,19 +10,14 @@ def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
     output = tmp_path / "eval.json"
 
     report = run_eval_sync(
-        baseline_names=["no_recovery", "first"],
+        baseline_names=["first"],
         repeats=1,
         output_path=output,
     )
 
     assert output.exists()
-    assert "no_recovery" in report["summaries"]
     assert "first" in report["summaries"]
     assert report["baseline_configs"]["first"]["max_retries_per_step"] == 1
-    assert (
-        report["summaries"]["first"]["recovery_success_rate"]
-        >= report["summaries"]["no_recovery"]["recovery_success_rate"]
-    )
     assert "first" in report["failure_family_summaries"]
 
 
@@ -62,7 +57,7 @@ def test_eval_runner_can_write_llm_cache(tmp_path) -> None:
 def test_eval_runner_filters_splits_and_limits_tasks(tmp_path) -> None:
     report = run_eval_sync(
         benchmark_name="recovery_gym",
-        baseline_names=["no_recovery"],
+        baseline_names=["first"],
         splits=["seen_template_unseen_params"],
         max_tasks=2,
         repeats=1,
@@ -71,7 +66,7 @@ def test_eval_runner_filters_splits_and_limits_tasks(tmp_path) -> None:
 
     assert report["task_count"] == 2
     assert report["splits"] == ["seen_template_unseen_params"]
-    assert report["summaries"]["no_recovery"]["tasks"] == 2
+    assert report["summaries"]["first"]["tasks"] == 2
 
 
 def test_parse_pm_path_items() -> None:
@@ -97,7 +92,7 @@ def test_eval_runner_uses_per_baseline_pm_paths(tmp_path) -> None:
 
     report = run_eval_sync(
         benchmark_name="recovery_bench_generated",
-        baseline_names=["no_recovery", "lightweight_pm"],
+        baseline_names=["lightweight_pm"],
         pm_paths={"lightweight_pm": str(checkpoint)},
         splits=["test_unseen", "clean"],
         max_tasks=4,
@@ -105,12 +100,7 @@ def test_eval_runner_uses_per_baseline_pm_paths(tmp_path) -> None:
         output_path=tmp_path / "eval.json",
     )
 
-    assert report["summaries"]["no_recovery"]["tasks"] == 4
     assert report["summaries"]["lightweight_pm"]["tasks"] == 4
-    assert (
-        report["summaries"]["lightweight_pm"]["recovery_success_rate"]
-        >= report["summaries"]["no_recovery"]["recovery_success_rate"]
-    )
 
 
 def test_eval_runner_resolves_pm_path_for_retry_suffixed_baseline() -> None:

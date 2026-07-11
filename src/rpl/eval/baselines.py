@@ -37,8 +37,6 @@ def build_baseline(
     )
     if retry_override is None:
         return spec
-    if base_name == "no_recovery" and retry_override > 0:
-        raise ValueError("no_recovery cannot use a positive retry suffix")
     return BaselineSpec(
         name=name,
         selector=spec.selector,
@@ -62,8 +60,6 @@ def _build_base_baseline(
         if llm_client is None:
             raise ValueError("llm_client is required for llm_self_pick baseline")
         return BaselineSpec(name=name, selector=LLMSelfSelector(llm_client), max_retries_per_step=1)
-    if name == "no_recovery":
-        return BaselineSpec(name=name, selector=DefaultSelector("first"), max_retries_per_step=0)
     if name == "first":
         return BaselineSpec(name=name, selector=DefaultSelector("first"), max_retries_per_step=1)
     if name == "random":

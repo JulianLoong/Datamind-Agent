@@ -11,7 +11,7 @@ from rpl.eval.runner import parse_pm_path_items
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run RecoveryGym family/split generalization evaluation.")
-    parser.add_argument("--baselines", nargs="+", default=["no_recovery", "fixed_retry", "mock_pm"])
+    parser.add_argument("--baselines", nargs="+", default=["fixed_retry", "mock_pm"])
     parser.add_argument("--pm-path", default=None)
     parser.add_argument(
         "--pm-paths",

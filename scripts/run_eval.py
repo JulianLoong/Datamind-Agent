@@ -15,7 +15,7 @@ def main() -> None:
     parser.add_argument(
         "--baselines",
         nargs="+",
-        default=["no_recovery", "first", "random", "mock_pm"],
+        default=["first", "random", "mock_pm"],
         help="Baselines to run",
     )
     parser.add_argument("--pm-path", default=None, help="Checkpoint for lightweight_pm baseline")

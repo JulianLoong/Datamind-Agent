@@ -54,7 +54,7 @@ async def run_eval(
 ) -> dict[str, Any]:
     tasks = get_benchmark(benchmark_name)
     tasks = _filter_tasks(tasks, splits=splits, max_tasks=max_tasks)
-    baseline_names = baseline_names or ["no_recovery", "first", "random"]
+    baseline_names = baseline_names or ["first", "random"]
     all_records: list[TaskEvalRecord] = []
     summaries: dict[str, dict[str, float | int | str]] = {}
     baseline_configs: dict[str, dict[str, int]] = {}

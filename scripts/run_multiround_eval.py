@@ -14,7 +14,7 @@ def main() -> None:
     parser.add_argument(
         "--baselines",
         nargs="+",
-        default=["no_recovery", "fixed_retry", "random_r3", "mock_pm"],
+        default=["fixed_retry", "random_r3", "mock_pm"],
     )
     parser.add_argument("--pm-path", default=None)
     parser.add_argument("--memory-db", default=None)

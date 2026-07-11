@@ -34,9 +34,9 @@ def test_build_baseline_supports_fixed_retry() -> None:
     assert spec.max_retries_per_step == 3
 
 
-def test_build_baseline_rejects_no_recovery_positive_retry_suffix() -> None:
-    with pytest.raises(ValueError, match="no_recovery"):
-        build_baseline("no_recovery_r2")
+def test_build_baseline_rejects_removed_no_recovery() -> None:
+    with pytest.raises(ValueError, match="Unknown baseline"):
+        build_baseline("no_recovery")
 
 
 def test_build_baseline_llm_greedy() -> None:
