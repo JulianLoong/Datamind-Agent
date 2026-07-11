@@ -19,7 +19,10 @@ def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
     assert "no_recovery" in report["summaries"]
     assert "first" in report["summaries"]
     assert report["baseline_configs"]["first"]["max_retries_per_step"] == 1
-    assert report["summaries"]["first"]["success_rate"] >= report["summaries"]["no_recovery"]["success_rate"]
+    assert (
+        report["summaries"]["first"]["success_rate"]
+        >= report["summaries"]["no_recovery"]["success_rate"]
+    )
     assert "first" in report["failure_family_summaries"]
 
 
@@ -30,11 +33,7 @@ def test_eval_runner_records_recovery_trace(tmp_path) -> None:
         output_path=tmp_path / "eval.json",
     )
 
-    recovered_records = [
-        record
-        for record in report["records"]
-        if record["recovery_attempts"] > 0
-    ]
+    recovered_records = [record for record in report["records"] if record["recovery_attempts"] > 0]
 
     assert recovered_records
     trace = recovered_records[0]["recovery_trace"]
@@ -108,7 +107,10 @@ def test_eval_runner_uses_per_baseline_pm_paths(tmp_path) -> None:
 
     assert report["summaries"]["no_recovery"]["tasks"] == 4
     assert report["summaries"]["lightweight_pm"]["tasks"] == 4
-    assert report["summaries"]["lightweight_pm"]["success_rate"] >= report["summaries"]["no_recovery"]["success_rate"]
+    assert (
+        report["summaries"]["lightweight_pm"]["success_rate"]
+        >= report["summaries"]["no_recovery"]["success_rate"]
+    )
 
 
 def test_eval_runner_resolves_pm_path_for_retry_suffixed_baseline() -> None:
@@ -119,3 +121,31 @@ def test_eval_runner_resolves_pm_path_for_retry_suffixed_baseline() -> None:
     )
 
     assert path == "Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes"
+
+
+def test_eval_runner_llm_self_pick_baseline_runs(tmp_path) -> None:
+    report = run_eval_sync(
+        baseline_names=["llm_self_pick"],
+        repeats=1,
+        output_path=tmp_path / "eval.json",
+    )
+
+    assert "llm_self_pick" in report["summaries"]
+    assert report["summaries"]["llm_self_pick"]["avg_selector_evals"] >= 0
+
+
+def test_eval_runner_candidate_count_param(tmp_path) -> None:
+    report = run_eval_sync(
+        baseline_names=["first"],
+        candidate_count=2,
+        repeats=1,
+        output_path=tmp_path / "eval.json",
+    )
+
+    candidate_counts = [
+        len(attempt["candidates"])
+        for record in report["records"]
+        for attempt in record["recovery_trace"]
+    ]
+    assert candidate_counts, "expected at least one recovery attempt with candidates"
+    assert max(candidate_counts) <= 2

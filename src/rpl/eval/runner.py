@@ -20,8 +20,14 @@ from rpl.eval.metrics import (
     task_record,
 )
 from rpl.llm import CachedLLMClient
+from rpl.recovery import (
+    CandidateDedup,
+    CandidateGenerator,
+    CandidateValidator,
+    ErrorContextBuilder,
+    RecoveryPipeline,
+)
 from rpl.recovery.candidate_gen import build_llm_client
-from rpl.recovery import CandidateDedup, CandidateGenerator, CandidateValidator, ErrorContextBuilder, RecoveryPipeline
 from rpl.tools.builtin import build_builtin_registry
 from rpl.trajectory.collector import TrajectoryCollector
 from rpl.trajectory.store import TrajectoryStore
@@ -43,6 +49,7 @@ async def run_eval(
     splits: list[str] | None = None,
     max_tasks: int = 0,
     repeats: int = 5,
+    candidate_count: int = 3,
     output_path: str | Path | None = None,
 ) -> dict[str, Any]:
     tasks = get_benchmark(benchmark_name)
@@ -84,9 +91,11 @@ async def run_eval(
                 baseline_name,
                 pm_path=baseline_pm_path,
                 memory_db_path=memory_db_path,
+                llm_client=shared_llm_client,
             )
             baseline_configs[spec.name] = {
                 "max_retries_per_step": spec.max_retries_per_step,
+                "candidate_count": spec.candidate_count,
             }
             records = await _run_baseline(
                 spec_name=spec.name,
@@ -97,6 +106,9 @@ async def run_eval(
                 db_path=tmp_path / f"{spec.name}.db",
                 llm_client=shared_llm_client,
                 llm_max_tokens=llm_max_tokens,
+                candidate_count=spec.candidate_count
+                if spec.candidate_count is not None
+                else candidate_count,
             )
             all_records.extend(records)
             summaries[spec.name] = summarize_records(records)
@@ -147,6 +159,7 @@ async def _run_baseline(
     db_path: Path,
     llm_client,
     llm_max_tokens: int = 512,
+    candidate_count: int = 3,
 ) -> list[TaskEvalRecord]:
     registry = build_builtin_registry()
     store = TrajectoryStore(db_path)
@@ -162,7 +175,7 @@ async def _run_baseline(
             ),
             CandidateDedup(),
             selector,
-            candidate_count=3,
+            candidate_count=candidate_count,
             validator=CandidateValidator(registry),
         ),
         TrajectoryCollector(store),

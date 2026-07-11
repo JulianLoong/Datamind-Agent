@@ -25,15 +25,44 @@ def main() -> None:
         default=None,
         help="Per-baseline PM checkpoints, e.g. lightweight_pm=path dpo_pm=base::adapter",
     )
-    parser.add_argument("--memory-db", default=None, help="Trajectory DB used to load successful recovery experiences")
-    parser.add_argument("--llm-provider", default=None, help="LLM provider for candidate generation (fake, openai_compatible)")
-    parser.add_argument("--llm-model", default=None, help="LLM model name for real candidate generation")
-    parser.add_argument("--llm-base-url", default=None, help="Base URL for OpenAI-compatible LLM API")
+    parser.add_argument(
+        "--memory-db",
+        default=None,
+        help="Trajectory DB used to load successful recovery experiences",
+    )
+    parser.add_argument(
+        "--llm-provider",
+        default=None,
+        help="LLM provider for candidate generation (fake, openai_compatible)",
+    )
+    parser.add_argument(
+        "--llm-model", default=None, help="LLM model name for real candidate generation"
+    )
+    parser.add_argument(
+        "--llm-base-url", default=None, help="Base URL for OpenAI-compatible LLM API"
+    )
     parser.add_argument("--llm-api-key", default=None, help="API key for OpenAI-compatible LLM API")
-    parser.add_argument("--llm-cache", default=None, help="JSONL cache used to replay generated candidates across baselines")
-    parser.add_argument("--splits", nargs="+", default=None, help="Optional benchmark splits to include")
-    parser.add_argument("--max-tasks", type=int, default=0, help="Maximum tasks after split filtering; 0 means no limit")
+    parser.add_argument(
+        "--llm-cache",
+        default=None,
+        help="JSONL cache used to replay generated candidates across baselines",
+    )
+    parser.add_argument(
+        "--splits", nargs="+", default=None, help="Optional benchmark splits to include"
+    )
+    parser.add_argument(
+        "--max-tasks",
+        type=int,
+        default=0,
+        help="Maximum tasks after split filtering; 0 means no limit",
+    )
     parser.add_argument("--repeats", type=int, default=5)
+    parser.add_argument(
+        "--candidate-count",
+        type=int,
+        default=3,
+        help="Number of recovery candidates to generate per failed step",
+    )
     parser.add_argument("--out", default="data/eval/recovery_bench_lite.json")
     args = parser.parse_args()
 
@@ -51,6 +80,7 @@ def main() -> None:
         splits=args.splits,
         max_tasks=args.max_tasks,
         repeats=args.repeats,
+        candidate_count=args.candidate_count,
         output_path=args.out,
     )
     print(f"wrote {args.out}")

@@ -3,8 +3,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from rpl.experience import ExperienceMemory
+from rpl.llm import LLMClient
 from rpl.pref_model import LightweightPrefModel, MockPrefModel
-from rpl.recovery import DefaultSelector, FixedRetrySelector, MemoryPriorSelector, PMSelector, RecoverySelector
+from rpl.recovery import (
+    DefaultSelector,
+    FixedRetrySelector,
+    LLMSelfSelector,
+    MemoryPriorSelector,
+    PMSelector,
+    RecoverySelector,
+)
 from rpl.trajectory.store import TrajectoryStore
 
 
@@ -13,6 +21,7 @@ class BaselineSpec:
     name: str
     selector: RecoverySelector
     max_retries_per_step: int
+    candidate_count: int | None = None
 
 
 def build_baseline(
@@ -20,14 +29,22 @@ def build_baseline(
     *,
     pm_path: str | None = None,
     memory_db_path: str | None = None,
+    llm_client: LLMClient | None = None,
 ) -> BaselineSpec:
     base_name, retry_override = _parse_retry_suffix(name)
-    spec = _build_base_baseline(base_name, pm_path=pm_path, memory_db_path=memory_db_path)
+    spec = _build_base_baseline(
+        base_name, pm_path=pm_path, memory_db_path=memory_db_path, llm_client=llm_client
+    )
     if retry_override is None:
         return spec
     if base_name == "no_recovery" and retry_override > 0:
         raise ValueError("no_recovery cannot use a positive retry suffix")
-    return BaselineSpec(name=name, selector=spec.selector, max_retries_per_step=retry_override)
+    return BaselineSpec(
+        name=name,
+        selector=spec.selector,
+        max_retries_per_step=retry_override,
+        candidate_count=spec.candidate_count,
+    )
 
 
 def _build_base_baseline(
@@ -35,7 +52,16 @@ def _build_base_baseline(
     *,
     pm_path: str | None = None,
     memory_db_path: str | None = None,
+    llm_client: LLMClient | None = None,
 ) -> BaselineSpec:
+    if name == "llm_greedy":
+        return BaselineSpec(
+            name=name, selector=DefaultSelector("first"), max_retries_per_step=1, candidate_count=1
+        )
+    if name == "llm_self_pick":
+        if llm_client is None:
+            raise ValueError("llm_client is required for llm_self_pick baseline")
+        return BaselineSpec(name=name, selector=LLMSelfSelector(llm_client), max_retries_per_step=1)
     if name == "no_recovery":
         return BaselineSpec(name=name, selector=DefaultSelector("first"), max_retries_per_step=0)
     if name == "first":
@@ -108,4 +134,6 @@ def _load_memory(memory_db_path: str | None) -> ExperienceMemory:
     if not memory_db_path:
         return ExperienceMemory()
     store = TrajectoryStore(memory_db_path)
-    return ExperienceMemory.from_recovery_rows(store.query_recovery_attempts_with_context(limit=10000))
+    return ExperienceMemory.from_recovery_rows(
+        store.query_recovery_attempts_with_context(limit=10000)
+    )

@@ -3,6 +3,8 @@ from __future__ import annotations
 import pytest
 
 from rpl.eval.baselines import build_baseline
+from rpl.llm import FakeLLMClient
+from rpl.recovery.selector import LLMSelfSelector
 
 
 def test_build_baseline_supports_retry_suffix() -> None:
@@ -35,3 +37,32 @@ def test_build_baseline_supports_fixed_retry() -> None:
 def test_build_baseline_rejects_no_recovery_positive_retry_suffix() -> None:
     with pytest.raises(ValueError, match="no_recovery"):
         build_baseline("no_recovery_r2")
+
+
+def test_build_baseline_llm_greedy() -> None:
+    spec = build_baseline("llm_greedy")
+
+    assert spec.name == "llm_greedy"
+    assert spec.max_retries_per_step == 1
+    assert spec.candidate_count == 1
+
+
+def test_build_baseline_llm_self_pick() -> None:
+    spec = build_baseline("llm_self_pick", llm_client=FakeLLMClient())
+
+    assert spec.name == "llm_self_pick"
+    assert isinstance(spec.selector, LLMSelfSelector)
+    assert spec.candidate_count is None
+    assert spec.max_retries_per_step == 1
+
+
+def test_build_baseline_llm_self_pick_requires_client() -> None:
+    with pytest.raises(ValueError, match="llm_client"):
+        build_baseline("llm_self_pick")
+
+
+def test_build_baseline_retry_suffix_preserves_candidate_count() -> None:
+    spec = build_baseline("llm_greedy_r2")
+
+    assert spec.candidate_count == 1
+    assert spec.max_retries_per_step == 2
