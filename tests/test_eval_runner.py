@@ -20,8 +20,8 @@ def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
     assert "first" in report["summaries"]
     assert report["baseline_configs"]["first"]["max_retries_per_step"] == 1
     assert (
-        report["summaries"]["first"]["success_rate"]
-        >= report["summaries"]["no_recovery"]["success_rate"]
+        report["summaries"]["first"]["recovery_success_rate"]
+        >= report["summaries"]["no_recovery"]["recovery_success_rate"]
     )
     assert "first" in report["failure_family_summaries"]
 
@@ -108,8 +108,8 @@ def test_eval_runner_uses_per_baseline_pm_paths(tmp_path) -> None:
     assert report["summaries"]["no_recovery"]["tasks"] == 4
     assert report["summaries"]["lightweight_pm"]["tasks"] == 4
     assert (
-        report["summaries"]["lightweight_pm"]["success_rate"]
-        >= report["summaries"]["no_recovery"]["success_rate"]
+        report["summaries"]["lightweight_pm"]["recovery_success_rate"]
+        >= report["summaries"]["no_recovery"]["recovery_success_rate"]
     )
 
 
@@ -131,7 +131,14 @@ def test_eval_runner_llm_self_pick_baseline_runs(tmp_path) -> None:
     )
 
     assert "llm_self_pick" in report["summaries"]
-    assert report["summaries"]["llm_self_pick"]["avg_selector_evals"] >= 0
+    assert "recovery_success_rate" in report["summaries"]["llm_self_pick"]
+    # selector cost is dropped from the summary but retained in the raw recovery trace
+    trace_entries = [
+        attempt for record in report["records"] for attempt in record["recovery_trace"]
+    ]
+    if trace_entries:
+        assert "selector_tokens" in trace_entries[0]
+        assert "selector_evals" in trace_entries[0]
 
 
 def test_eval_runner_candidate_count_param(tmp_path) -> None:

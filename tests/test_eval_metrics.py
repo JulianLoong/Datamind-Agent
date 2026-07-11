@@ -36,7 +36,7 @@ def _record(
     )
 
 
-def test_summarize_records_includes_recovery_efficiency_metrics() -> None:
+def test_summarize_records_reports_recovery_headline_metrics() -> None:
     records = [
         _record("a", "train", "division_by_zero", "success", 1, 2),
         _record("b", "train", "not_found", "failed", 3, 4),
@@ -45,26 +45,11 @@ def test_summarize_records_includes_recovery_efficiency_metrics() -> None:
 
     summary = summarize_records(records)
 
-    assert summary["avg_recovery_attempts_on_failure_tasks"] == 2.0
-    assert summary["avg_recovery_attempts_on_recovered"] == 1.0
-    assert summary["avg_recovery_attempts_on_unrecovered"] == 3.0
-    assert summary["avg_tool_calls_on_recovered"] == 2.0
-
-
-def test_summarize_records_includes_selector_cost() -> None:
-    records = [
-        _record("a", "train", "division_by_zero", "success", 1, 2),
-        _record("b", "train", "not_found", "failed", 3, 4),
-    ]
-    records[0].selector_tokens = 10
-    records[0].selector_evals = 3
-    records[1].selector_tokens = 20
-    records[1].selector_evals = 1
-
-    summary = summarize_records(records)
-
-    assert summary["avg_selector_tokens"] == 15.0
-    assert summary["avg_selector_evals"] == 2.0
+    assert summary["tasks"] == 3
+    assert summary["failure_tasks"] == 2
+    assert summary["recovery_success_rate"] == 0.5
+    assert summary["avg_recovery_attempts"] == 2.0
+    assert summary["avg_recovery_tokens"] == 0.0
 
 
 def test_summarize_records_by_split() -> None:
@@ -77,8 +62,8 @@ def test_summarize_records_by_split() -> None:
     summary = summarize_records_by_split(records)
 
     assert summary["train"]["tasks"] == 2
-    assert summary["train"]["success_rate"] == 0.5
     assert summary["train"]["recovery_success_rate"] == 0.5
+    assert summary["train"]["avg_recovery_attempts"] == 1.0
     assert summary["clean"]["tasks"] == 1
     assert summary["clean"]["recovery_success_rate"] == 0.0
 

@@ -55,35 +55,14 @@ def task_record(
 
 def summarize_records(records: list[TaskEvalRecord]) -> dict[str, float | int | str]:
     total = len(records)
-    success = sum(1 for record in records if record.status == "success")
     failed_tasks = [record for record in records if record.expected_error_type is not None]
     recovered = sum(1 for record in failed_tasks if record.status == "success")
-    recovered_tasks = [record for record in failed_tasks if record.status == "success"]
-    unrecovered_tasks = [record for record in failed_tasks if record.status != "success"]
     return {
         "tasks": total,
-        "success_rate": success / total if total else 0.0,
         "failure_tasks": len(failed_tasks),
         "recovery_success_rate": recovered / len(failed_tasks) if failed_tasks else 0.0,
-        "avg_recovery_attempts": _avg(record.recovery_attempts for record in records),
-        "avg_recovery_attempts_on_failure_tasks": _avg(
-            record.recovery_attempts for record in failed_tasks
-        ),
-        "avg_recovery_attempts_on_recovered": _avg(
-            record.recovery_attempts for record in recovered_tasks
-        ),
-        "avg_recovery_attempts_on_unrecovered": _avg(
-            record.recovery_attempts for record in unrecovered_tasks
-        ),
-        "avg_tool_calls": _avg(record.tool_calls for record in records),
-        "avg_tool_calls_on_failure_tasks": _avg(record.tool_calls for record in failed_tasks),
-        "avg_tool_calls_on_recovered": _avg(record.tool_calls for record in recovered_tasks),
-        "avg_tokens": _avg(record.tokens for record in records),
-        "avg_latency_ms": _avg(record.latency_ms for record in records),
-        "avg_recovery_tokens": _avg(record.recovery_tokens for record in records),
-        "avg_recovery_latency_ms": _avg(record.recovery_latency_ms for record in records),
-        "avg_selector_tokens": _avg(record.selector_tokens for record in records),
-        "avg_selector_evals": _avg(record.selector_evals for record in records),
+        "avg_recovery_attempts": _avg(record.recovery_attempts for record in failed_tasks),
+        "avg_recovery_tokens": _avg(record.recovery_tokens for record in failed_tasks),
     }
 
 

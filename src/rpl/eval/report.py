@@ -10,22 +10,17 @@ def summary_markdown(report: dict) -> str:
         "Note: controlled synthetic benchmarks validate the recovery pipeline and ranking behavior; "
         "split-level results should be used when discussing generalization.",
         "",
-        "| baseline | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls | avg_recovery_tokens | avg_recovery_latency_ms | avg_selector_tokens | avg_selector_evals |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| baseline | failure_tasks | recovery_success_rate | avg_recovery_attempts | avg_recovery_tokens |",
+        "|---|---:|---:|---:|---:|",
     ]
     for baseline, summary in report["summaries"].items():
         lines.append(
-            "| {baseline} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} | {recovery_tokens:.3f} | {recovery_latency:.3f} | {selector_tokens:.3f} | {selector_evals:.3f} |".format(
+            "| {baseline} | {failure_tasks} | {recovery:.3f} | {attempts:.3f} | {recovery_tokens:.3f} |".format(
                 baseline=baseline,
-                success=summary["success_rate"],
+                failure_tasks=summary["failure_tasks"],
                 recovery=summary["recovery_success_rate"],
                 attempts=summary["avg_recovery_attempts"],
-                recovered_attempts=summary["avg_recovery_attempts_on_recovered"],
-                calls=summary["avg_tool_calls"],
                 recovery_tokens=summary["avg_recovery_tokens"],
-                recovery_latency=summary["avg_recovery_latency_ms"],
-                selector_tokens=summary["avg_selector_tokens"],
-                selector_evals=summary["avg_selector_evals"],
             )
         )
 
@@ -33,22 +28,16 @@ def summary_markdown(report: dict) -> str:
         lines,
         title_prefix="Split",
         grouped=report.get("split_summaries", {}),
-        attempts_key="avg_recovery_attempts",
-        calls_key="avg_tool_calls",
     )
     _append_grouped_table(
         lines,
         title_prefix="Failure Type",
         grouped=report.get("failure_type_summaries", {}),
-        attempts_key="avg_recovery_attempts_on_failure_tasks",
-        calls_key="avg_tool_calls_on_failure_tasks",
     )
     _append_grouped_table(
         lines,
         title_prefix="Failure Family",
         grouped=report.get("failure_family_summaries", {}),
-        attempts_key="avg_recovery_attempts_on_failure_tasks",
-        calls_key="avg_tool_calls_on_failure_tasks",
     )
     return "\n".join(lines) + "\n"
 
@@ -58,8 +47,6 @@ def _append_grouped_table(
     *,
     title_prefix: str,
     grouped: dict,
-    attempts_key: str,
-    calls_key: str,
 ) -> None:
     group_names = sorted({group for summaries in grouped.values() for group in summaries})
     for group_name in group_names:
@@ -68,8 +55,8 @@ def _append_grouped_table(
                 "",
                 f"## {title_prefix}: {group_name}",
                 "",
-                "| baseline | tasks | success_rate | recovery_success_rate | avg_recovery_attempts | avg_recovery_attempts_on_recovered | avg_tool_calls |",
-                "|---|---:|---:|---:|---:|---:|---:|",
+                "| baseline | tasks | recovery_success_rate | avg_recovery_attempts | avg_recovery_tokens |",
+                "|---|---:|---:|---:|---:|",
             ]
         )
         for baseline, summaries in grouped.items():
@@ -77,13 +64,11 @@ def _append_grouped_table(
             if summary is None:
                 continue
             lines.append(
-                "| {baseline} | {tasks} | {success:.3f} | {recovery:.3f} | {attempts:.3f} | {recovered_attempts:.3f} | {calls:.3f} |".format(
+                "| {baseline} | {tasks} | {recovery:.3f} | {attempts:.3f} | {recovery_tokens:.3f} |".format(
                     baseline=baseline,
                     tasks=summary["tasks"],
-                    success=summary["success_rate"],
                     recovery=summary["recovery_success_rate"],
-                    attempts=summary[attempts_key],
-                    recovered_attempts=summary["avg_recovery_attempts_on_recovered"],
-                    calls=summary[calls_key],
+                    attempts=summary["avg_recovery_attempts"],
+                    recovery_tokens=summary["avg_recovery_tokens"],
                 )
             )
