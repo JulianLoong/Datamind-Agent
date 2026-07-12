@@ -14,6 +14,10 @@ class CandidateParseError(ValueError):
     pass
 
 
+class CandidateGenerationError(RuntimeError):
+    pass
+
+
 class CandidateGenerator:
     """Generate recovery candidates via an LLM-compatible interface.
 
@@ -28,11 +32,13 @@ class CandidateGenerator:
         temperature: float = 0.2,
         max_tokens: int = 512,
         tool_specs: list[BaseTool] | None = None,
+        strict_parsing: bool = False,
     ) -> None:
         self.llm_client = llm_client or FakeLLMClient()
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.tool_specs = tool_specs or []
+        self.strict_parsing = strict_parsing
         self.last_tokens_used = 0
         self.last_latency_ms = 0.0
 
@@ -46,7 +52,13 @@ class CandidateGenerator:
         self.last_latency_ms = (time.perf_counter() - started) * 1000
         try:
             candidates = parse_candidates(response.text)
-        except CandidateParseError:
+        except CandidateParseError as exc:
+            if self.strict_parsing:
+                response_preview = response.text[:500].replace("\n", "\\n")
+                raise CandidateGenerationError(
+                    "LLM candidate response could not be parsed: "
+                    f"{exc}. Response preview: {response_preview!r}"
+                ) from exc
             candidates = []
         if not candidates:
             candidates = deterministic_fallback_candidates(ctx)
@@ -61,7 +73,7 @@ class CandidateGenerator:
     ) -> str:
         tool_contract = _format_tool_contract(tool_specs or [])
         return (
-            "You are an agent recovery expert. Generate recovery candidates as a JSON array.\n"
+            "You are an agent recovery expert. Generate recovery candidates as a JSON object.\n"
             f"Candidate Count: {k}\n"
             f"Task Goal: {ctx.task_goal}\n"
             f"Current Step: {ctx.step_description}\n"
@@ -70,7 +82,8 @@ class CandidateGenerator:
             f"Error Type: {ctx.error_type}\n"
             f"Error Message: {ctx.error_message}\n"
             f"{tool_contract}"
-            "Each item must contain reasoning, action, tool_name, tool_params.\n"
+            'The object must have exactly one key, "candidates", containing an array.\n'
+            "Each candidate must contain reasoning, action, tool_name, tool_params.\n"
             "Return valid JSON only. Do not wrap the answer in markdown or prose.\n"
             "Use null for missing tool_name or tool_params.\n"
             "Only use tool_name values listed above. Do not invent tools.\n"
@@ -125,8 +138,14 @@ def parse_candidates(text: str) -> list[Candidate]:
         raw_items = json.loads(text)
     except json.JSONDecodeError as exc:
         raise CandidateParseError(str(exc)) from exc
+    if isinstance(raw_items, dict):
+        if set(raw_items) != {"candidates"}:
+            raise CandidateParseError(
+                "Candidate response object must contain exactly the 'candidates' key"
+            )
+        raw_items = raw_items["candidates"]
     if not isinstance(raw_items, list):
-        raise CandidateParseError("Candidate response must be a JSON array")
+        raise CandidateParseError("Candidate response must be an object containing an array")
 
     candidates: list[Candidate] = []
     for item in raw_items:
@@ -198,25 +217,58 @@ def deterministic_fallback_candidates(ctx: ErrorContext) -> list[Candidate]:
                 raw_text="Add the missing JSON field and retry.",
             )
         )
-    elif ctx.error_type == "division_by_zero":
-        expr = str(ctx.tool_params.get("expression", ""))
+    elif ctx.error_type == "validation_error":
+        candidates.extend(_validation_error_candidates(ctx))
+    return candidates
+
+
+def _validation_error_candidates(ctx: ErrorContext) -> list[Candidate]:
+    """Generate recovery candidates for registry parameter validation errors.
+
+    The registry produces three message shapes:
+    - ``'<field>' must be a string`` (wrong type)
+    - ``'<field>' must be one of [...]`` (wrong enum)
+    - ``Unexpected properties: [...]`` (extra property)
+    """
+    msg = ctx.error_message
+    candidates: list[Candidate] = []
+    if "must be a string" in msg:
+        parts = msg.split("'")
+        if len(parts) >= 2:
+            field = parts[1]
+            if field in ctx.tool_params:
+                val = ctx.tool_params[field]
+                repaired = val if isinstance(val, str) else json.dumps(val, ensure_ascii=False)
+                candidates.append(
+                    Candidate(
+                        reasoning=f"Parameter '{field}' has wrong type; serialize to string.",
+                        action="fix_param_type",
+                        tool_name=ctx.tool_name,
+                        tool_params={**ctx.tool_params, field: repaired},
+                        raw_text="Convert the parameter to a string and retry.",
+                    )
+                )
+    elif "must be one of" in msg and ctx.tool_name == "http_request":
         candidates.append(
             Candidate(
-                reasoning="The arithmetic expression divides by zero; replace /0 with /1.",
-                action="avoid_zero_division",
+                reasoning="Method not in allowed enum; use GET.",
+                action="fix_enum_value",
                 tool_name=ctx.tool_name,
-                tool_params={**ctx.tool_params, "expression": _repair_division_by_zero(expr)},
-                raw_text="Patch the expression to avoid zero division and retry.",
+                tool_params={**ctx.tool_params, "method": "GET"},
+                raw_text="Switch to the only allowed method and retry.",
             )
         )
-    elif ctx.error_type == "not_found":
+    elif "Unexpected properties" in msg:
+        suffix = msg.split("Unexpected properties:")[-1]
+        extra_names = [token.strip("' []") for token in suffix.split(",")]
+        new_params = {k: v for k, v in ctx.tool_params.items() if k not in extra_names}
         candidates.append(
             Candidate(
-                reasoning="The mock HTTP URL is missing; try the known health endpoint.",
-                action="try_known_fixture",
+                reasoning="Unexpected parameter present; remove it.",
+                action="remove_extra_property",
                 tool_name=ctx.tool_name,
-                tool_params={**ctx.tool_params, "url": "https://example.test/health"},
-                raw_text="Use a known mock fixture URL and retry.",
+                tool_params=new_params,
+                raw_text="Drop the unexpected parameter and retry.",
             )
         )
     return candidates
@@ -241,12 +293,6 @@ def _repair_missing_field(tool_params: dict[str, Any]) -> str:
         parsed = {}
     parsed[field] = None
     return json.dumps(parsed, ensure_ascii=False)
-
-
-def _repair_division_by_zero(expression: str) -> str:
-    if "/0" in expression:
-        return expression.replace("/0", "/1")
-    return "1"
 
 
 def pad_candidates(candidates: list[Candidate], ctx: ErrorContext, k: int) -> list[Candidate]:

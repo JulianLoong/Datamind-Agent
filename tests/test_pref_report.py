@@ -16,7 +16,7 @@ def test_preference_data_reporter_counts_sources_and_actions() -> None:
         ),
         PreferencePair(
             prompt="p",
-            chosen='{"action":"avoid_zero_division"}',
+            chosen='{"action":"fix_param_type"}',
             rejected='{"action":"retry_same_tool"}',
             source="outcome",
             confidence=0.9,

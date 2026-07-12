@@ -7,10 +7,10 @@ from rpl.recovery.types import Candidate, ErrorContext
 def test_lightweight_pref_model_trains_and_loads(tmp_path) -> None:
     prompt = "\n".join(
         [
-            "[Task Goal]: calculate",
-            "[Current Step]: math",
-            "[Failed Tool]: math_calc({'expression': '1/0'})",
-            "[Error]: division_by_zero: division by zero",
+            "[Task Goal]: parse json",
+            "[Current Step]: json",
+            "[Failed Tool]: json_parse({'text': '{\"a\":', 'field': 'a'})",
+            "[Error]: invalid_json: Expecting value",
             "[Recent History]:",
             "  - None",
         ]
@@ -18,8 +18,8 @@ def test_lightweight_pref_model_trains_and_loads(tmp_path) -> None:
     records = [
         {
             "prompt": prompt,
-            "chosen": '{"action":"avoid_zero_division","tool_name":"math_calc","tool_params":{"expression":"1/1"}}',
-            "rejected": '{"action":"retry_same_tool","tool_name":"math_calc","tool_params":{"expression":"1/0"}}',
+            "chosen": '{"action":"repair_json_payload","tool_name":"json_parse","tool_params":{"text":"{\\"a\\": null}","field":"a"}}',
+            "rejected": '{"action":"retry_same_tool","tool_name":"json_parse","tool_params":{"text":"{\\"a\\":","field":"a"}}',
             "confidence": 0.9,
         }
     ]
@@ -29,15 +29,15 @@ def test_lightweight_pref_model_trains_and_loads(tmp_path) -> None:
     model.save(path)
     loaded = LightweightPrefModel.load(path)
     ctx = ErrorContext(
-        task_goal="calculate",
-        step_description="math",
-        tool_name="math_calc",
-        tool_params={"expression": "1/0"},
-        error_type="division_by_zero",
-        error_message="division by zero",
+        task_goal="parse json",
+        step_description="json",
+        tool_name="json_parse",
+        tool_params={"text": '{"a":', "field": "a"},
+        error_type="invalid_json",
+        error_message="Expecting value",
         recent_history=[],
     )
-    good = Candidate("fix", "avoid_zero_division", "math_calc", {"expression": "1/1"}, "good")
-    bad = Candidate("retry", "retry_same_tool", "math_calc", {"expression": "1/0"}, "bad")
+    good = Candidate("repair", "repair_json_payload", "json_parse", {"text": '{"a": null}', "field": "a"}, "good")
+    bad = Candidate("retry", "retry_same_tool", "json_parse", {"text": '{"a":', "field": "a"}, "bad")
 
     assert loaded.score(ctx, good) > loaded.score(ctx, bad)

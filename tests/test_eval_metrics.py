@@ -18,6 +18,8 @@ def _record(
     tool_calls: int,
     *,
     failure_family: str | None = None,
+    recovery_tokens: int = 0,
+    selector_tokens: int = 0,
 ) -> TaskEvalRecord:
     return TaskEvalRecord(
         "pm",
@@ -30,16 +32,17 @@ def _record(
         tool_calls,
         0,
         1.0,
-        0,
+        recovery_tokens,
         0.0,
         [],
+        selector_tokens,
     )
 
 
 def test_summarize_records_reports_recovery_headline_metrics() -> None:
     records = [
-        _record("a", "train", "division_by_zero", "success", 1, 2),
-        _record("b", "train", "not_found", "failed", 3, 4),
+        _record("a", "train", "invalid_json", "success", 1, 2),
+        _record("b", "train", "missing_field", "failed", 3, 4),
         _record("c", "clean", None, "success", 0, 1),
     ]
 
@@ -49,13 +52,43 @@ def test_summarize_records_reports_recovery_headline_metrics() -> None:
     assert summary["failure_tasks"] == 2
     assert summary["recovery_success_rate"] == 0.5
     assert summary["avg_recovery_attempts"] == 2.0
-    assert summary["avg_recovery_tokens"] == 0.0
+    assert summary["avg_total_recovery_tokens"] == 0.0
+
+
+def test_summarize_records_total_recovery_tokens_adds_selector_cost() -> None:
+    records = [
+        _record(
+            "a",
+            "train",
+            "invalid_json",
+            "success",
+            1,
+            2,
+            recovery_tokens=100,
+            selector_tokens=25,
+        ),
+        _record(
+            "b",
+            "train",
+            "missing_field",
+            "failed",
+            1,
+            2,
+            recovery_tokens=200,
+            selector_tokens=75,
+        ),
+    ]
+
+    summary = summarize_records(records)
+
+    # (100+25 + 200+75) / 2 = 200
+    assert summary["avg_total_recovery_tokens"] == 200.0
 
 
 def test_summarize_records_by_split() -> None:
     records = [
-        _record("a", "train", "division_by_zero", "success", 1, 2),
-        _record("b", "train", "not_found", "failed", 1, 2),
+        _record("a", "train", "invalid_json", "success", 1, 2),
+        _record("b", "train", "missing_field", "failed", 1, 2),
         _record("c", "clean", None, "success", 0, 1),
     ]
 
@@ -70,22 +103,22 @@ def test_summarize_records_by_split() -> None:
 
 def test_summarize_records_by_failure_type_groups_clean_tasks() -> None:
     records = [
-        _record("a", "train", "division_by_zero", "success", 1, 2),
-        _record("b", "train", "not_found", "failed", 1, 2),
+        _record("a", "train", "invalid_json", "success", 1, 2),
+        _record("b", "train", "missing_field", "failed", 1, 2),
         _record("c", "clean", None, "success", 0, 1),
     ]
 
     summary = summarize_records_by_failure_type(records)
 
-    assert summary["division_by_zero"]["tasks"] == 1
-    assert summary["not_found"]["failure_tasks"] == 1
+    assert summary["invalid_json"]["tasks"] == 1
+    assert summary["missing_field"]["failure_tasks"] == 1
     assert summary["clean"]["failure_tasks"] == 0
 
 
 def test_summarize_records_by_failure_family() -> None:
     records = [
         _record(
-            "a", "train", "division_by_zero", "success", 1, 2, failure_family="semantic_param_error"
+            "a", "train", "invalid_json", "success", 1, 2, failure_family="malformed_input"
         ),
         _record("b", "train", "validation_error", "failed", 1, 2, failure_family="schema_error"),
         _record("c", "clean", None, "success", 0, 1),
@@ -93,6 +126,6 @@ def test_summarize_records_by_failure_family() -> None:
 
     summary = summarize_records_by_failure_family(records)
 
-    assert summary["semantic_param_error"]["tasks"] == 1
+    assert summary["malformed_input"]["tasks"] == 1
     assert summary["schema_error"]["failure_tasks"] == 1
     assert summary["clean"]["tasks"] == 1

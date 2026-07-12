@@ -12,30 +12,30 @@ from rpl.trajectory.store import to_json
 
 def _ctx() -> ErrorContext:
     return ErrorContext(
-        task_goal="calculate",
-        step_description="math",
-        tool_name="math_calc",
-        tool_params={"expression": "1/0"},
-        error_type="division_by_zero",
-        error_message="division by zero",
+        task_goal="parse json",
+        step_description="json",
+        tool_name="json_parse",
+        tool_params={"text": '{"a":', "field": "a"},
+        error_type="invalid_json",
+        error_message="Expecting value",
         recent_history=[],
     )
 
 
 def _record() -> ExperienceRecord:
     return ExperienceRecord(
-        tool_name="math_calc",
-        error_type="division_by_zero",
-        error_message="division by zero",
-        failed_params={"expression": "1/0"},
+        tool_name="json_parse",
+        error_type="invalid_json",
+        error_message="Expecting value",
+        failed_params={"text": '{"a":', "field": "a"},
         successful_candidate=Candidate(
-            "fix zero denominator",
-            "avoid_zero_division",
-            "math_calc",
-            {"expression": "1/1"},
-            "fix",
+            "repair malformed JSON",
+            "repair_json_payload",
+            "json_parse",
+            {"text": '{"a": null}', "field": "a"},
+            "repair",
         ),
-        final_result=ToolResult.ok(1.0),
+        final_result=ToolResult.ok(None),
     )
 
 
@@ -45,7 +45,7 @@ def test_experience_memory_retrieves_similar_record() -> None:
     matches = memory.retrieve(_ctx())
 
     assert matches
-    assert matches[0][0].successful_candidate.action == "avoid_zero_division"
+    assert matches[0][0].successful_candidate.action == "repair_json_payload"
     assert matches[0][1] > 0
 
 
@@ -56,7 +56,7 @@ def test_experience_memory_loads_successful_recovery_rows() -> None:
         "id": "recovery-1",
         "error_context_json": to_json(_ctx()),
         "chosen_candidate_json": to_json(_record().successful_candidate),
-        "final_result_json": to_json(ToolResult.ok(1.0)),
+        "final_result_json": to_json(ToolResult.ok(None)),
     }
 
     memory = ExperienceMemory.from_recovery_rows([row])
@@ -70,12 +70,12 @@ async def test_memory_prior_selector_can_override_base_selector() -> None:
     memory = ExperienceMemory([_record()])
     selector = MemoryPriorSelector(memory, DefaultSelector("first"), memory_weight=1.0)
     candidates = [
-        Candidate("retry", "retry_same_tool", "math_calc", {"expression": "1/0"}, "retry"),
-        Candidate("fix", "avoid_zero_division", "math_calc", {"expression": "1/1"}, "fix"),
+        Candidate("retry", "retry_same_tool", "json_parse", {"text": '{"a":', "field": "a"}, "retry"),
+        Candidate("repair", "repair_json_payload", "json_parse", {"text": '{"a": null}', "field": "a"}, "repair"),
     ]
 
     idx, candidate = await selector.select(_ctx(), candidates)
 
     assert idx == 1
-    assert candidate.action == "avoid_zero_division"
+    assert candidate.action == "repair_json_payload"
     assert selector.last_scores() is not None

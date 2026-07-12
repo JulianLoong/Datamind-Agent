@@ -46,6 +46,7 @@ async def run_eval(
     llm_api_key: str | None = None,
     llm_max_tokens: int = 512,
     llm_cache_path: str | Path | None = None,
+    strict_llm_candidates: bool | None = None,
     splits: list[str] | None = None,
     max_tasks: int = 0,
     repeats: int = 5,
@@ -58,6 +59,11 @@ async def run_eval(
     all_records: list[TaskEvalRecord] = []
     summaries: dict[str, dict[str, float | int | str]] = {}
     baseline_configs: dict[str, dict[str, int]] = {}
+    resolved_strict_llm_candidates = (
+        llm_provider not in {None, "fake"}
+        if strict_llm_candidates is None
+        else strict_llm_candidates
+    )
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
@@ -106,6 +112,7 @@ async def run_eval(
                 db_path=tmp_path / f"{spec.name}.db",
                 llm_client=shared_llm_client,
                 llm_max_tokens=llm_max_tokens,
+                strict_llm_candidates=resolved_strict_llm_candidates,
                 candidate_count=spec.candidate_count
                 if spec.candidate_count is not None
                 else candidate_count,
@@ -120,6 +127,7 @@ async def run_eval(
         "max_tasks": max_tasks,
         "task_count": len(tasks),
         "llm_cache_path": str(llm_cache_path) if llm_cache_path is not None else None,
+        "strict_llm_candidates": resolved_strict_llm_candidates,
         "baseline_configs": baseline_configs,
         "summaries": summaries,
         "split_summaries": {
@@ -159,6 +167,7 @@ async def _run_baseline(
     db_path: Path,
     llm_client,
     llm_max_tokens: int = 512,
+    strict_llm_candidates: bool = False,
     candidate_count: int = 3,
 ) -> list[TaskEvalRecord]:
     registry = build_builtin_registry()
@@ -172,6 +181,7 @@ async def _run_baseline(
                 llm_client,
                 max_tokens=llm_max_tokens,
                 tool_specs=registry.list_tools(),
+                strict_parsing=strict_llm_candidates,
             ),
             CandidateDedup(),
             selector,

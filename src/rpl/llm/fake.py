@@ -14,32 +14,21 @@ class FakeLLMClient(LLMClient):
         error_type = self._extract_field(request.prompt, "Error Type")
         failed_tool = self._extract_field(request.prompt, "Failed Tool")
         tool_params = self._extract_json_field(request.prompt, "Tool Params")
-        candidates = self._build_candidates(error_type, failed_tool, tool_params)
-        return LLMResponse(text=json.dumps(candidates, ensure_ascii=False), tokens_used=len(request.prompt) // 4)
+        error_message = self._extract_field(request.prompt, "Error Message")
+        candidates = self._build_candidates(error_type, failed_tool, tool_params, error_message)
+        return LLMResponse(
+            text=json.dumps({"candidates": candidates}, ensure_ascii=False),
+            tokens_used=len(request.prompt) // 4,
+        )
 
     def _build_candidates(
         self,
         error_type: str,
         failed_tool: str,
         tool_params: dict[str, Any],
+        error_message: str = "",
     ) -> list[dict[str, Any]]:
         candidates: list[dict[str, Any]] = []
-        candidates.append(
-            {
-                "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
-                "action": "retry_same_tool",
-                "tool_name": failed_tool,
-                "tool_params": tool_params,
-            }
-        )
-        candidates.append(
-            {
-                "reasoning": "No safe recovery is available within the current tool set.",
-                "action": "give_up",
-                "tool_name": None,
-                "tool_params": None,
-            }
-        )
         if error_type == "invalid_json":
             repaired_text = self._repair_json_text(tool_params)
             candidates.append(
@@ -60,23 +49,68 @@ class FakeLLMClient(LLMClient):
                     "tool_params": {**tool_params, "text": repaired_text},
                 }
             )
-        elif error_type == "division_by_zero":
-            expr = str(tool_params.get("expression", ""))
+        elif error_type == "validation_error":
+            candidates.extend(self._validation_error_candidates(failed_tool, tool_params, error_message))
+        candidates.append(
+            {
+                "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+                "action": "retry_same_tool",
+                "tool_name": failed_tool,
+                "tool_params": tool_params,
+            }
+        )
+        candidates.append(
+            {
+                "reasoning": "No safe recovery is available within the current tool set.",
+                "action": "give_up",
+                "tool_name": None,
+                "tool_params": None,
+            }
+        )
+        return candidates
+
+    @staticmethod
+    def _validation_error_candidates(
+        failed_tool: str,
+        tool_params: dict[str, Any],
+        error_message: str,
+    ) -> list[dict[str, Any]]:
+        msg = error_message
+        candidates: list[dict[str, Any]] = []
+        if "must be a string" in msg:
+            parts = msg.split("'")
+            if len(parts) >= 2:
+                field = parts[1]
+                if field in tool_params:
+                    val = tool_params[field]
+                    repaired = val if isinstance(val, str) else json.dumps(val, ensure_ascii=False)
+                    candidates.append(
+                        {
+                            "reasoning": f"Parameter '{field}' has wrong type; serialize to string.",
+                            "action": "fix_param_type",
+                            "tool_name": failed_tool,
+                            "tool_params": {**tool_params, field: repaired},
+                        }
+                    )
+        elif "must be one of" in msg and failed_tool == "http_request":
             candidates.append(
                 {
-                    "reasoning": "The expression divides by zero; replace the zero denominator.",
-                    "action": "avoid_zero_division",
+                    "reasoning": "Method not in allowed enum; use GET.",
+                    "action": "fix_enum_value",
                     "tool_name": failed_tool,
-                    "tool_params": {**tool_params, "expression": self._repair_division_by_zero(expr)},
+                    "tool_params": {**tool_params, "method": "GET"},
                 }
             )
-        elif error_type == "not_found":
+        elif "Unexpected properties" in msg:
+            suffix = msg.split("Unexpected properties:")[-1]
+            extra_names = [token.strip("' []") for token in suffix.split(",")]
+            new_params = {k: v for k, v in tool_params.items() if k not in extra_names}
             candidates.append(
                 {
-                    "reasoning": "The URL fixture is missing; use a known health-check fixture.",
-                    "action": "try_known_fixture",
+                    "reasoning": "Unexpected parameter present; remove it.",
+                    "action": "remove_extra_property",
                     "tool_name": failed_tool,
-                    "tool_params": {**tool_params, "url": "https://example.test/health"},
+                    "tool_params": new_params,
                 }
             )
         return candidates
@@ -101,12 +135,6 @@ class FakeLLMClient(LLMClient):
             value = {}
         value[field] = None
         return json.dumps(value, ensure_ascii=False)
-
-    @staticmethod
-    def _repair_division_by_zero(expression: str) -> str:
-        if "/0" in expression:
-            return expression.replace("/0", "/1")
-        return "1"
 
     @staticmethod
     def _extract_field(prompt: str, field: str) -> str:

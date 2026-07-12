@@ -10,17 +10,17 @@ def summary_markdown(report: dict) -> str:
         "Note: controlled synthetic benchmarks validate the recovery pipeline and ranking behavior; "
         "split-level results should be used when discussing generalization.",
         "",
-        "| baseline | failure_tasks | recovery_success_rate | avg_recovery_attempts | avg_recovery_tokens |",
+        "| baseline | failure_tasks | recovery_success_rate | avg_recovery_attempts | avg_total_recovery_tokens |",
         "|---|---:|---:|---:|---:|",
     ]
     for baseline, summary in report["summaries"].items():
         lines.append(
-            "| {baseline} | {failure_tasks} | {recovery:.3f} | {attempts:.3f} | {recovery_tokens:.3f} |".format(
+            "| {baseline} | {failure_tasks} | {recovery:.3f} | {attempts:.3f} | {total_tokens:.3f} |".format(
                 baseline=baseline,
                 failure_tasks=summary["failure_tasks"],
                 recovery=summary["recovery_success_rate"],
                 attempts=summary["avg_recovery_attempts"],
-                recovery_tokens=summary["avg_recovery_tokens"],
+                total_tokens=summary["avg_total_recovery_tokens"],
             )
         )
 
@@ -55,7 +55,7 @@ def _append_grouped_table(
                 "",
                 f"## {title_prefix}: {group_name}",
                 "",
-                "| baseline | tasks | recovery_success_rate | avg_recovery_attempts | avg_recovery_tokens |",
+                "| baseline | tasks | recovery_success_rate | avg_recovery_attempts | avg_total_recovery_tokens |",
                 "|---|---:|---:|---:|---:|",
             ]
         )
@@ -64,11 +64,11 @@ def _append_grouped_table(
             if summary is None:
                 continue
             lines.append(
-                "| {baseline} | {tasks} | {recovery:.3f} | {attempts:.3f} | {recovery_tokens:.3f} |".format(
+                "| {baseline} | {tasks} | {recovery:.3f} | {attempts:.3f} | {total_tokens:.3f} |".format(
                     baseline=baseline,
                     tasks=summary["tasks"],
                     recovery=summary["recovery_success_rate"],
                     attempts=summary["avg_recovery_attempts"],
-                    recovery_tokens=summary["avg_recovery_tokens"],
+                    total_tokens=summary["avg_total_recovery_tokens"],
                 )
             )

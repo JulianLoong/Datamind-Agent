@@ -62,7 +62,9 @@ def summarize_records(records: list[TaskEvalRecord]) -> dict[str, float | int | 
         "failure_tasks": len(failed_tasks),
         "recovery_success_rate": recovered / len(failed_tasks) if failed_tasks else 0.0,
         "avg_recovery_attempts": _avg(record.recovery_attempts for record in failed_tasks),
-        "avg_recovery_tokens": _avg(record.recovery_tokens for record in failed_tasks),
+        "avg_total_recovery_tokens": _avg(
+            record.recovery_tokens + record.selector_tokens for record in failed_tasks
+        ),
     }
 
 

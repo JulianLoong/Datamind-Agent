@@ -4,6 +4,8 @@ import pytest
 
 from rpl.eval import run_eval_sync
 from rpl.eval.runner import _resolve_pm_path, parse_pm_path_items
+from rpl.llm import LLMClient, LLMRequest, LLMResponse
+from rpl.recovery.candidate_gen import CandidateGenerationError
 
 
 def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
@@ -146,3 +148,38 @@ def test_eval_runner_candidate_count_param(tmp_path) -> None:
     ]
     assert candidate_counts, "expected at least one recovery attempt with candidates"
     assert max(candidate_counts) <= 2
+
+
+def test_eval_runner_records_strict_real_llm_setting(tmp_path) -> None:
+    report = run_eval_sync(
+        baseline_names=["first"],
+        llm_provider="fake",
+        strict_llm_candidates=True,
+        max_tasks=1,
+        repeats=1,
+        output_path=tmp_path / "eval.json",
+    )
+
+    assert report["strict_llm_candidates"] is True
+
+
+def test_eval_runner_real_provider_fails_fast_on_malformed_candidates(
+    tmp_path, monkeypatch
+) -> None:
+    class MalformedClient(LLMClient):
+        async def complete(self, request: LLMRequest) -> LLMResponse:
+            return LLMResponse(text="not-json", tokens_used=3)
+
+    monkeypatch.setattr(
+        "rpl.eval.runner.build_llm_client",
+        lambda **kwargs: MalformedClient(),
+    )
+
+    with pytest.raises(CandidateGenerationError, match="not-json"):
+        run_eval_sync(
+            baseline_names=["first"],
+            llm_provider="openai_compatible",
+            max_tasks=1,
+            repeats=1,
+            output_path=tmp_path / "eval.json",
+        )

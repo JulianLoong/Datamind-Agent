@@ -7,9 +7,9 @@ from rpl.pref_data.dpo_data import build_dpo_prompt, export_trl_dpo_jsonl, to_tr
 
 def test_to_trl_dpo_record_converts_pair() -> None:
     record = {
-        "prompt": "[Error]: division_by_zero: division by zero",
-        "chosen": '{"action":"avoid_zero_division","tool_name":"math_calc","tool_params":{"expression":"1/1"}}',
-        "rejected": '{"action":"retry_same_tool","tool_name":"math_calc","tool_params":{"expression":"1/0"}}',
+        "prompt": "[Error]: invalid_json: Expecting value",
+        "chosen": '{"action":"repair_json_payload","tool_name":"json_parse","tool_params":{"text":"{}"}}',
+        "rejected": '{"action":"retry_same_tool","tool_name":"json_parse","tool_params":{"text":"{"}}',
     }
 
     converted = to_trl_dpo_record(record)
@@ -17,8 +17,8 @@ def test_to_trl_dpo_record_converts_pair() -> None:
     assert "prompt" in converted
     assert "chosen" in converted
     assert "rejected" in converted
-    assert "division_by_zero" in converted["prompt"]
-    assert "avoid_zero_division" in converted["chosen"]
+    assert "invalid_json" in converted["prompt"]
+    assert "repair_json_payload" in converted["chosen"]
 
 
 def test_export_trl_dpo_jsonl(tmp_path) -> None:

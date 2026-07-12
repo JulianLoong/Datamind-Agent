@@ -10,17 +10,17 @@ from rpl.recovery.types import Candidate, ErrorContext
 @pytest.mark.asyncio
 async def test_pm_selector_prefers_specific_repair() -> None:
     ctx = ErrorContext(
-        task_goal="calculate",
-        step_description="math",
-        tool_name="math_calc",
-        tool_params={"expression": "1/0"},
-        error_type="division_by_zero",
-        error_message="division by zero",
+        task_goal="parse json",
+        step_description="json",
+        tool_name="json_parse",
+        tool_params={"text": '{"a":', "field": "a"},
+        error_type="invalid_json",
+        error_message="Expecting value",
         recent_history=[],
     )
     candidates = [
-        Candidate("retry", "retry_same_tool", "math_calc", {"expression": "1/0"}, "retry"),
-        Candidate("fix", "avoid_zero_division", "math_calc", {"expression": "1/1"}, "fix"),
+        Candidate("retry", "retry_same_tool", "json_parse", {"text": '{"a":', "field": "a"}, "retry"),
+        Candidate("repair", "repair_json_payload", "json_parse", {"text": '{"a": null}', "field": "a"}, "repair"),
         Candidate("stop", "give_up", None, None, "stop"),
     ]
     selector = PMSelector(MockPrefModel())
@@ -28,5 +28,5 @@ async def test_pm_selector_prefers_specific_repair() -> None:
     idx, candidate = await selector.select(ctx, candidates)
 
     assert idx == 1
-    assert candidate.action == "avoid_zero_division"
+    assert candidate.action == "repair_json_payload"
     assert selector.last_scores() is not None

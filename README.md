@@ -134,45 +134,34 @@ checkpoints in one report.
 ## Real LLM candidate evaluation
 
 To validate recovery ranking under a non-deterministic candidate generator, point the runtime at an
-OpenAI-compatible chat completions API. Zhipu GLM 5.1 is supported through the same path. This is
-the P5 entry point for comparing PM and memory behavior when candidate generation is no longer
-deterministic:
-
-```bash
-export ZHIPU_API_KEY=...
-PYTHONPATH=src python3 scripts/run_real_llm_eval.py \
-  --benchmark recovery_gym \
-  --llm-provider glm \
-  --llm-model glm-5.1 \
-  --llm-base-url https://open.bigmodel.cn/api/paas/v4 \
-  --memory-db data/trajectories.db \
-  --llm-cache data/eval/real_llm_candidates_cache.jsonl \
-  --repeats 1 \
-  --out data/eval/real_llm_recovery.json
-```
-
-The same `PMSelector` and `MemoryPriorSelector` paths are used; only the candidate generator
-changes. For fair final comparisons, use `--llm-cache` to replay the same real-LLM generated
-candidates across selectors.
-
-On this Windows workspace, run DPO_PM real-LLM evals through the project virtual environment instead
-of relying on the active shell's `python` or `python3`. The wrapper below pins execution to
-`.venv\Scripts\python.exe`, sets `PYTHONPATH`, and verifies that `torch`, `transformers`, and `peft`
-come from the DPO-capable environment before the eval starts:
+OpenAI-compatible chat completions API. The current selector protocol is `llm_greedy`,
+`llm_self_pick`, and `dpo_pm`, all with one recovery attempt. The generated main benchmark defaults
+to the `test_unseen` and `clean` splits; RecoveryGym defaults to all splits.
 
 ```powershell
 $env:DEEPSEEK_API_KEY="..."
 .\scripts\run_real_llm_dpo_pm_eval.ps1 `
   -LlmModel deepseek-chat `
-  -LlmBaseUrl https://api.deepseek.com `
-  -LlmCache data/eval/real_llm_deepseek_candidates_v3.jsonl `
-  -MaxTasks 8 `
-  -Out data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json
+  -LlmBaseUrl https://api.deepseek.com
 ```
 
-The wrapper defaults to `random_r3` versus `dpo_pm_r3`, so both methods use the same
-three-retry recovery budget. DPO_PM is re-scored after each failed recovery attempt against the new
-`ErrorContext` and the newly generated, validator-filtered candidates.
+That command runs the 110-task main controlled evaluation and writes
+`data/eval/real_llm_main.json`. Run RecoveryGym with a separate cache and output:
+
+```powershell
+.\scripts\run_real_llm_dpo_pm_eval.ps1 `
+  -Benchmark recovery_gym `
+  -LlmModel deepseek-chat `
+  -LlmBaseUrl https://api.deepseek.com `
+  -LlmCache data/eval/real_llm_recovery_gym_candidates_v2.jsonl `
+  -Out data/eval/real_llm_recovery_gym.json
+```
+
+The wrapper pins execution to `.venv\Scripts\python.exe`, verifies the DPO dependencies, and reuses
+one candidate cache across selectors. Malformed real-LLM candidate responses stop the evaluation by
+default. `run_real_llm_eval.py --allow-candidate-fallback` is available only for diagnostic runs;
+do not use it for reported results. New candidate responses use
+`{"candidates": [...]}` while legacy array-only cache entries remain readable.
 
 For GLM 5.1, the real path should disable thinking and request JSON output. The current Zhipu
 provider does this automatically.
@@ -216,7 +205,7 @@ PYTHONPATH=src python3 scripts/export_dpo_data.py \
 
 PYTHONPATH=src python3 scripts/run_eval.py \
   --benchmark recovery_bench_generated \
-  --baselines no_recovery first random lightweight_pm \
+  --baselines first random lightweight_pm \
   --pm-path data/pm_checkpoints/lightweight_pm_generated.json \
   --repeats 1 \
   --out data/eval/generated_lightweight.json

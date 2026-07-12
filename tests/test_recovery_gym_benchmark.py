@@ -14,7 +14,7 @@ def test_recovery_gym_has_family_and_generalization_splits() -> None:
     assert "seen_tool_new_error_message" in splits
     assert "new_tool_same_family" in splits
     assert "clean" in splits
-    assert {"schema_error", "malformed_input", "semantic_param_error", "unavailable_resource", "permission_error"} <= families
+    assert {"schema_error", "malformed_input"} <= families
     assert len({task.goal for task in tasks}) == len(tasks)
 
 

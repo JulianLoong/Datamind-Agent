@@ -39,13 +39,15 @@ class MockPrefModel(PrefModel):
             score -= 2.0
         if candidate.tool_name is not None and candidate.tool_params is not None:
             score += 1.0
-        if error_context.error_type == "division_by_zero" and candidate.action == "avoid_zero_division":
-            score += 5.0
         if error_context.error_type == "invalid_json" and candidate.action == "repair_json_payload":
             score += 5.0
         if error_context.error_type == "missing_field" and candidate.action == "add_missing_json_field":
             score += 5.0
-        if error_context.error_type == "not_found" and candidate.action == "try_known_fixture":
+        if error_context.error_type == "validation_error" and candidate.action in {
+            "fix_param_type",
+            "fix_enum_value",
+            "remove_extra_property",
+        }:
             score += 5.0
         return score
 

@@ -14,16 +14,68 @@ class BenchmarkTask:
     metadata: dict[str, Any] | None = None
 
 
+def _structured_goal(description: str, tool_name: str, params: dict[str, Any]) -> str:
+    return "rpl_task " + json.dumps(
+        {
+            "description": description,
+            "tool_name": tool_name,
+            "params": params,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+
+
 RECOVERY_BENCH_LITE: list[BenchmarkTask] = [
-    BenchmarkTask("calculate math divide by zero", "division_by_zero", "train"),
-    BenchmarkTask("fetch missing http", "not_found", "train"),
-    BenchmarkTask("parse invalid json", "invalid_json", "train"),
-    BenchmarkTask("calculate math divide by zero case 2", "division_by_zero", "test_seen"),
-    BenchmarkTask("fetch missing http 404", "not_found", "test_seen"),
-    BenchmarkTask("parse bad json", "invalid_json", "test_seen"),
-    BenchmarkTask("calculate math", None, "clean"),
-    BenchmarkTask("fetch http", None, "clean"),
-    BenchmarkTask("parse json", None, "clean"),
+    BenchmarkTask(
+        _structured_goal("Parse invalid JSON", "json_parse", {"text": '{"a":}', "field": "a"}),
+        "invalid_json",
+        "train",
+    ),
+    BenchmarkTask(
+        _structured_goal("Parse JSON missing field", "json_parse", {"text": '{"other": 1}', "field": "target"}),
+        "missing_field",
+        "train",
+    ),
+    BenchmarkTask(
+        _structured_goal("Evaluate math with wrong type", "math_calc", {"expression": 42}),
+        "validation_error",
+        "train",
+    ),
+    BenchmarkTask(
+        _structured_goal("Parse malformed JSON variant", "json_parse", {"text": "{broken: true}", "field": "broken"}),
+        "invalid_json",
+        "test_seen",
+    ),
+    BenchmarkTask(
+        _structured_goal("Parse JSON missing other field", "json_parse", {"text": '{"x": 2}', "field": "y"}),
+        "missing_field",
+        "test_seen",
+    ),
+    BenchmarkTask(
+        _structured_goal(
+            "Fetch HTTP with wrong method",
+            "http_request",
+            {"url": "https://example.test/health", "method": "POST"},
+        ),
+        "validation_error",
+        "test_seen",
+    ),
+    BenchmarkTask(
+        _structured_goal("Evaluate clean math", "math_calc", {"expression": "1+1"}),
+        None,
+        "clean",
+    ),
+    BenchmarkTask(
+        _structured_goal("Fetch clean HTTP", "http_request", {"url": "https://example.test/health"}),
+        None,
+        "clean",
+    ),
+    BenchmarkTask(
+        _structured_goal("Parse clean JSON", "json_parse", {"text": '{"v": 1}', "field": "v"}),
+        None,
+        "clean",
+    ),
 ]
 
 
@@ -45,8 +97,12 @@ def generate_recovery_gym(
 ) -> list[BenchmarkTask]:
     """Build executable recovery episodes with explicit generalization splits.
 
-    The gym is still deterministic and local, but each task is annotated with a failure family so
-    evaluation can separate parameter-level generalization from new messages and same-family tools.
+    Two failure families are covered:
+    - ``malformed_input``: recoverable JSON syntax errors.
+    - ``schema_error``: parameter validation failures (wrong type, wrong enum, extra property).
+
+    Each error message returned by the registry is information-dense enough that a real LLM
+    can infer the correct repair action from the prompt alone (no hidden internal state).
     """
 
     tasks: list[BenchmarkTask] = []
@@ -70,20 +126,17 @@ def generate_recovery_gym(
 def _recovery_gym_family_tasks(idx: int, split: str, *, offset: int) -> list[BenchmarkTask]:
     item = offset + idx
     return [
-        _gym_math_semantic_param_task(item, split),
         _gym_json_malformed_input_task(item, split),
         _gym_json_schema_task(item, split),
-        _gym_http_unavailable_resource_task(item, split),
         _gym_http_schema_task(item, split),
-        _gym_file_permission_task(item, split),
+        _gym_extra_property_task(item, split),
     ]
 
 
 def _recovery_gym_new_tool_same_family_tasks(idx: int, *, offset: int) -> list[BenchmarkTask]:
     item = offset + idx
     return [
-        _gym_file_unavailable_resource_task(item, "new_tool_same_family"),
-        _gym_math_malformed_input_task(item, "new_tool_same_family"),
+        _gym_math_wrong_type_task(item, "new_tool_same_family"),
     ]
 
 
@@ -100,53 +153,17 @@ def generate_recovery_bench(
     ]:
         for i in range(count):
             idx = offset + i
-            tasks.append(_math_div_zero_task(idx, split))
-            tasks.append(_http_not_found_task(idx, split))
             tasks.append(_json_invalid_task(idx, split))
             tasks.append(_json_missing_field_task(idx, split))
+            tasks.append(_math_wrong_type_task(idx, split))
+            tasks.append(_http_wrong_method_task(idx, split))
+            tasks.append(_json_extra_property_task(idx, split))
 
     for i in range(clean_per_type):
         tasks.append(_math_clean_task(i))
         tasks.append(_http_clean_task(i))
         tasks.append(_json_clean_task(i))
     return tasks
-
-
-def _structured_goal(description: str, tool_name: str, params: dict[str, Any]) -> str:
-    return "rpl_task " + json.dumps(
-        {
-            "description": description,
-            "tool_name": tool_name,
-            "params": params,
-        },
-        ensure_ascii=False,
-        sort_keys=True,
-    )
-
-
-def _math_div_zero_task(idx: int, split: str) -> BenchmarkTask:
-    numerator = idx + 3
-    expressions = [
-        f"{numerator}/0",
-        f"({numerator} + 2)/0",
-        f"{numerator}/(2-2)",
-        f"({numerator} * 3)/(5-5)",
-    ]
-    expression = expressions[idx % len(expressions)]
-    return BenchmarkTask(
-        _structured_goal("Evaluate generated arithmetic expression", "math_calc", {"expression": expression}),
-        "division_by_zero",
-        split,
-    )
-
-
-def _http_not_found_task(idx: int, split: str) -> BenchmarkTask:
-    url = f"https://example.test/missing/{idx}"
-    return BenchmarkTask(
-        _structured_goal("Fetch generated missing mock HTTP URL", "http_request", {"url": url}),
-        "not_found",
-        split,
-    )
 
 
 def _json_invalid_task(idx: int, split: str) -> BenchmarkTask:
@@ -181,9 +198,52 @@ def _json_missing_field_task(idx: int, split: str) -> BenchmarkTask:
     )
 
 
+def _math_wrong_type_task(idx: int, split: str) -> BenchmarkTask:
+    return BenchmarkTask(
+        _structured_goal(
+            "Evaluate arithmetic expression with wrong type",
+            "math_calc",
+            {"expression": idx},
+        ),
+        "validation_error",
+        split,
+    )
+
+
+def _http_wrong_method_task(idx: int, split: str) -> BenchmarkTask:
+    methods = ["POST", "PUT", "DELETE"]
+    urls = ["https://example.test/health", "https://example.test/users/1"]
+    return BenchmarkTask(
+        _structured_goal(
+            "Fetch HTTP fixture with unsupported method",
+            "http_request",
+            {"url": urls[idx % len(urls)], "method": methods[idx % len(methods)]},
+        ),
+        "validation_error",
+        split,
+    )
+
+
+def _json_extra_property_task(idx: int, split: str) -> BenchmarkTask:
+    field = f"value_{idx}"
+    return BenchmarkTask(
+        _structured_goal(
+            "Parse JSON with unexpected parameter",
+            "json_parse",
+            {"text": json.dumps({field: idx}), "field": field, "bogus": "extra"},
+        ),
+        "validation_error",
+        split,
+    )
+
+
 def _math_clean_task(idx: int) -> BenchmarkTask:
     return BenchmarkTask(
-        _structured_goal("Evaluate clean generated arithmetic expression", "math_calc", {"expression": f"{idx}+{idx + 1}"}),
+        _structured_goal(
+            "Evaluate clean generated arithmetic expression",
+            "math_calc",
+            {"expression": f"{idx}+{idx + 1}"},
+        ),
         None,
         "clean",
     )
@@ -235,40 +295,6 @@ def _gym_task(
     )
 
 
-def _gym_math_semantic_param_task(idx: int, split: str) -> BenchmarkTask:
-    expressions = [
-        f"{idx + 5}/0",
-        f"({idx + 7})/(3-3)",
-        f"({idx + 2} * 4)/(8-8)",
-    ]
-    return _gym_task(
-        description="Evaluate arithmetic expression with semantic parameter failure",
-        tool_name="math_calc",
-        params={"expression": expressions[idx % len(expressions)]},
-        expected_error_type="division_by_zero",
-        split=split,
-        failure_family="semantic_param_error",
-        idx=idx,
-    )
-
-
-def _gym_math_malformed_input_task(idx: int, split: str) -> BenchmarkTask:
-    expressions = [
-        f"{idx}+",
-        f"sqrt({idx})",
-        f"{idx} + unknown",
-    ]
-    return _gym_task(
-        description="Evaluate malformed arithmetic expression",
-        tool_name="math_calc",
-        params={"expression": expressions[idx % len(expressions)]},
-        expected_error_type="invalid_expression",
-        split=split,
-        failure_family="malformed_input",
-        idx=idx,
-    )
-
-
 def _gym_json_malformed_input_task(idx: int, split: str) -> BenchmarkTask:
     field = f"value_{idx}"
     payloads = [
@@ -299,23 +325,13 @@ def _gym_json_schema_task(idx: int, split: str) -> BenchmarkTask:
     )
 
 
-def _gym_http_unavailable_resource_task(idx: int, split: str) -> BenchmarkTask:
-    return _gym_task(
-        description="Fetch unavailable mock HTTP fixture",
-        tool_name="http_request",
-        params={"url": f"https://example.test/archive/{idx}"},
-        expected_error_type="not_found",
-        split=split,
-        failure_family="unavailable_resource",
-        idx=idx,
-    )
-
-
 def _gym_http_schema_task(idx: int, split: str) -> BenchmarkTask:
+    methods = ["POST", "PUT", "DELETE"]
+    urls = ["https://example.test/health", "https://example.test/users/1"]
     return _gym_task(
         description="Fetch HTTP fixture with unsupported method",
         tool_name="http_request",
-        params={"url": f"https://example.test/health/{idx}", "method": "POST"},
+        params={"url": urls[idx % len(urls)], "method": methods[idx % len(methods)]},
         expected_error_type="validation_error",
         split=split,
         failure_family="schema_error",
@@ -323,25 +339,26 @@ def _gym_http_schema_task(idx: int, split: str) -> BenchmarkTask:
     )
 
 
-def _gym_file_permission_task(idx: int, split: str) -> BenchmarkTask:
+def _gym_extra_property_task(idx: int, split: str) -> BenchmarkTask:
+    field = f"value_{idx}"
     return _gym_task(
-        description="Read file path that escapes sandbox",
-        tool_name="file_read",
-        params={"path": f"../secret_{idx}.txt"},
-        expected_error_type="permission_denied",
+        description="Parse JSON with unexpected parameter",
+        tool_name="json_parse",
+        params={"text": json.dumps({field: idx}), "field": field, "bogus": "extra"},
+        expected_error_type="validation_error",
         split=split,
-        failure_family="permission_error",
+        failure_family="schema_error",
         idx=idx,
     )
 
 
-def _gym_file_unavailable_resource_task(idx: int, split: str) -> BenchmarkTask:
+def _gym_math_wrong_type_task(idx: int, split: str) -> BenchmarkTask:
     return _gym_task(
-        description="Read missing sandbox file",
-        tool_name="file_read",
-        params={"path": f"missing/{idx}.txt"},
-        expected_error_type="file_not_found",
+        description="Evaluate arithmetic expression with wrong type",
+        tool_name="math_calc",
+        params={"expression": idx},
+        expected_error_type="validation_error",
         split=split,
-        failure_family="unavailable_resource",
+        failure_family="schema_error",
         idx=idx,
     )

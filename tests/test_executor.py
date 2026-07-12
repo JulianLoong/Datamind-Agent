@@ -37,7 +37,7 @@ async def test_executor_runs_success_task(tmp_path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_executor_recovers_division_by_zero(tmp_path) -> None:
+async def test_executor_recovers_invalid_json(tmp_path) -> None:
     registry = build_builtin_registry()
     store = TrajectoryStore(tmp_path / "trajectories.db")
     collector = TrajectoryCollector(store)
@@ -50,9 +50,9 @@ async def test_executor_recovers_division_by_zero(tmp_path) -> None:
     )
     executor = Executor(registry, RuleBasedPlanner(), recovery, collector)
 
-    result = await executor.run_task("calculate math divide by zero", max_retries_per_step=1)
+    goal = 'rpl_task {"description": "Parse invalid JSON", "tool_name": "json_parse", "params": {"text": "{bad json", "field": "value"}}'
+    result = await executor.run_task(goal, max_retries_per_step=1)
 
     assert result.status == "success"
     assert result.steps[0].recovery_attempts
-    assert result.steps[0].params == {"expression": "1/1"}
     assert store.query_recovery_attempts(result.task_id)

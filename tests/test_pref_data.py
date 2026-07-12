@@ -26,7 +26,10 @@ async def test_preference_extractor_exports_pairs(tmp_path) -> None:
         ),
         TrajectoryCollector(store),
     )
-    await executor.run_task("calculate math divide by zero", max_retries_per_step=1)
+    await executor.run_task(
+        'rpl_task {"description": "Parse invalid JSON", "tool_name": "json_parse", "params": {"text": "{bad json", "field": "value"}}',
+        max_retries_per_step=1,
+    )
 
     pairs = DataQualityFilter().filter(PreferenceExtractor().extract(store))
     assert pairs

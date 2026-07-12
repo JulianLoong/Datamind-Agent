@@ -50,27 +50,21 @@ class RuleBasedPlanner(Planner):
                 params["text"] = "{bad json"
             return [Step(index=0, description="Parse JSON content", tool_name="json_parse", params=params)]
         if "math" in goal or "calculate" in goal:
-            expression = "1 + 2"
-            if "divide" in goal or "zero" in goal:
-                expression = "1/0"
             return [
                 Step(
                     index=0,
                     description="Evaluate arithmetic expression",
                     tool_name="math_calc",
-                    params={"expression": expression},
+                    params={"expression": "1 + 2"},
                 )
             ]
         if "http" in goal or "fetch" in goal:
-            url = "https://example.test/users/1"
-            if "missing" in goal or "404" in goal:
-                url = "https://example.test/missing"
             return [
                 Step(
                     index=0,
                     description="Fetch mock HTTP URL",
                     tool_name="http_request",
-                    params={"url": url},
+                    params={"url": "https://example.test/users/1"},
                 )
             ]
         return [Step(index=0, description="Default health check", tool_name="http_request", params={"url": "https://example.test/health"})]

@@ -76,22 +76,19 @@ PYTHONPATH=src python3 scripts/train_dpo_pm.py \
 ```bash
 PYTHONPATH=src python3 scripts/run_eval.py \
   --benchmark recovery_bench_lite \
-  --baselines no_recovery random fixed_retry dpo_pm_r3 \
-  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
+  --baselines llm_greedy llm_self_pick dpo_pm \
+  --pm-paths dpo_pm=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
   --repeats 1 \
   --out data/eval/dpo_pm_outcomes_lite.json
 ```
 
 ### Step 4：主实验
 
-```bash
-PYTHONPATH=src python3 scripts/run_eval.py \
-  --benchmark recovery_bench_generated \
-  --baselines no_recovery random fixed_retry dpo_pm_r3 \
-  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
-  --splits test_unseen clean \
-  --repeats 1 \
-  --out data/eval/dpo_pm_outcomes_generated.json
+```powershell
+$env:DEEPSEEK_API_KEY="..."
+.\scripts\run_real_llm_dpo_pm_eval.ps1 `
+  -LlmModel deepseek-chat `
+  -LlmBaseUrl https://api.deepseek.com
 ```
 
 主表关注：
@@ -103,12 +100,13 @@ PYTHONPATH=src python3 scripts/run_eval.py \
 
 ### Step 5：补充 RecoveryGym
 
-```bash
-PYTHONPATH=src python3 scripts/run_recovery_gym_eval.py \
-  --baselines no_recovery fixed_retry random dpo_pm_r3 \
-  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes \
-  --repeats 1 \
-  --out data/eval/dpo_pm_outcomes_recovery_gym.json
+```powershell
+.\scripts\run_real_llm_dpo_pm_eval.ps1 `
+  -Benchmark recovery_gym `
+  -LlmModel deepseek-chat `
+  -LlmBaseUrl https://api.deepseek.com `
+  -LlmCache data/eval/real_llm_recovery_gym_candidates_v2.jsonl `
+  -Out data/eval/real_llm_recovery_gym.json
 ```
 
 RecoveryGym 只作为补充。若 DPO_PM 表现不佳，应重点分析候选覆盖、failure family 和数据分布，不直接否定主方法。
@@ -270,7 +268,8 @@ Implementation note:
   analysis after rerunning real-LLM evals.
 - Real-LLM eval now supports `--llm-cache path.jsonl`. Use it when comparing selectors so
   `fixed_retry`, `dpo_pm_r3`, and other baselines replay the same LLM-generated candidate sets.
-- The 2026-07-05 eval wrapper defaults to `fixed_retry` versus `dpo_pm_r3`, records
+- The retired 2026-07-05 eval wrapper used `fixed_retry` versus `dpo_pm_r3`; the current wrapper
+  defaults to `llm_greedy`, `llm_self_pick`, and `dpo_pm`, and records
   `baseline_configs`, and constrains real-LLM candidate prompts with the available tool schemas.
 
 Remaining work:

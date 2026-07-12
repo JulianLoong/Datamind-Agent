@@ -18,20 +18,20 @@ class _StubClient(LLMClient):
 
 def _ctx() -> ErrorContext:
     return ErrorContext(
-        task_goal="calculate",
-        step_description="math",
-        tool_name="math_calc",
-        tool_params={"expression": "1/0"},
-        error_type="division_by_zero",
-        error_message="division by zero",
+        task_goal="parse json",
+        step_description="json",
+        tool_name="json_parse",
+        tool_params={"text": '{"a":', "field": "a"},
+        error_type="invalid_json",
+        error_message="Expecting value",
         recent_history=[],
     )
 
 
 def _candidates() -> list[Candidate]:
     return [
-        Candidate("retry", "retry_same_tool", "math_calc", {"expression": "1/0"}, "retry"),
-        Candidate("fix", "avoid_zero_division", "math_calc", {"expression": "1/1"}, "fix"),
+        Candidate("retry", "retry_same_tool", "json_parse", {"text": '{"a":', "field": "a"}, "retry"),
+        Candidate("repair", "repair_json_payload", "json_parse", {"text": '{"a": null}', "field": "a"}, "repair"),
         Candidate("stop", "give_up", None, None, "stop"),
     ]
 
@@ -43,7 +43,7 @@ async def test_llm_self_selector_picks_returned_index() -> None:
     idx, candidate = await selector.select(_ctx(), _candidates())
 
     assert idx == 1
-    assert candidate.action == "avoid_zero_division"
+    assert candidate.action == "repair_json_payload"
     assert selector.last_scores() == [0.0, 1.0, 0.0]
     cost = selector.last_cost()
     assert cost.selector_tokens == 7

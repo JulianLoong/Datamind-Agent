@@ -1,6 +1,6 @@
 param(
-    [string]$Benchmark = "recovery_bench_lite",
-    [string[]]$Baselines = @("random_r3", "dpo_pm_r3"),
+    [string]$Benchmark = "recovery_bench_generated",
+    [string[]]$Baselines = @("llm_greedy", "llm_self_pick", "dpo_pm"),
     [string]$DpoBaseModel = "Qwen/Qwen2.5-0.5B-Instruct",
     [string]$DpoAdapterPath = "data/pm_checkpoints/dpo_pm_outcomes",
     [string]$LlmProvider = "openai_compatible",
@@ -9,11 +9,11 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$LlmBaseUrl,
     [string]$LlmApiKey = $env:DEEPSEEK_API_KEY,
-    [int]$LlmMaxTokens = 512,
-    [string]$LlmCache = "data/eval/real_llm_deepseek_candidates_v3.jsonl",
-    [int]$MaxTasks = 8,
+    [int]$LlmMaxTokens = 1024,
+    [string]$LlmCache = "data/eval/real_llm_main_candidates_v2.jsonl",
+    [int]$MaxTasks = 0,
     [int]$Repeats = 1,
-    [string]$Out = "data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json",
+    [string]$Out = "data/eval/real_llm_main.json",
     [string[]]$Splits = @()
 )
 
@@ -42,6 +42,9 @@ foreach ($baseline in $Baselines) {
     if ($baseName -eq "dpo_pm") {
         $pmPathItems += "$baseline=$DpoBaseModel::$DpoAdapterPath"
     }
+    elseif ($baseName -eq "base_model") {
+        $pmPathItems += "$baseline=$DpoBaseModel"
+    }
 }
 if ($pmPathItems.Count -eq 0) {
     $pmPathItems += "dpo_pm=$DpoBaseModel::$DpoAdapterPath"
@@ -69,3 +72,6 @@ if ($Splits.Count -gt 0) {
 }
 
 & $Python @evalArgs
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}

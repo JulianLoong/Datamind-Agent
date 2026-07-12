@@ -8,24 +8,23 @@ from rpl.eval import run_eval_sync
 from rpl.eval.report import summary_markdown
 from rpl.eval.runner import parse_pm_path_items
 
+DEFAULT_DPO_PATH = (
+    "Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_outcomes"
+)
+DEFAULT_BASELINES = ["llm_greedy", "llm_self_pick", "dpo_pm"]
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Run recovery evaluation with a real OpenAI-compatible LLM."
     )
-    parser.add_argument("--benchmark", default="recovery_gym")
+    parser.add_argument("--benchmark", default="recovery_bench_generated")
     parser.add_argument(
         "--baselines",
         nargs="+",
-        default=[
-            "random_r3",
-            "mock_pm",
-            "memory_mock_pm",
-            "lightweight_pm",
-            "memory_lightweight_pm",
-        ],
+        default=DEFAULT_BASELINES,
     )
-    parser.add_argument("--pm-path", default=None)
+    parser.add_argument("--pm-path", default=DEFAULT_DPO_PATH)
     parser.add_argument(
         "--pm-paths",
         nargs="*",
@@ -37,7 +36,12 @@ def main() -> None:
     parser.add_argument("--llm-model", default=None)
     parser.add_argument("--llm-base-url", default=None)
     parser.add_argument("--llm-api-key", default=None)
-    parser.add_argument("--llm-max-tokens", type=int, default=512)
+    parser.add_argument("--llm-max-tokens", type=int, default=1024)
+    parser.add_argument(
+        "--allow-candidate-fallback",
+        action="store_true",
+        help="Allow deterministic fallback when a real LLM response is malformed",
+    )
     parser.add_argument(
         "--llm-cache",
         default=None,
@@ -51,8 +55,9 @@ def main() -> None:
         help="Maximum tasks after split filtering; 0 means no limit",
     )
     parser.add_argument("--repeats", type=int, default=1)
-    parser.add_argument("--out", default="data/eval/real_llm_recovery.json")
+    parser.add_argument("--out", default="data/eval/real_llm_main.json")
     args = parser.parse_args()
+    splits = _resolve_splits(args.benchmark, args.splits)
 
     report = run_eval_sync(
         benchmark_name=args.benchmark,
@@ -66,7 +71,8 @@ def main() -> None:
         llm_api_key=args.llm_api_key,
         llm_max_tokens=args.llm_max_tokens,
         llm_cache_path=args.llm_cache,
-        splits=args.splits,
+        strict_llm_candidates=not args.allow_candidate_fallback,
+        splits=splits,
         max_tasks=args.max_tasks,
         repeats=args.repeats,
         output_path=args.out,
@@ -84,6 +90,14 @@ def _parse_pm_paths(items: list[str] | None) -> dict[str, str]:
         return parse_pm_path_items(items)
     except ValueError as exc:
         raise SystemExit(str(exc)) from exc
+
+
+def _resolve_splits(benchmark: str, splits: list[str] | None) -> list[str] | None:
+    if splits is not None:
+        return splits
+    if benchmark == "recovery_bench_generated":
+        return ["test_unseen", "clean"]
+    return None
 
 
 if __name__ == "__main__":

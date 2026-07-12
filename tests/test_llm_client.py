@@ -25,6 +25,7 @@ def test_build_llm_client_can_create_zhipu_client() -> None:
 
     assert isinstance(client, OpenAICompatibleLLMClient)
     assert client.model == "glm-5.1"
+    assert client.extra_body["response_format"] == {"type": "json_object"}
 
 
 def test_openai_compatible_extract_helpers_handle_chat_payload() -> None:
@@ -41,12 +42,17 @@ def test_openai_compatible_extract_helpers_handle_chat_payload() -> None:
 
 def test_fake_llm_still_returns_recoverable_candidates() -> None:
     client = FakeLLMClient()
-    request = LLMRequest(prompt="Error Type: division_by_zero\nFailed Tool: math_calc\nTool Params: {\"expression\": \"1/0\"}")
+    request = LLMRequest(
+        prompt='Error Type: invalid_json\nFailed Tool: json_parse\n'
+        'Tool Params: {"text": "{bad", "field": "value"}\n'
+        "Error Message: Expecting value\n"
+    )
 
     # No network call, just make sure the fake path is still intact.
     response = asyncio.run(client.complete(request))
 
-    assert "avoid_zero_division" in response.text
+    assert "repair_json_payload" in response.text
+    assert '"candidates"' in response.text
 
 
 def test_cached_llm_client_replays_identical_requests(tmp_path) -> None:

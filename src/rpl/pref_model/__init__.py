@@ -6,6 +6,7 @@ from rpl.pref_model.model import (
 )
 
 __all__ = [
+    "BaseModelPrefModel",
     "DPOPrefModel",
     "LightweightPrefModel",
     "MockPrefModel",
@@ -19,4 +20,8 @@ def __getattr__(name: str):
         from rpl.pref_model.dpo import DPOPrefModel
 
         return DPOPrefModel
+    if name == "BaseModelPrefModel":
+        from rpl.pref_model.dpo import BaseModelPrefModel
+
+        return BaseModelPrefModel
     raise AttributeError(name)
