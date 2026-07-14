@@ -8,6 +8,7 @@ from rpl.pref_model.model import (
 __all__ = [
     "BaseModelPrefModel",
     "DPOPrefModel",
+    "LogProbStats",
     "LightweightPrefModel",
     "MockPrefModel",
     "PrefModel",
@@ -24,4 +25,8 @@ def __getattr__(name: str):
         from rpl.pref_model.dpo import BaseModelPrefModel
 
         return BaseModelPrefModel
+    if name == "LogProbStats":
+        from rpl.pref_model.dpo import LogProbStats
+
+        return LogProbStats
     raise AttributeError(name)

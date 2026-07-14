@@ -131,6 +131,50 @@ multi-round evaluation with a three-retry budget.
 `run_eval.py` supports `--pm-paths baseline=path`, so different PM baselines can use different
 checkpoints in one report.
 
+## No-retraining DPO marginal-effect diagnostics
+
+Use the adapter-on/off diagnostics below to separate the DPO signal from the fixed give-up
+penalty. They use the existing checkpoint and do not train or modify model weights.
+
+The pairwise diagnostic scores the 192 validation pairs with the base model and DPO adapter. It
+reports raw mean log-probability, the same scores with the `-5` give-up sensitivity penalty, and the
+DPO implicit reward based on adapter-minus-base sequence log-probability. Bootstrap confidence
+intervals are clustered by the 64 error contexts rather than treating all pairs as independent.
+
+```bash
+PYTHONPATH=src python3 scripts/eval_dpo_margin.py \
+  --pairs data/pref_pairs_outcomes/val.jsonl \
+  --base-model Qwen/Qwen2.5-0.5B-Instruct \
+  --adapter data/pm_checkpoints/dpo_pm_outcomes \
+  --out data/eval/dpo_pairwise_margin.json
+```
+
+The controlled smoke test freezes 32 contexts before scoring: 24 recoverable contexts across the
+four training-artifact failure families and 8 unrecoverable controls. Recoverable contexts have
+canonical and paraphrased candidate pools, producing 56 fixed pools in total. Every candidate is
+executed before ranking so top-1 success, first-success rank, success-over-failure accuracy, give-up
+rate, and abstention accuracy use deterministic outcome labels.
+
+```bash
+PYTHONPATH=src python3 scripts/run_dpo_controlled_smoke.py \
+  --base-model Qwen/Qwen2.5-0.5B-Instruct \
+  --adapter data/pm_checkpoints/dpo_pm_outcomes \
+  --out data/eval/dpo_controlled_smoke.json
+```
+
+Use `--manifest-only` to write and inspect the controlled candidate manifest without installing
+PyTorch. Both evaluation commands cache raw model scores, so changing the reporting penalty or
+bootstrap settings does not repeat model inference. On the Windows GPU environment, run both with:
+
+```powershell
+.\scripts\run_dpo_margin_eval.ps1
+```
+
+Interpret `dpo_raw - base_raw` as the adapter's contribution, `base_penalized - base_raw` as the
+heuristic penalty's contribution, and `dpo_penalized - base_penalized` as the DPO contribution under
+the same decision rule. If only the implicit-reward scorer improves, report that the adapter contains
+a preference signal but the current deployment scorer is misaligned with the DPO objective.
+
 ## Real LLM candidate evaluation
 
 To validate recovery ranking under a non-deterministic candidate generator, point the runtime at an
