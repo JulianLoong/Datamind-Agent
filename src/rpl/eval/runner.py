@@ -59,16 +59,15 @@ async def run_eval(
     all_records: list[TaskEvalRecord] = []
     summaries: dict[str, dict[str, float | int | str]] = {}
     baseline_configs: dict[str, dict[str, int]] = {}
+    resolved_llm_provider = llm_provider or "openai_compatible"
     resolved_strict_llm_candidates = (
-        llm_provider not in {None, "fake"}
-        if strict_llm_candidates is None
-        else strict_llm_candidates
+        resolved_llm_provider != "fake" if strict_llm_candidates is None else strict_llm_candidates
     )
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         shared_llm_client = build_llm_client(
-            provider=llm_provider or "fake",
+            provider=resolved_llm_provider,
             model=llm_model,
             base_url=llm_base_url,
             api_key=llm_api_key,
@@ -79,7 +78,7 @@ async def run_eval(
                 cache_path=llm_cache_path,
                 namespace=json.dumps(
                     {
-                        "provider": llm_provider or "fake",
+                        "provider": resolved_llm_provider,
                         "model": llm_model,
                         "base_url": llm_base_url,
                     },
@@ -128,6 +127,8 @@ async def run_eval(
         "task_count": len(tasks),
         "llm_cache_path": str(llm_cache_path) if llm_cache_path is not None else None,
         "strict_llm_candidates": resolved_strict_llm_candidates,
+        "llm_provider": resolved_llm_provider,
+        "llm_model": llm_model,
         "baseline_configs": baseline_configs,
         "summaries": summaries,
         "split_summaries": {

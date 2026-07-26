@@ -34,54 +34,30 @@ not yet improve over `lightweight_pm`.
 `mock_pm` is a rule-based oracle-like selector used only for controlled debugging and cold-start data
 collection. It should not be presented as the learned method.
 
-## Lightweight baseline loop
-
-Use this loop to check the data and evaluation pipeline quickly before spending GPU time on DPO:
-
-```bash
-PYTHONPATH=src python3 scripts/cold_start.py --selector mock_pm --repeats 10 --export
-PYTHONPATH=src python3 scripts/train_pm.py \
-  --train data/pref_pairs/train.jsonl \
-  --val data/pref_pairs/val.jsonl \
-  --out data/pm_checkpoints/lightweight_pm.json
-PYTHONPATH=src python3 scripts/run_eval.py \
-  --baselines first random mock_pm lightweight_pm \
-  --pm-path data/pm_checkpoints/lightweight_pm.json \
-  --repeats 5 \
-  --out data/eval/recovery_bench_lite.json
-```
-
-Outputs:
-
-- `data/pref_pairs/train.jsonl` and `data/pref_pairs/val.jsonl`: DPO-style preference pairs.
-- `data/pm_checkpoints/lightweight_pm.json`: dependency-free pairwise preference ranker.
-- `data/eval/recovery_bench_lite.json` and `.md`: baseline comparison report.
-
-This path proves that trajectory-derived preference pairs can train a working selector. It should be
-reported as a baseline or implementation sanity check, not as the final DPO_PM result.
-
 ## DPO_PM target path
 
 The repository includes a LoRA DPO training and inference path. DPO dependencies are imported only by
 the DPO scripts/model, so the lightweight loop still runs without PyTorch.
 
-The older `data/pm_checkpoints/dpo_pm` checkpoint is an early recovery-bench-lite artifact. The
-current thesis-facing checkpoint is `data/pm_checkpoints/dpo_pm_outcomes`, trained from
-outcome-ranked recovery candidates and evaluated on both `recovery_bench_generated` and
-RecoveryGym; see `DPO_PM主线实验计划.md` for the current mainline commands.
+The early `data/pm_checkpoints/dpo_pm` checkpoint (a recovery-bench-lite demo) was removed in the
+2026-07-26 cleanup. The current thesis-facing checkpoint is `data/pm_checkpoints/dpo_pm_outcomes`,
+trained from outcome-ranked recovery candidates and evaluated on both `recovery_bench_generated`
+and RecoveryGym; see `DPO_PM主线实验计划.md` for the current mainline commands.
 
 Current mainline status as of 2026-07-05:
 
 - Branch: `dpo-pm-mainline` tracking `origin/codex/dpo-pm-mainline`.
 - Outcome-ranked data was collected with `scripts/collect_candidate_outcomes.py` on
-  `recovery_bench_generated` train split: `960` preference pairs, split into
-  `768 train / 192 val` under `data/pref_pairs_outcomes`.
+  `recovery_bench_generated` train split: `978` preference pairs (400 tasks, 5 failure types, post-dedup), split into
+  `783 train / 195 val` under `data/pref_pairs_outcomes`.
 - `DPO_PM` was trained from the outcome-ranked pairs with
   `Qwen/Qwen2.5-0.5B-Instruct`, QLoRA 4-bit loading, bf16 precision, and gradient
   checkpointing. The saved adapter is `data/pm_checkpoints/dpo_pm_outcomes`, and
   the training log is `data/logs/dpo_pm_outcomes_train_bf16.log`.
-- The generated benchmark evaluation result is checked in as
-  `data/eval/dpo_pm_outcomes_generated.json` and `.md`.
+- The controlled (FakeLLM-candidate) benchmark result `data/eval/dpo_pm_outcomes_generated.*` was
+  removed in the 2026-07-26 cleanup. The current thesis main result is the real-LLM evaluation
+  `data/eval/real_llm_main.*` (see "Real LLM candidate evaluation"). The 1.000 / 0.517 figures
+  below are historical FakeLLM-candidate controlled results, superseded by the real-LLM numbers.
 - The current selector label for multi-round comparisons is `dpo_pm_r3`, which uses a
   three-retry recovery budget.
 - On `recovery_bench_generated` with splits `test_unseen clean`, `dpo_pm_r3` reached
@@ -177,8 +153,9 @@ a preference signal but the current deployment scorer is misaligned with the DPO
 
 ## Real LLM candidate evaluation
 
-To validate recovery ranking under a non-deterministic candidate generator, point the runtime at an
-OpenAI-compatible chat completions API. The current selector protocol is `llm_greedy`,
+`run_eval.py` defaults to a real LLM: candidate generation goes through an OpenAI-compatible chat
+completions API, so set an API key (`OPENAI_API_KEY` env or `--llm-api-key`) before running. Pass
+`--llm-provider fake` for offline/reproducible runs. The current selector protocol is `llm_greedy`,
 `llm_self_pick`, and `dpo_pm`, all with one recovery attempt. The generated main benchmark defaults
 to the `test_unseen` and `clean` splits; RecoveryGym defaults to all splits.
 
@@ -210,11 +187,10 @@ do not use it for reported results. New candidate responses use
 For GLM 5.1, the real path should disable thinking and request JSON output. The current Zhipu
 provider does this automatically.
 
-A small DeepSeek real-LLM DPO_PM smoke result is checked in as
-`data/eval/real_llm_deepseek_dpo_pm_r3_smoke.json` and `.md`. It is a historical
-`recovery_bench_lite` path-validation artifact with `max_tasks=8`; its retired comparison baseline
-is no longer available in the current evaluation code. The result should not be used as evidence for
-the current evaluation design because the sample size is very small.
+A small historical DeepSeek real-LLM DPO_PM smoke result (`real_llm_deepseek_dpo_pm_r3_smoke.*`,
+`recovery_bench_lite`, `max_tasks=8`) was removed in the 2026-07-26 cleanup; it used the retired
+`fixed_retry`/`dpo_pm_r3` comparison and too small a sample to serve as evidence. The current
+real-LLM evidence is `real_llm_main.*` and `real_llm_recovery_gym.*`.
 
 New evaluation records include a `recovery_trace` field with generated candidates, selected index,
 PM scores, and initial/final tool results. Use this for future real-LLM failure analysis instead of
@@ -229,55 +205,14 @@ tasks across four failure types:
 division-by-zero, HTTP not-found, invalid JSON, and missing JSON field.
 
 ```bash
-PYTHONPATH=src python3 scripts/collect_benchmark_data.py \
+PYTHONPATH=src python3 scripts/collect_candidate_outcomes.py \
   --benchmark recovery_bench_generated \
   --splits train \
-  --db data/generated_trajectories.db \
-  --out-dir data/pref_pairs_generated \
-  --limit 20000
-
-PYTHONPATH=src python3 scripts/train_pm.py \
-  --train data/pref_pairs_generated/train.jsonl \
-  --val data/pref_pairs_generated/val.jsonl \
-  --out data/pm_checkpoints/lightweight_pm_generated.json
-
-PYTHONPATH=src python3 scripts/export_dpo_data.py \
-  --train data/pref_pairs_generated/train.jsonl \
-  --val data/pref_pairs_generated/val.jsonl \
-  --out-train data/dpo_generated/train.jsonl \
-  --out-val data/dpo_generated/val.jsonl
-
-PYTHONPATH=src python3 scripts/run_eval.py \
-  --benchmark recovery_bench_generated \
-  --baselines first random lightweight_pm \
-  --pm-path data/pm_checkpoints/lightweight_pm_generated.json \
-  --repeats 1 \
-  --out data/eval/generated_lightweight.json
+  --candidate-count 3 \
+  --out-dir data/pref_pairs_outcomes
 ```
 
-The default generated train split currently yields 640 deduplicated preference pairs
-(`512 train / 128 val`) from 320 recovery tasks.
-
-The generated 640-pair dataset remains useful for historical comparison or a fallback smoke run.
-For the current thesis-facing result, prefer the outcome-ranked checkpoint above. If you do run a
-generated-data DPO fallback, keep it separate from `data/pm_checkpoints/dpo_pm_outcomes`:
-
-```bash
-PYTHONPATH=src python3 scripts/train_dpo_pm.py \
-  --base-model Qwen/Qwen2.5-0.5B-Instruct \
-  --train data/pref_pairs_generated/train.jsonl \
-  --val data/pref_pairs_generated/val.jsonl \
-  --work-dir data/dpo_generated \
-  --out data/pm_checkpoints/dpo_pm_generated \
-  --use-4bit \
-  --fp16 \
-  --gradient-checkpointing
-
-PYTHONPATH=src python3 scripts/run_eval.py \
-  --benchmark recovery_bench_generated \
-  --baselines first random_r3 dpo_pm_r3 \
-  --pm-paths dpo_pm_r3=Qwen/Qwen2.5-0.5B-Instruct::data/pm_checkpoints/dpo_pm_generated \
-  --splits test_unseen clean \
-  --repeats 1 \
-  --out data/eval/generated_dpo_pm_fallback.json
-```
+The outcome-ranked collection executes every recovery candidate under each failure context and
+exports `783 train / 195 val` preference pairs (978 total, 400 tasks, 5 failure types, post-dedup)
+into `data/pref_pairs_outcomes`. This is the thesis-facing training data; the DPO training command
+is shown in the DPO_PM target path above.

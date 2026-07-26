@@ -2,6 +2,8 @@
 
 更新时间：2026-06-14
 
+> **更新（2026-07-26）**：第 5–7 节提到的受控（非真实 LLM）评测产物（`dpo_pm_outcomes_generated.*`、`dpo_pm_outcomes_recovery_gym.*`、`real_llm_deepseek_dpo_pm_r3_smoke.*`）以及旧 checkpoint `data/pm_checkpoints/dpo_pm` 已在仓库清理中删除。当前主线已切换为真实 LLM 候选评测（`real_llm_main` / `real_llm_recovery_gym` / `real_llm_ablation_base_model`），checkpoint 为 `dpo_pm_outcomes`，数据为 `pref_pairs_outcomes`，详见 `论文初稿数据汇总.md`。
+
 ## 1. 目标
 
 当前阶段主攻 `DPO_PM`，不优先做完整 memory 消融。第一版目标是产出导师能初步认可的主实验：
@@ -17,8 +19,8 @@
 
 - 旧 `data/pm_checkpoints/dpo_pm` 只对应 `recovery_bench_lite` 早期 demo。
 - 当前仓库已有 `data/pref_pairs_generated`：`512 train / 128 val`。
-- 已重新采集 `data/pref_pairs_outcomes`：`768 train / 192 val`，共 `960` 条 `outcome_multi_candidate` 偏好对。
-- 已导出 `data/dpo_outcomes`：`768 train / 192 val`，用于 TRL DPO 训练。
+- 已重新采集 `data/pref_pairs_outcomes`：`783 train / 195 val`，共 `978` 条 `outcome_multi_candidate` 偏好对（400 任务、5 失败类型，去重后）。
+- 已导出 `data/dpo_outcomes`：`783 train / 195 val`，用于 TRL DPO 训练。
 - 当前本机环境缺少 `torch`、`transformers`、`datasets`、`peft`、`trl`、`bitsandbytes`，不能直接训练 DPO_PM；训练需要在 CUDA/4090 环境执行。
 - `run_eval.py` 已支持 `--pm-paths baseline=path`，可在同一张表里给不同 PM baseline 配不同 checkpoint。
 
@@ -133,8 +135,8 @@ Completed items:
 - Upgraded PyTorch to `2.11.0+cu128` so the RTX 5060 (`sm_120`) can run CUDA kernels.
 - Collected outcome-ranked preference data with:
   `scripts/collect_candidate_outcomes.py --benchmark recovery_bench_generated --splits train --candidate-count 3 --out-dir data/pref_pairs_outcomes`.
-- Collection result: `960` total `outcome_multi_candidate` pairs, split into
-  `768 train / 192 val`.
+- Collection result: `978` total `outcome_multi_candidate` pairs (400 tasks, 5 failure types, post-dedup), split into
+  `783 train / 195 val`.
 - Trained `DPO_PM` from `data/pref_pairs_outcomes` using
   `Qwen/Qwen2.5-0.5B-Instruct`, QLoRA 4-bit loading, bf16 precision, and gradient checkpointing.
 - Saved the adapter and tokenizer under `data/pm_checkpoints/dpo_pm_outcomes`.

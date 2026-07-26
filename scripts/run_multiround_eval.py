@@ -18,6 +18,19 @@ def main() -> None:
     )
     parser.add_argument("--pm-path", default=None)
     parser.add_argument("--memory-db", default=None)
+    parser.add_argument(
+        "--llm-provider",
+        default=None,
+        help="LLM provider (defaults to a real openai_compatible LLM); pass 'fake' for offline.",
+    )
+    parser.add_argument("--llm-model", default=None)
+    parser.add_argument("--llm-base-url", default=None)
+    parser.add_argument("--llm-api-key", default=None)
+    parser.add_argument(
+        "--llm-cache",
+        default=None,
+        help="JSONL cache used to replay generated candidates across baselines",
+    )
     parser.add_argument("--repeats", type=int, default=5)
     parser.add_argument("--out", default="data/eval/multiround_recovery.json")
     args = parser.parse_args()
@@ -27,6 +40,11 @@ def main() -> None:
         baseline_names=args.baselines,
         pm_path=args.pm_path,
         memory_db_path=args.memory_db,
+        llm_provider=args.llm_provider,
+        llm_model=args.llm_model,
+        llm_base_url=args.llm_base_url,
+        llm_api_key=args.llm_api_key,
+        llm_cache_path=args.llm_cache,
         repeats=args.repeats,
         output_path=args.out,
     )

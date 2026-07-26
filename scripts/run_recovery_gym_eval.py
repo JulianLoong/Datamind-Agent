@@ -22,6 +22,19 @@ def main() -> None:
         help="Per-baseline PM checkpoints, e.g. lightweight_pm=path dpo_pm=base::adapter",
     )
     parser.add_argument("--memory-db", default=None)
+    parser.add_argument(
+        "--llm-provider",
+        default=None,
+        help="LLM provider (defaults to a real openai_compatible LLM); pass 'fake' for offline.",
+    )
+    parser.add_argument("--llm-model", default=None)
+    parser.add_argument("--llm-base-url", default=None)
+    parser.add_argument("--llm-api-key", default=None)
+    parser.add_argument(
+        "--llm-cache",
+        default=None,
+        help="JSONL cache used to replay generated candidates across baselines",
+    )
     parser.add_argument("--splits", nargs="+", default=None)
     parser.add_argument(
         "--max-tasks",
@@ -39,6 +52,11 @@ def main() -> None:
         pm_path=args.pm_path,
         pm_paths=_parse_pm_paths(args.pm_paths),
         memory_db_path=args.memory_db,
+        llm_provider=args.llm_provider,
+        llm_model=args.llm_model,
+        llm_base_url=args.llm_base_url,
+        llm_api_key=args.llm_api_key,
+        llm_cache_path=args.llm_cache,
         splits=args.splits,
         max_tasks=args.max_tasks,
         repeats=args.repeats,

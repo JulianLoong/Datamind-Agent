@@ -13,6 +13,7 @@ def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
 
     report = run_eval_sync(
         baseline_names=["first"],
+        llm_provider="fake",
         repeats=1,
         output_path=output,
     )
@@ -26,6 +27,7 @@ def test_eval_runner_produces_baseline_summary(tmp_path) -> None:
 def test_eval_runner_records_recovery_trace(tmp_path) -> None:
     report = run_eval_sync(
         baseline_names=["first"],
+        llm_provider="fake",
         repeats=1,
         output_path=tmp_path / "eval.json",
     )
@@ -46,6 +48,7 @@ def test_eval_runner_can_write_llm_cache(tmp_path) -> None:
 
     run_eval_sync(
         baseline_names=["first", "random"],
+        llm_provider="fake",
         repeats=1,
         max_tasks=1,
         llm_cache_path=cache_path,
@@ -60,6 +63,7 @@ def test_eval_runner_filters_splits_and_limits_tasks(tmp_path) -> None:
     report = run_eval_sync(
         benchmark_name="recovery_gym",
         baseline_names=["first"],
+        llm_provider="fake",
         splits=["seen_template_unseen_params"],
         max_tasks=2,
         repeats=1,
@@ -95,6 +99,7 @@ def test_eval_runner_uses_per_baseline_pm_paths(tmp_path) -> None:
     report = run_eval_sync(
         benchmark_name="recovery_bench_generated",
         baseline_names=["lightweight_pm"],
+        llm_provider="fake",
         pm_paths={"lightweight_pm": str(checkpoint)},
         splits=["test_unseen", "clean"],
         max_tasks=4,
@@ -118,6 +123,7 @@ def test_eval_runner_resolves_pm_path_for_retry_suffixed_baseline() -> None:
 def test_eval_runner_llm_self_pick_baseline_runs(tmp_path) -> None:
     report = run_eval_sync(
         baseline_names=["llm_self_pick"],
+        llm_provider="fake",
         repeats=1,
         output_path=tmp_path / "eval.json",
     )
@@ -136,6 +142,7 @@ def test_eval_runner_llm_self_pick_baseline_runs(tmp_path) -> None:
 def test_eval_runner_candidate_count_param(tmp_path) -> None:
     report = run_eval_sync(
         baseline_names=["first"],
+        llm_provider="fake",
         candidate_count=2,
         repeats=1,
         output_path=tmp_path / "eval.json",
@@ -179,6 +186,18 @@ def test_eval_runner_real_provider_fails_fast_on_malformed_candidates(
         run_eval_sync(
             baseline_names=["first"],
             llm_provider="openai_compatible",
+            max_tasks=1,
+            repeats=1,
+            output_path=tmp_path / "eval.json",
+        )
+
+
+def test_eval_runner_real_default_fails_fast_without_api_key(tmp_path, monkeypatch) -> None:
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    with pytest.raises(ValueError, match="API key"):
+        run_eval_sync(
+            baseline_names=["first"],
             max_tasks=1,
             repeats=1,
             output_path=tmp_path / "eval.json",

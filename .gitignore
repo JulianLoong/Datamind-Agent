@@ -29,13 +29,3 @@ data/pref_pairs_outcomes/
 
 data/pm_checkpoints/*
 !data/pm_checkpoints/
-!data/pm_checkpoints/dpo_pm/
-data/pm_checkpoints/dpo_pm/checkpoint-*/
-data/pm_checkpoints/dpo_pm/ref/
-!data/pm_checkpoints/dpo_pm/adapter_config.json
-!data/pm_checkpoints/dpo_pm/adapter_model.safetensors
-!data/pm_checkpoints/dpo_pm/chat_template.jinja
-!data/pm_checkpoints/dpo_pm/README.md
-!data/pm_checkpoints/dpo_pm/tokenizer.json
-!data/pm_checkpoints/dpo_pm/tokenizer_config.json
-!data/pm_checkpoints/dpo_pm/training_args.bin

@@ -33,7 +33,12 @@ def main() -> None:
     parser.add_argument(
         "--llm-provider",
         default=None,
-        help="LLM provider for candidate generation (fake, openai_compatible)",
+        help=(
+            "LLM provider for candidate generation. Defaults to a real LLM "
+            "(openai_compatible); pass 'fake' for offline/reproducible runs. "
+            "Real providers require an API key (OPENAI_API_KEY env or --llm-api-key) "
+            "and halt with an error if none is found."
+        ),
     )
     parser.add_argument(
         "--llm-model", default=None, help="LLM model name for real candidate generation"

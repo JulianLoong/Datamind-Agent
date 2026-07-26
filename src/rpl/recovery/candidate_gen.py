@@ -108,6 +108,7 @@ def build_llm_client(
         resolved_model = model or os.environ.get("RPL_LLM_MODEL") or "gpt-4o-mini"
         resolved_base_url = base_url or os.environ.get("RPL_LLM_BASE_URL") or "https://api.openai.com"
         resolved_api_key = api_key or os.environ.get(api_key_env)
+        _ensure_api_key(provider, resolved_api_key, api_key_env)
         return OpenAICompatibleLLMClient(
             model=resolved_model,
             base_url=resolved_base_url,
@@ -119,6 +120,7 @@ def build_llm_client(
         resolved_model = model or os.environ.get("RPL_LLM_MODEL") or "glm-5.1"
         resolved_base_url = base_url or os.environ.get("RPL_LLM_BASE_URL") or "https://open.bigmodel.cn/api/paas/v4"
         resolved_api_key = api_key or os.environ.get("ZHIPU_API_KEY") or os.environ.get("GLM_API_KEY") or os.environ.get(api_key_env)
+        _ensure_api_key(provider, resolved_api_key, "ZHIPU_API_KEY")
         return OpenAICompatibleLLMClient(
             model=resolved_model,
             base_url=resolved_base_url,
@@ -131,6 +133,22 @@ def build_llm_client(
             },
         )
     raise ValueError(f"Unknown LLM provider: {provider}")
+
+
+def _ensure_api_key(provider: str, resolved_api_key: str | None, env_var: str) -> None:
+    """Fail fast when a real LLM provider has no resolvable API key.
+
+    Evaluation now defaults to a real LLM, so a missing key is a configuration error
+    rather than a silent fall-through to a network call that will 401 later. The fake
+    provider bypasses this entirely.
+    """
+    if resolved_api_key:
+        return
+    raise ValueError(
+        f"Real LLM provider {provider!r} requires an API key, but none was found. "
+        f"Set the {env_var} environment variable, pass --llm-api-key, or use "
+        f"--llm-provider fake for offline evaluation."
+    )
 
 
 def parse_candidates(text: str) -> list[Candidate]:
@@ -219,7 +237,58 @@ def deterministic_fallback_candidates(ctx: ErrorContext) -> list[Candidate]:
         )
     elif ctx.error_type == "validation_error":
         candidates.extend(_validation_error_candidates(ctx))
+    elif ctx.error_type == "no_rows":
+        candidates.extend(_no_rows_fallback(ctx))
     return candidates
+
+
+def _no_rows_fallback(ctx: ErrorContext) -> list[Candidate]:
+    """Defensive controlled pool for the contextual_filter hard slice.
+
+    Mirrors ``FakeLLMClient._no_rows_candidates`` so the ranking problem is
+    available even when a real LLM returns nothing parseable. The correct filter
+    value is parsed from the structured task goal; distractors are
+    plausible-but-empty values.
+    """
+    correct = _extract_correct_filter_value(ctx.task_goal)
+    field = ctx.tool_params.get("filter_field", "status")
+    distractors = ["shipped", "cancelled", "returned", "refunded"]
+    remaining = [d for d in distractors if d != correct]
+
+    def _candidate(value: str, reason: str) -> Candidate:
+        return Candidate(
+            reasoning=reason,
+            action="fix_filter_value",
+            tool_name=ctx.tool_name,
+            tool_params={**ctx.tool_params, "filter_value": value},
+            raw_text=f"Set {field} to {value}.",
+        )
+
+    ordered: list[Candidate] = []
+    if remaining:
+        ordered.append(_candidate(remaining[0], f"Maybe the {field} is {remaining[0]}."))
+    if correct:
+        ordered.append(_candidate(correct, f"Goal asks for {correct}; set {field}={correct}."))
+    for value in remaining[1:]:
+        ordered.append(_candidate(value, f"Maybe the {field} is {value}."))
+    return ordered
+
+
+def _extract_correct_filter_value(task_goal: str) -> str | None:
+    """Pull the goal-named filter value from a structured ``rpl_task`` goal."""
+    if not task_goal.startswith("rpl_task "):
+        return None
+    try:
+        payload = json.loads(task_goal[len("rpl_task ") :])
+    except json.JSONDecodeError:
+        return None
+    description = payload.get("description", "") if isinstance(payload, dict) else ""
+    marker = "Find the "
+    if marker not in description:
+        return None
+    tail = description.split(marker, 1)[1]
+    token = tail.split(" ", 1)[0]
+    return token or None
 
 
 def _validation_error_candidates(ctx: ErrorContext) -> list[Candidate]:
