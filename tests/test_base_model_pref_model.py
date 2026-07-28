@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import os
+
 import pytest
 
 from rpl.recovery.types import Candidate, ErrorContext
+
+# This repo runs offline against locally-cached HF models (every training script
+# sets HF_HUB_OFFLINE=1). huggingface_hub reads this flag at import time, so set
+# it before _torch_available() imports transformers below. setdefault keeps an
+# explicit override (e.g. HF_HUB_OFFLINE=0 in online CI).
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
 
 
 def _torch_available() -> bool:
@@ -33,12 +41,14 @@ def _make_candidates() -> tuple[Candidate, Candidate]:
         action="repair_json_payload",
         tool_name="json_parse",
         tool_params={"text": '{"a": null}', "field": "a"},
+        raw_text="Repair the malformed JSON and retry.",
     )
     bad = Candidate(
         reasoning="just retry",
         action="retry_same_tool",
         tool_name="json_parse",
         tool_params={"text": '{"a":', "field": "a"},
+        raw_text="Retry the same tool with the same parameters.",
     )
     return good, bad
 
