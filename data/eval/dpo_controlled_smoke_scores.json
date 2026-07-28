@@ -1,0 +1,2248 @@
+{
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "adapter": "data/pm_checkpoints/dpo_pm_outcomes",
+  "base_scores": {
+    "907e62020716552253b497b508cc2a60b32e191c123841a8f1398f8be4adf57c": {
+      "mean_logprob": -1.671875,
+      "sum_logprob": -72.0,
+      "token_count": 43
+    },
+    "01f8dd08963ede5851d6c96d7f715788f79edfe52d0df408977ae242cc1b9353": {
+      "mean_logprob": -2.609375,
+      "sum_logprob": -83.5,
+      "token_count": 32
+    },
+    "709dca5e4c3f500fa9040ffa9f237b2a3bb0ce5719e391a2e9d7cb9347552d70": {
+      "mean_logprob": -1.5625,
+      "sum_logprob": -62.5,
+      "token_count": 40
+    },
+    "ca7332a4befba7c503736e9de0d5d2b17f78889252c97136d20a019f501e72be": {
+      "mean_logprob": -1.0546875,
+      "sum_logprob": -44.25,
+      "token_count": 42
+    },
+    "f8b497a61747c7c4af1ea2a9b46054a8f6f82ec8c09111ee7ce91c52f996c3fa": {
+      "mean_logprob": -1.625,
+      "sum_logprob": -70.0,
+      "token_count": 43
+    },
+    "e4131f0a937517dcc0374a94107b8c4f71011301c38436f40f09b59490f097dc": {
+      "mean_logprob": -2.421875,
+      "sum_logprob": -80.0,
+      "token_count": 33
+    },
+    "0c7f697c352f8d244b1c62f7dbad2022adaa111ccb02a25a923395c855be4ba4": {
+      "mean_logprob": -1.4765625,
+      "sum_logprob": -60.5,
+      "token_count": 41
+    },
+    "0e0d639009d8728a6730d1d88011a237ed4f27fa9d03dab5fdcc092e5fe8da7e": {
+      "mean_logprob": -1.453125,
+      "sum_logprob": -64.0,
+      "token_count": 44
+    },
+    "b5e1db893166050fcf432700061a78384657a59c60541485d4bf5fcfc4dadfb7": {
+      "mean_logprob": -1.4375,
+      "sum_logprob": -67.5,
+      "token_count": 47
+    },
+    "b0d67819b97e0c4902db361a8caea2537f733920c3b39e7fe7f7b39038e7438f": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -82.5,
+      "token_count": 32
+    },
+    "4d3f624f8937701e70f5f1b602067e606fc8d0068de4b08fb1e31121456de1f1": {
+      "mean_logprob": -1.7578125,
+      "sum_logprob": -86.0,
+      "token_count": 49
+    },
+    "7689a0e50a75124a02114290ad77e68ac6c9218f503e4634a2282b0e0d2d9278": {
+      "mean_logprob": -0.98046875,
+      "sum_logprob": -47.0,
+      "token_count": 48
+    },
+    "d8c05fe5496d4605e8715de3e5dd54c2a31fe654e4e2cee22afed86c678b7fc8": {
+      "mean_logprob": -1.3828125,
+      "sum_logprob": -68.0,
+      "token_count": 49
+    },
+    "aed17309feae0645f4c0fb3bbd915fab8ccee26f484302bce543e443df031be4": {
+      "mean_logprob": -2.140625,
+      "sum_logprob": -75.0,
+      "token_count": 35
+    },
+    "8408c90d2121da28bcc5cecd05c3b815033808c802b96c62404ac03178a9a89c": {
+      "mean_logprob": -1.265625,
+      "sum_logprob": -66.0,
+      "token_count": 52
+    },
+    "00ef3c1e5433d278b8ae52b7e1832f2b39511b1d7892da66884f1dfa0ca01af9": {
+      "mean_logprob": -1.8046875,
+      "sum_logprob": -88.5,
+      "token_count": 49
+    },
+    "2dfb70889aff02564da6d4b3a4b4a8acbecbdabd7328d3cc68ed24047d122e11": {
+      "mean_logprob": -1.4765625,
+      "sum_logprob": -79.5,
+      "token_count": 54
+    },
+    "6cd7aa2f79750d17d4aa2be3f0c66e76ab1ac46a7a5dad5d503a83994c011d57": {
+      "mean_logprob": -1.203125,
+      "sum_logprob": -67.0,
+      "token_count": 56
+    },
+    "2a77d367d20b578b346741674ec1e109948163a0ff81acfb1563756829485e7e": {
+      "mean_logprob": -1.078125,
+      "sum_logprob": -64.5,
+      "token_count": 60
+    },
+    "2e34e9467441190d45be5297fa7e3c0fbb67e590ef2f9fcfedeb2fefd55a64a1": {
+      "mean_logprob": -2.234375,
+      "sum_logprob": -74.0,
+      "token_count": 33
+    },
+    "f404b850762fcb89e09c7f6c8b16f47117cae4cb0ad150cb3a50a4f088c502d3": {
+      "mean_logprob": -1.3203125,
+      "sum_logprob": -76.5,
+      "token_count": 58
+    },
+    "5f1b4234f41ef5409a71c571812dc7f057ca679ef7f85d9d06e757b6aad813a4": {
+      "mean_logprob": -1.96875,
+      "sum_logprob": -116.0,
+      "token_count": 59
+    },
+    "3d1b0a2cc883d2a084e96925c31810c41296b13ea558b2c1b8cfa60e88197441": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -81.5,
+      "token_count": 34
+    },
+    "0619766299436cef0e9b6a1468f0506672a5709103c013234d6d1578b0a2cef2": {
+      "mean_logprob": -1.65625,
+      "sum_logprob": -106.0,
+      "token_count": 64
+    },
+    "18eba5dc2c10ff2e009d2daa2eac0ce7cf09f3e776f1e3b4f09dffb468be0dca": {
+      "mean_logprob": -1.25,
+      "sum_logprob": -89.0,
+      "token_count": 71
+    },
+    "d7a3c2a31bb46efc17a4d4ab45fb36e9f74b451397c788ece0b0ca67d53681b7": {
+      "mean_logprob": -2.453125,
+      "sum_logprob": -78.5,
+      "token_count": 32
+    },
+    "10c8a1c32060a10b3e619dcd2560ac14f9b685a1494a30a8e02ae4d43c5254cc": {
+      "mean_logprob": -1.5546875,
+      "sum_logprob": -104.0,
+      "token_count": 67
+    },
+    "ade496aff057579515d54ba1bed55473294166e6a102c7b993b44ced4a8f31eb": {
+      "mean_logprob": -0.99609375,
+      "sum_logprob": -52.75,
+      "token_count": 53
+    },
+    "7f8bc2b059d638fedfe633c7e1a5b6400313489bfe3d44e3757abd6554de4408": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -88.0,
+      "token_count": 55
+    },
+    "51b4e1ce61612ab012d40b9142a21f2314f96375031026d73390e4508c1d0a53": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -89.0,
+      "token_count": 71
+    },
+    "7a719c9be24279229cba8851ed5692e61e4a8f4e520108fc2c570b761d5018ea": {
+      "mean_logprob": -1.75,
+      "sum_logprob": -124.0,
+      "token_count": 71
+    },
+    "12d5c63e30d3fdccfb1c7ec61c4ffc8326a508c71a9f740cdd34f701fd8c7ba3": {
+      "mean_logprob": -2.078125,
+      "sum_logprob": -72.5,
+      "token_count": 35
+    },
+    "0e2b3074fb0dad4ae52b7cfc571a2284b6c9134e9b3c4d2842f052a884874eb9": {
+      "mean_logprob": -2.609375,
+      "sum_logprob": -83.5,
+      "token_count": 32
+    },
+    "13eb8c078829312cea9130faa663f7444402da4d13c67802c26b7c08db3b7006": {
+      "mean_logprob": -1.0546875,
+      "sum_logprob": -44.25,
+      "token_count": 42
+    },
+    "026d3b046059597245eafe5714dcf4a25686d65a6f2212a416968f50894630a3": {
+      "mean_logprob": -1.5546875,
+      "sum_logprob": -62.25,
+      "token_count": 40
+    },
+    "7370ef5485951542fab2af36b6ceb13340553f60cc571d3d4c06d7b45d2a0d9e": {
+      "mean_logprob": -1.65625,
+      "sum_logprob": -71.5,
+      "token_count": 43
+    },
+    "5ac155fa67310d4a4235b6b8813f89e3559ad1f31bf2585a92e0578140754ac8": {
+      "mean_logprob": -1.484375,
+      "sum_logprob": -60.75,
+      "token_count": 41
+    },
+    "5f8d07624e3c020f8914efde2918b56d7780d46f214992f9a5f4a9d5e004cb1a": {
+      "mean_logprob": -1.625,
+      "sum_logprob": -70.0,
+      "token_count": 43
+    },
+    "5a46c36b8c73deebb123b96b9de85540ea5dd28bd69b0f846929e584301567ea": {
+      "mean_logprob": -1.4453125,
+      "sum_logprob": -63.75,
+      "token_count": 44
+    },
+    "e723d1398a653a642d2de6296ca9a16d67e4582605300c986428b64d7af6175b": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -79.5,
+      "token_count": 33
+    },
+    "ef0e42e0718e58a30873c485b00936800ac2efeb52ab84fff4878f2b7c23b910": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -82.5,
+      "token_count": 32
+    },
+    "c19fb9082f5a4cfb9d0e72bf7cfa6b90980585b5e2341d04a14405caf4639348": {
+      "mean_logprob": -1.4296875,
+      "sum_logprob": -67.5,
+      "token_count": 47
+    },
+    "7ce19c44a63bacd27bde8d2816455ee6c612e8c383160a448c27037469980029": {
+      "mean_logprob": -0.96875,
+      "sum_logprob": -46.5,
+      "token_count": 48
+    },
+    "c4360692df4afdb4a4e037233a2d8fe4528e9767660f5d17ebd6a9f5526ccb12": {
+      "mean_logprob": -1.7578125,
+      "sum_logprob": -86.0,
+      "token_count": 49
+    },
+    "1abb35ed64428489930fe198fb40c1c9ec268b4991649e123a7dc7ccfd59ff70": {
+      "mean_logprob": -1.8203125,
+      "sum_logprob": -89.0,
+      "token_count": 49
+    },
+    "add7aca40c2e140d12c3321c4f59dc69dcc78003514f54194b6c96942a5abfe3": {
+      "mean_logprob": -2.140625,
+      "sum_logprob": -75.0,
+      "token_count": 35
+    },
+    "1ac09ac07e89511377ff5db0ef85693456ca22fbcecbcf8af3e415b5bc84eaf1": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -65.5,
+      "token_count": 52
+    },
+    "c379af8d9d78278fb268fed2ba2ddd735d15e9ba84142f35a349277c71df77eb": {
+      "mean_logprob": -1.375,
+      "sum_logprob": -67.5,
+      "token_count": 49
+    },
+    "71f6cdd17f3cdec4aa8101a3c5b52c9041e58192f495c5a15704b4c865f1f136": {
+      "mean_logprob": -1.4609375,
+      "sum_logprob": -79.0,
+      "token_count": 54
+    },
+    "c9b355a460ad980154471055405029fcfae593a41cbb3299ba91270a36aefcd9": {
+      "mean_logprob": -1.0546875,
+      "sum_logprob": -63.0,
+      "token_count": 60
+    },
+    "17c27188b28f9239645247686f3c7962f358ef112f5eda47e4ab0d1452d92977": {
+      "mean_logprob": -1.203125,
+      "sum_logprob": -67.5,
+      "token_count": 56
+    },
+    "9a8b18019f8cd7ce55fbd8c96d4575be8299a5c2ac73e2d16757aaefb201b533": {
+      "mean_logprob": -2.265625,
+      "sum_logprob": -74.5,
+      "token_count": 33
+    },
+    "0990c4a0a0f046c0fa4d91c8c2d1af0ad57dbf0bbf7882a6887543aa94e094bd": {
+      "mean_logprob": -1.6328125,
+      "sum_logprob": -104.5,
+      "token_count": 64
+    },
+    "e27b62d07ba20e9a8588fdd8c34aa5de8a6c1283703fb8363a1dd20d99aa17cc": {
+      "mean_logprob": -1.3125,
+      "sum_logprob": -76.5,
+      "token_count": 58
+    },
+    "ef26935614c9c47cbc21bc95d5e0100825b175f4a46f01de6514bb0950e06827": {
+      "mean_logprob": -1.9453125,
+      "sum_logprob": -114.5,
+      "token_count": 59
+    },
+    "cb3fd7cde21bca94efb9b121eb64cb6977979c83ff7d2e656f1c8c002c19487e": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -82.0,
+      "token_count": 34
+    },
+    "1a26c253ae44584dce825797b92645eb7cb79bdec843035ebc5d185903cb6c89": {
+      "mean_logprob": -1.0,
+      "sum_logprob": -53.0,
+      "token_count": 53
+    },
+    "1742263894ee239723d47d51f3e079438860fddd4ff001c5319a66bc3fba27ca": {
+      "mean_logprob": -1.25,
+      "sum_logprob": -88.5,
+      "token_count": 71
+    },
+    "7a7be89506ee8b56e6c1a8c94f6b01d26b88e8907d6dc889e6b503a876b5a15a": {
+      "mean_logprob": -1.5078125,
+      "sum_logprob": -101.0,
+      "token_count": 67
+    },
+    "7c40ff088f2061424161b85af483cc972210a12706e8a3c803e5c9ca97abe455": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -78.0,
+      "token_count": 32
+    },
+    "48e584a884b19d726c7d3c49ff2d063b2258217acd14e66fe34f52de1d6a1328": {
+      "mean_logprob": -1.7421875,
+      "sum_logprob": -123.5,
+      "token_count": 71
+    },
+    "5026a5a634dc7eec191da98f0bcd593054b22b20a3eaabe1a665bf4c715a3f50": {
+      "mean_logprob": -1.59375,
+      "sum_logprob": -87.5,
+      "token_count": 55
+    },
+    "09d882e2ca951ce69a57d5dd11173f662754b008573e2430940b5cf0fd7b167a": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -72.0,
+      "token_count": 35
+    },
+    "fe5d3cc8e932c121931945195dc0f338cd44edf7286dc7c22163bf8d57e31472": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -89.5,
+      "token_count": 71
+    },
+    "f69b1e669c50b41d39fe75f4484850c568c5496c5b2d865d8c99efdf45eb90d6": {
+      "mean_logprob": -1.0546875,
+      "sum_logprob": -44.25,
+      "token_count": 42
+    },
+    "8373fe22b32639eac31ed7397d176e3a678a9a0890d9f0c1ad9ee014e9445125": {
+      "mean_logprob": -1.546875,
+      "sum_logprob": -62.0,
+      "token_count": 40
+    },
+    "bd28d1e16f9394ebb92ea0cf2a08e0487e2fb6e51807a19e98430d262a4bc17b": {
+      "mean_logprob": -2.59375,
+      "sum_logprob": -83.0,
+      "token_count": 32
+    },
+    "a1acc096285ff84f7bc860d2bb63dec96125f66a39cc452c7387134a9ea7caaa": {
+      "mean_logprob": -1.6640625,
+      "sum_logprob": -71.5,
+      "token_count": 43
+    },
+    "e1488c308bbdd16af24627ab14ebb85d4113141ceadb455e658524155152f0a1": {
+      "mean_logprob": -1.484375,
+      "sum_logprob": -60.75,
+      "token_count": 41
+    },
+    "004827ba20329264960e26e31cbca1120b7c34c1b1d0330e8cf5783af5acd938": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -79.5,
+      "token_count": 33
+    },
+    "5b528a198c9f83a3ff645b6188bfe615db02ba2c79a0fa038e51ba7537431166": {
+      "mean_logprob": -1.6171875,
+      "sum_logprob": -69.5,
+      "token_count": 43
+    },
+    "932e49fbc4e14e7291e19aac2fb47139cae6ccf8650ea82401a1f8f76bbd99a3": {
+      "mean_logprob": -1.453125,
+      "sum_logprob": -63.75,
+      "token_count": 44
+    },
+    "790ca47022b6074b10093277d8353318ee802c932cf51490ee405b3de3835d53": {
+      "mean_logprob": -0.96875,
+      "sum_logprob": -46.5,
+      "token_count": 48
+    },
+    "656dcb92e05d597818d4796d898fa7b0a420da943af74313e17260420088fc26": {
+      "mean_logprob": -1.796875,
+      "sum_logprob": -88.0,
+      "token_count": 49
+    },
+    "806413b9d4accefbb3118977fc4752184f8ea28a13673073a0736d27c170fdfa": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -82.5,
+      "token_count": 32
+    },
+    "c3d9fd5ab076993cc808eb982e9a9c7bad6604fb1e16f055093d00f5ec7baea5": {
+      "mean_logprob": -1.4375,
+      "sum_logprob": -67.5,
+      "token_count": 47
+    },
+    "89e38b12295bc0665aa92417df9c9e2e393bb613a09a574fdd52f6bd556f77f6": {
+      "mean_logprob": -1.3828125,
+      "sum_logprob": -67.5,
+      "token_count": 49
+    },
+    "71141fdbece62201d1631f8fac174e5cb69d6d914a0b5072ad0b7f7cdc6fbd05": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -65.5,
+      "token_count": 52
+    },
+    "5daebc18c361bca41310d05026fa3c11199f1c4031ef05c187eec21ba375fbb0": {
+      "mean_logprob": -1.8515625,
+      "sum_logprob": -91.0,
+      "token_count": 49
+    },
+    "2ac95d2c6f2adc3021ec5da1cde39af6eaf4017db4bf02a3d71f5723e4dc2516": {
+      "mean_logprob": -2.140625,
+      "sum_logprob": -75.0,
+      "token_count": 35
+    },
+    "8f2ebbade7a8edc9f1d6469a6c4de6cec92cf0a3e2d84d76dde1fbaab5766e53": {
+      "mean_logprob": -1.0625,
+      "sum_logprob": -63.75,
+      "token_count": 60
+    },
+    "b9390ccbf1de9bb3d29ac0ca9574541938d9277a1a1a1b5cab134f0c6cbc1387": {
+      "mean_logprob": -2.25,
+      "sum_logprob": -74.5,
+      "token_count": 33
+    },
+    "05de2e6ba4e0e04fad4973d68e81fdb87aa9574f79ba1604194665402b1b1d31": {
+      "mean_logprob": -1.1953125,
+      "sum_logprob": -67.0,
+      "token_count": 56
+    },
+    "2765f501eca3b7b0bf8e4eb4c2f272169e523684abc1d09bc444ee810c32d0f8": {
+      "mean_logprob": -1.46875,
+      "sum_logprob": -79.5,
+      "token_count": 54
+    },
+    "267213b7cd8106d52264ce64255ef3a4d665ded7a63fc00161c9ca874ff45d2f": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -81.5,
+      "token_count": 34
+    },
+    "602e0746038a0dbbffa97067b0c1417d1510916fdff4b2d21e46c233d9ae04eb": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -105.0,
+      "token_count": 64
+    },
+    "1aee387417e4dba4d7689567899c3fdb6db3ca3d2b5cf37ec521313b42170474": {
+      "mean_logprob": -1.953125,
+      "sum_logprob": -115.0,
+      "token_count": 59
+    },
+    "addb6c832873f4ef4e95095c34005d392f55769cf474f40317eced70bc8fc70c": {
+      "mean_logprob": -1.3203125,
+      "sum_logprob": -76.5,
+      "token_count": 58
+    },
+    "5e4c4eee5d0007b3c4c0e6259bb2e9db5a4301b550f151856d5f7b8ae214f2d8": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -78.0,
+      "token_count": 32
+    },
+    "e68de0756a8194db101f18e5d41e15dfa61a6286d32df8ff96c4b420cdb6854c": {
+      "mean_logprob": -1.5390625,
+      "sum_logprob": -103.0,
+      "token_count": 67
+    },
+    "b856379a22c1ffa3958ab0d1289bfdd0e0362fb9558e6f7179116d96b5781629": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -89.5,
+      "token_count": 71
+    },
+    "bcca691eb8943b8465b0f55d50a07b3d9d2a8a4cfb2445632639b05cd6279377": {
+      "mean_logprob": -1.0078125,
+      "sum_logprob": -53.25,
+      "token_count": 53
+    },
+    "5467d82a1a6dd10a05d118eead09ff7966b772aef6ebab140e4a42b3eeae3207": {
+      "mean_logprob": -1.28125,
+      "sum_logprob": -91.0,
+      "token_count": 71
+    },
+    "345cb9fa67ca6c6d5415c99508610ca06c21c197acbcdd1eebbb6eb1e52e4e8f": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -72.5,
+      "token_count": 35
+    },
+    "fcc13b138b4a38074348473743ccb7d01c3ab0d10870fbcb8dd34e0002864675": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -88.5,
+      "token_count": 55
+    },
+    "60de22888d69a2d921b405418e58bb1c82fd3dbe1e62e65895632e50247dfdb7": {
+      "mean_logprob": -1.734375,
+      "sum_logprob": -123.0,
+      "token_count": 71
+    },
+    "331f54eff44bc3263fc32bf49c04c1510a883c751861f8d8962748485063f59a": {
+      "mean_logprob": -1.5546875,
+      "sum_logprob": -62.25,
+      "token_count": 40
+    },
+    "dfe800576ea20f37502d09f3a41b16d79fa5f2d42a0cf11f3b86b00a4a7b0440": {
+      "mean_logprob": -1.65625,
+      "sum_logprob": -71.0,
+      "token_count": 43
+    },
+    "49fe238fa5295463af03b8cb12dfa8827565f6d4ad52c973ceb7a38d2cc61e7a": {
+      "mean_logprob": -1.0390625,
+      "sum_logprob": -43.75,
+      "token_count": 42
+    },
+    "6f2ab836276f79968266ed97f839fcbb4f50c27a689b372124d15cdaa8402848": {
+      "mean_logprob": -2.609375,
+      "sum_logprob": -83.5,
+      "token_count": 32
+    },
+    "e611817fa594d5a6022f03d9132bbcb9539d9fa687bda19e921cdcac50a46f70": {
+      "mean_logprob": -1.6328125,
+      "sum_logprob": -70.5,
+      "token_count": 43
+    },
+    "4401c54bfccf5f52c1828cbb6b6792e78270bc2494ae5980853b34b3d36bf388": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -79.5,
+      "token_count": 33
+    },
+    "09f79475334be129ee4c89427f222ba32bdf3ff77bec57e2d0ff94927291d2d5": {
+      "mean_logprob": -1.4765625,
+      "sum_logprob": -60.5,
+      "token_count": 41
+    },
+    "317c6cd3e231fe1c26458233acfbee2848691b02ab90448af66505095258c9dc": {
+      "mean_logprob": -1.4453125,
+      "sum_logprob": -63.5,
+      "token_count": 44
+    },
+    "1319b17a187bc844d914df9c79307ea39e9e5b4b622f3bc5bff5663560a33037": {
+      "mean_logprob": -1.4296875,
+      "sum_logprob": -67.5,
+      "token_count": 47
+    },
+    "e41edfd030d49a5aeb0319dc56f151d7f649ac5b423e269a71317b8fc01df5f5": {
+      "mean_logprob": -1.7890625,
+      "sum_logprob": -88.0,
+      "token_count": 49
+    },
+    "fd211d2403606b65f6bd37ca32dd7ffbd3aec36f6df8e26fc96d7c5b9640daf4": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -82.5,
+      "token_count": 32
+    },
+    "340ea0b5fe255fd9a126a26d338bdc111314f09854ac2f144029373d25b30f2c": {
+      "mean_logprob": -0.96875,
+      "sum_logprob": -46.5,
+      "token_count": 48
+    },
+    "638983c5160b78235772828025c89f44152e3ab0fac655373045e6686fd17524": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -65.5,
+      "token_count": 52
+    },
+    "06856aac0e44181ec1740253dfad40e955a1e95b34b3a00ff4ac3e93e5955bfc": {
+      "mean_logprob": -1.84375,
+      "sum_logprob": -90.5,
+      "token_count": 49
+    },
+    "a1af6d992a6ccfcabdf8573a0df85b53a784766ed7e98146499910bdf659bee0": {
+      "mean_logprob": -2.140625,
+      "sum_logprob": -75.0,
+      "token_count": 35
+    },
+    "bf21ff7aa766c3c25136cffc47ee30f3fece3d30cf00c5b0d3e76b553b42dfd6": {
+      "mean_logprob": -1.390625,
+      "sum_logprob": -68.0,
+      "token_count": 49
+    },
+    "6af2dc10ff01985ade8244283f008edb3e27ed60df9c768a1fabfa76c17e8f8d": {
+      "mean_logprob": -1.0546875,
+      "sum_logprob": -63.25,
+      "token_count": 60
+    },
+    "7579f38aac2593f2d618ef7b398916f031521ba16358b7c740e946981ae9142f": {
+      "mean_logprob": -1.4765625,
+      "sum_logprob": -79.5,
+      "token_count": 54
+    },
+    "c604637e7604298f9ba4d15b03b9e5b9b433dc4fdcfdf42672c12c492f8bc189": {
+      "mean_logprob": -2.234375,
+      "sum_logprob": -74.0,
+      "token_count": 33
+    },
+    "d70c95c8593d55230b7129c349858a5dbfa3b8d48912cfb79810d0fc8f6cbaff": {
+      "mean_logprob": -1.1953125,
+      "sum_logprob": -67.0,
+      "token_count": 56
+    },
+    "1fe058f1529229f6f321bc44e47e27f6b34baf1399a34749951792dd0ecc0853": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -105.0,
+      "token_count": 64
+    },
+    "708ecf27881128a2310542fc4b07851e8bd927f1cf3bb4af55dae9133bff67cb": {
+      "mean_logprob": -1.96875,
+      "sum_logprob": -116.0,
+      "token_count": 59
+    },
+    "36a6fb37af49237d64a6e196485c552d5fa0e611ba7dd2f6596ef8b521a028f4": {
+      "mean_logprob": -1.3125,
+      "sum_logprob": -76.5,
+      "token_count": 58
+    },
+    "757302c2960a8811f375a887d87d98548cb31e80a09715c757b4041e7cecaf5b": {
+      "mean_logprob": -2.390625,
+      "sum_logprob": -81.5,
+      "token_count": 34
+    },
+    "4c4647d85a5338f7a7e957dec66a6e353e61d6300818d482fd96540c46691f1b": {
+      "mean_logprob": -1.0,
+      "sum_logprob": -53.25,
+      "token_count": 53
+    },
+    "bddffd72767a32654b75ce0e588bff1c23cff69ad60a1de9f49c973f02de888a": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -89.5,
+      "token_count": 71
+    },
+    "5dcf6d275e747aee2563eacc01aa4048033a4338108f0c7b0d47634eb9d8dd50": {
+      "mean_logprob": -1.515625,
+      "sum_logprob": -101.5,
+      "token_count": 67
+    },
+    "77f99dbab7884be94376508421207c9f7fb22ef464c94c421ba3767dd4e7180d": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -78.0,
+      "token_count": 32
+    },
+    "f6f0fe975f59508f186adb770fb032557d98f12fbbb23f9e2ed2fcb185fb3550": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -72.0,
+      "token_count": 35
+    },
+    "41dcb91f37e2e2e82e57f44a2ad58426dff74de90c8dd2ba3a3c9d9053721ad2": {
+      "mean_logprob": -1.2734375,
+      "sum_logprob": -90.5,
+      "token_count": 71
+    },
+    "76bcd11aec9d81938ffce07b69edebf9b8a31fc7bb9ad2b9d0874ccd45df48d9": {
+      "mean_logprob": -1.71875,
+      "sum_logprob": -122.0,
+      "token_count": 71
+    },
+    "eec54169bd610be38bfb37203149128f68ea83c359dc854809921f3caa2564a0": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -88.5,
+      "token_count": 55
+    },
+    "97320d23741f712d69e40543df1378a5af720cdd63946e98e7176e5a4a7392db": {
+      "mean_logprob": -1.5390625,
+      "sum_logprob": -61.75,
+      "token_count": 40
+    },
+    "7a3df03243496a90d9682ebf0fc2406bd0068d545b87273dcad5191422df42b9": {
+      "mean_logprob": -1.6484375,
+      "sum_logprob": -71.0,
+      "token_count": 43
+    },
+    "2149b041de72ad24bfc7eea611b854ac52041d952af2f64fb5133caa8e72c19d": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -82.5,
+      "token_count": 32
+    },
+    "1572cd028f33d584718e0164257fc26c8cd5216c73f3295d54a4d5e3509a8a42": {
+      "mean_logprob": -1.03125,
+      "sum_logprob": -43.25,
+      "token_count": 42
+    },
+    "35ac887c48ceaf98ee491ab21b71ef5dbfed808e948b4147ca409ad9f72bdc10": {
+      "mean_logprob": -1.4765625,
+      "sum_logprob": -60.5,
+      "token_count": 41
+    },
+    "306d336f7b91496af3d86af6db91a8667de3c3c3658120f4bb4534f647cc0440": {
+      "mean_logprob": -1.6328125,
+      "sum_logprob": -70.0,
+      "token_count": 43
+    },
+    "5008ed7679752fa54da05223d4d53a2e6cffa492a23552ce3c3c3d3a76e385db": {
+      "mean_logprob": -2.421875,
+      "sum_logprob": -80.0,
+      "token_count": 33
+    },
+    "2db3963417456a1e4a1bf90fb1ebdb002272d0ef79c0f3121845cabb9aa80e19": {
+      "mean_logprob": -1.4453125,
+      "sum_logprob": -63.5,
+      "token_count": 44
+    },
+    "e32d130d6cb0d32bb6da37553f97bd767c65d4777af750f31e5408061fc01dd6": {
+      "mean_logprob": -1.4375,
+      "sum_logprob": -67.5,
+      "token_count": 47
+    },
+    "5e0258d317cc5543c3a3143a36134c17444668b7534b02532916fa8f4abc5a13": {
+      "mean_logprob": -1.796875,
+      "sum_logprob": -88.0,
+      "token_count": 49
+    },
+    "0592d4d53015902f995df39dda70f20ee7540ebb638a5ae494ff989cab6ece01": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -82.5,
+      "token_count": 32
+    },
+    "435175a3935a659b15ec3eb967e19755f4e6913d3334c303bf4bc62f1132b206": {
+      "mean_logprob": -0.9609375,
+      "sum_logprob": -46.0,
+      "token_count": 48
+    },
+    "49481e9d1dc4beb0f7853433e684bc6a4b060369a3e9a01610de9fd1ccd738b3": {
+      "mean_logprob": -1.3828125,
+      "sum_logprob": -67.5,
+      "token_count": 49
+    },
+    "0bc60139022e35ac1559ba1a271db59c8a3cf5981aa5cdd60cee9c7b41ca6dad": {
+      "mean_logprob": -1.25,
+      "sum_logprob": -65.0,
+      "token_count": 52
+    },
+    "c2ac52d78dc88960f29945eed88cfa5d5f2b3c35aea4378d2715b46f52372bf7": {
+      "mean_logprob": -2.140625,
+      "sum_logprob": -75.0,
+      "token_count": 35
+    },
+    "13719d5cc67f76337d711c0bdb8ec73c1a880337302a7ca0d53881420f09fc4b": {
+      "mean_logprob": -1.8515625,
+      "sum_logprob": -90.5,
+      "token_count": 49
+    },
+    "dfe30026f9e1204c7758909840f116621e458286d59d81aad7e469a504fda41c": {
+      "mean_logprob": -1.46875,
+      "sum_logprob": -79.5,
+      "token_count": 54
+    },
+    "847f44fafc98d4dd9ed2aa3ffdc854778119ab248629579c8f5518066b50b003": {
+      "mean_logprob": -1.0625,
+      "sum_logprob": -63.75,
+      "token_count": 60
+    },
+    "fe2b2fded4235064c6c0223572008c6f995ee30fecbdcd8671dad64a51f0cb74": {
+      "mean_logprob": -2.25,
+      "sum_logprob": -74.5,
+      "token_count": 33
+    },
+    "d5408190fd16f2d88d504a5f818ba55f02f5f56454dcb8ca277644fdad761202": {
+      "mean_logprob": -1.2109375,
+      "sum_logprob": -67.5,
+      "token_count": 56
+    },
+    "fe3a54e930871d5dc505e6f152288b5f39b1c3442604b4152b7f6f84410a0d1d": {
+      "mean_logprob": -1.9453125,
+      "sum_logprob": -115.0,
+      "token_count": 59
+    },
+    "b8ed395430f4e1f175ab0bc5a62d66fbf2551119f3a29fa88bf750472c3fd46b": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -105.0,
+      "token_count": 64
+    },
+    "eb95ae5d4ee80fb17e765c99c9de7ec328bd598e2601f4d15afeb80f1ae7a2a1": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -81.5,
+      "token_count": 34
+    },
+    "d2f89378ae98f6d2e193a3174b76da9ac486c2c82dbd4b85269814cb84a60a1c": {
+      "mean_logprob": -1.3203125,
+      "sum_logprob": -76.5,
+      "token_count": 58
+    },
+    "ec933b9464d73e5e329fc375a9b08362aaab1cce0df72ecbe3d7493adf3ffaaa": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -78.0,
+      "token_count": 32
+    },
+    "a8e3f3be1edddda13d40c5680e69ce7dbce9c1f4b350e8bff227e79ed341fed0": {
+      "mean_logprob": -1.546875,
+      "sum_logprob": -103.5,
+      "token_count": 67
+    },
+    "7bf2335aa21790f77a5961f4d3fae08d2b0b370d93524c9b7bff2fec7ef31c72": {
+      "mean_logprob": -1.0078125,
+      "sum_logprob": -53.5,
+      "token_count": 53
+    },
+    "99aa2a3c838caae8bf9e53a97db9ac548b604d2e49cd1cb216e48033adcc7249": {
+      "mean_logprob": -1.2734375,
+      "sum_logprob": -90.5,
+      "token_count": 71
+    },
+    "0e42a7ef679485b65f81f31a676bd318970b88b2e8a47ea43aa8127dcf4aeaab": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -72.0,
+      "token_count": 35
+    },
+    "81e92ce388b4670ae27198f5eac668bedfc7f412e78bbd6832a4fcad2041cbbf": {
+      "mean_logprob": -1.2734375,
+      "sum_logprob": -90.5,
+      "token_count": 71
+    },
+    "4d000c1ca9276b01b4dc7d74f53e33d92e1dabac4e6128266be6101f653d7fcb": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -88.0,
+      "token_count": 55
+    },
+    "f104c246dbef5e891aeaab305f49eeb18d514b2b97bad3c6010e3498bded7256": {
+      "mean_logprob": -1.7265625,
+      "sum_logprob": -122.5,
+      "token_count": 71
+    },
+    "6f833cf7f09bd8fd5f667385f461ecc4b78fbedbd684f0686bb0f88bcf21ea6a": {
+      "mean_logprob": -1.0390625,
+      "sum_logprob": -43.75,
+      "token_count": 42
+    },
+    "d23c459a3315f31888c9707801a5bbff4ff6e8033c9701a65c8e279899932a4e": {
+      "mean_logprob": -1.6484375,
+      "sum_logprob": -71.0,
+      "token_count": 43
+    },
+    "981c0389da870b6c43fa0335fad0c217e3ba13a7fb23f72f1d269157d6d2db1c": {
+      "mean_logprob": -2.609375,
+      "sum_logprob": -83.5,
+      "token_count": 32
+    },
+    "f6af62a10a101789ec83c7ccd3c65334c6a5f8ccbe33a8bcf4768aed291f91f7": {
+      "mean_logprob": -1.546875,
+      "sum_logprob": -62.0,
+      "token_count": 40
+    },
+    "3f54050094181953d7a891765c97a6eb44926d4030cdeff59eaee8e36a1e76a6": {
+      "mean_logprob": -1.6328125,
+      "sum_logprob": -70.0,
+      "token_count": 43
+    },
+    "e1618513c7eb6461c4fc28f51898714f0980d36c299ab5ccf88ef9999127178b": {
+      "mean_logprob": -1.4765625,
+      "sum_logprob": -60.75,
+      "token_count": 41
+    },
+    "56c9d90afcc31fc27237b8649dd22d51f6f83562a7a7bf5ebe9d279fd6b68a79": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -79.5,
+      "token_count": 33
+    },
+    "6b3fa1e0d53621c2c3d78a79a034b4014e2e2bcd8ff889339f888339d0cf006f": {
+      "mean_logprob": -1.4375,
+      "sum_logprob": -63.25,
+      "token_count": 44
+    },
+    "04d20215ea5a8c49a19ea88d4a0cd7a5bb6e43a9670bf8f052f217d73ee135ca": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -82.5,
+      "token_count": 32
+    },
+    "b35959176e1f45b1c70249203aae085bd6a93d11356b7ea2b9875a06f888208e": {
+      "mean_logprob": -1.4375,
+      "sum_logprob": -67.5,
+      "token_count": 47
+    },
+    "2dec657bc54f3aa6d107a53b68750e13847413eb014276b834e291d72f078496": {
+      "mean_logprob": -1.7890625,
+      "sum_logprob": -87.5,
+      "token_count": 49
+    },
+    "b6daaa0297cda05c5d6d3f260bb4cbf08aaa3ef8b87df441b67e9e62bd29c88e": {
+      "mean_logprob": -0.9609375,
+      "sum_logprob": -46.25,
+      "token_count": 48
+    },
+    "f85be4a57a97effd26cbea80ce12e75caa27a28c55084dfcba1b719f94855d69": {
+      "mean_logprob": -1.8359375,
+      "sum_logprob": -90.0,
+      "token_count": 49
+    },
+    "1d4134a1e1c7377dd44dda0b51ff659202788e883058ea17744b80dec29f1587": {
+      "mean_logprob": -1.3828125,
+      "sum_logprob": -67.5,
+      "token_count": 49
+    },
+    "8bd00bce7e4bc057752375fbc90703f8dbc966601eb325c4243f812b41dcbbb7": {
+      "mean_logprob": -2.140625,
+      "sum_logprob": -74.5,
+      "token_count": 35
+    },
+    "c5328e5c9367ec67f26afb67a372b691cd5a732ce7d5cfa88db8a98c7c6a7156": {
+      "mean_logprob": -1.25,
+      "sum_logprob": -65.0,
+      "token_count": 52
+    },
+    "796c63459090ed26d1d95087e7a21e86e3ffa97783973d8f3b757df2d090f100": {
+      "mean_logprob": -1.0546875,
+      "sum_logprob": -63.5,
+      "token_count": 60
+    },
+    "f5ddbb335f5dea3e563ef17122abea206248bb5a148fefef1be53a65f7e2ab71": {
+      "mean_logprob": -1.4765625,
+      "sum_logprob": -80.0,
+      "token_count": 54
+    },
+    "d2949fa8c63430e026ec631ab6ef8ffec4292ba3e63164ab52d631b763704b82": {
+      "mean_logprob": -2.265625,
+      "sum_logprob": -75.0,
+      "token_count": 33
+    },
+    "53e6220e33839a508dcac053e23c1619ac4a094d5cc6bd549b5f85acbb6a3570": {
+      "mean_logprob": -1.203125,
+      "sum_logprob": -67.5,
+      "token_count": 56
+    },
+    "069518d276ff961b8e5a4e5dacb97a703d50c8c3593de08fb20232686e503a21": {
+      "mean_logprob": -1.953125,
+      "sum_logprob": -115.5,
+      "token_count": 59
+    },
+    "cdbdf780723677c9a443045d800df83500389815a2e7a9c852ec9f5c88814762": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -82.0,
+      "token_count": 34
+    },
+    "3e1b1967112cc240e8c1217fd40b8aca21a3d15875b85b018d668f471f5e462f": {
+      "mean_logprob": -1.3203125,
+      "sum_logprob": -76.5,
+      "token_count": 58
+    },
+    "e627966142e3df92a8c0f1e9e67606dd0aba3f28067e7bbf436fee8e5fd71da4": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -105.0,
+      "token_count": 64
+    },
+    "64b07f4e9cc5a45aa5ddb0684f91baf1ecdb17c370d74039e3046e0091c6e86f": {
+      "mean_logprob": -1.0078125,
+      "sum_logprob": -53.5,
+      "token_count": 53
+    },
+    "d2fc6cf398162b9dcf0e39b73d6bf909649d8fd582618e8fac30229ebdcb2736": {
+      "mean_logprob": -1.5390625,
+      "sum_logprob": -103.0,
+      "token_count": 67
+    },
+    "2876112fc3f59391741614253d396bcb247dbfe6dc3c5235909de2ff8c6a224a": {
+      "mean_logprob": -1.265625,
+      "sum_logprob": -90.0,
+      "token_count": 71
+    },
+    "93108c05ec09400ce5e560fb7e6189db24599a0bdc42f7b6d634557b1938dca8": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -78.0,
+      "token_count": 32
+    },
+    "d94a64880d97a8da5da0af0c5bbfb734e45636f786bd8052063f788ee4bc2bde": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -72.0,
+      "token_count": 35
+    },
+    "7d8762ffee5e4ca9139dc548f39c589e4543ca61ff645665263ac33c1b4d7ba2": {
+      "mean_logprob": -1.7578125,
+      "sum_logprob": -125.0,
+      "token_count": 71
+    },
+    "257eee630b4cf6ba8f0f29440cac53c12ad78a5769f8a9f8f2530aee9bb9de4a": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -88.0,
+      "token_count": 55
+    },
+    "b0a4028e7992ecd997561f416b8c0d747c0dfadf8f3c132a3d77292ab3b17c1a": {
+      "mean_logprob": -1.2578125,
+      "sum_logprob": -89.5,
+      "token_count": 71
+    },
+    "6afddb13b7b9abdc315c03dc52e4e0a5af783b77dec7396128b7c0180fb034f0": {
+      "mean_logprob": -1.96875,
+      "sum_logprob": -90.5,
+      "token_count": 46
+    },
+    "d54a8e9740d21529345e6e68b2e2feb32f3d7871d1627169d1efbc10973349f9": {
+      "mean_logprob": -1.390625,
+      "sum_logprob": -54.25,
+      "token_count": 39
+    },
+    "30ca3793a75829a55ab100378a10502761ad8d88755e92f69b699c4eb0d73421": {
+      "mean_logprob": -1.40625,
+      "sum_logprob": -56.0,
+      "token_count": 40
+    },
+    "ee7395c710ecca09b4f3a00a403595f2c7e694e01b85248c400a64fff1f18b4c": {
+      "mean_logprob": -2.21875,
+      "sum_logprob": -82.5,
+      "token_count": 37
+    },
+    "dbbe2df3b71bbaae4aa5644dd2d26a17ff36d3d4092a838e5f31c31c64dd3b12": {
+      "mean_logprob": -1.0,
+      "sum_logprob": -47.0,
+      "token_count": 47
+    },
+    "c52a5f33ebedaebab2160e811918cea6f74f7c8c310ab6250c9a96ea30f0badf": {
+      "mean_logprob": -1.7265625,
+      "sum_logprob": -86.5,
+      "token_count": 50
+    },
+    "5335e53bedbea42ac38f0f6f4218fad4b69ad1e71564562a00a2aca6ba15fa14": {
+      "mean_logprob": -2.703125,
+      "sum_logprob": -89.5,
+      "token_count": 33
+    },
+    "1f5f08171ff004ef17863500fd89e1800948a112f7730b3c3bd16eaa0a429f2a": {
+      "mean_logprob": -1.6875,
+      "sum_logprob": -82.5,
+      "token_count": 49
+    },
+    "f1ea1079e921a42729532b7cbf5034021219721c97719e9fa9e4a7098d14fd10": {
+      "mean_logprob": -1.4375,
+      "sum_logprob": -70.5,
+      "token_count": 49
+    },
+    "45c97cbd1aef0644c02c48931cc6ecd67e7b8feb2664baadf8a00ce2b63f1fbf": {
+      "mean_logprob": -2.0,
+      "sum_logprob": -74.5,
+      "token_count": 37
+    },
+    "5f4d8bcfebba1cba846bc5070aa228fd2b2c1a19c5580e29af1ffb6f212a51f7": {
+      "mean_logprob": -1.5234375,
+      "sum_logprob": -76.5,
+      "token_count": 50
+    },
+    "a4d5e240ccbd38291c26f7b2015f5e77799b9cd86b294a0b86b981280c05bbca": {
+      "mean_logprob": -1.140625,
+      "sum_logprob": -53.75,
+      "token_count": 47
+    },
+    "b416bb03b661d04763f6ca5e2773f3b68803452da5b78ac37a9f02898ae39851": {
+      "mean_logprob": -1.3671875,
+      "sum_logprob": -82.0,
+      "token_count": 60
+    },
+    "d485189d8853635f675383788d6494b9b0f3df4385d5f18d3b234da8b12a7d48": {
+      "mean_logprob": -1.1484375,
+      "sum_logprob": -64.5,
+      "token_count": 56
+    },
+    "49da0fbef849675ba1ee222d149aabd6bb530c7c6f8d8216772cf8d2e8eb262b": {
+      "mean_logprob": -1.1171875,
+      "sum_logprob": -55.0,
+      "token_count": 49
+    },
+    "5f3f3831f7f2cca55f0cd7e5740312e7152150cb3ea622294c7184418bebe24f": {
+      "mean_logprob": -2.234375,
+      "sum_logprob": -76.0,
+      "token_count": 34
+    },
+    "019e667ad03f91e8dfcc55c77f5d8073fe68ff3cbe8d2cd98f480aaaab347b2e": {
+      "mean_logprob": -1.3984375,
+      "sum_logprob": -56.0,
+      "token_count": 40
+    },
+    "151229d3fd45cd72535d64b9fd7e9ac83c36036647167f7d238db0f85ee3a81c": {
+      "mean_logprob": -2.234375,
+      "sum_logprob": -82.5,
+      "token_count": 37
+    },
+    "7cd10326fde9522fa6860ec48533658d140903efc86bf30b4d8523882e8d29fe": {
+      "mean_logprob": -1.390625,
+      "sum_logprob": -54.25,
+      "token_count": 39
+    },
+    "d2e9ee10a567af6c358e0f71ff0942ad957d90802439d16a9cf235f715573e4d": {
+      "mean_logprob": -1.9765625,
+      "sum_logprob": -91.0,
+      "token_count": 46
+    },
+    "a3874edef4d0ce2e930360b3fc1bf5c70fb88b8b3f593f0a8f1f739e8e57cdfa": {
+      "mean_logprob": -0.98828125,
+      "sum_logprob": -46.5,
+      "token_count": 47
+    },
+    "1091960e4f5549d34f6b2e35b6710b6a3cd8d35265b9fca750b83014d1e80536": {
+      "mean_logprob": -1.6796875,
+      "sum_logprob": -82.5,
+      "token_count": 49
+    },
+    "c971d48cf146a9552cd26c403b2d19d736ec12c61582dd1194184c0d58cef592": {
+      "mean_logprob": -1.703125,
+      "sum_logprob": -85.5,
+      "token_count": 50
+    },
+    "18a9ca1149e06dd42309883e1117f6459fa44e58f95c8e11a173fbcc01a1e916": {
+      "mean_logprob": -2.6875,
+      "sum_logprob": -89.0,
+      "token_count": 33
+    },
+    "9ae47a001b699148e21da37cad2765843ddf77a8cd4b9e9d9c09977d1556090c": {
+      "mean_logprob": -1.140625,
+      "sum_logprob": -53.5,
+      "token_count": 47
+    },
+    "74b6e0d5788a110e12a2ec7c186549fb0f71ddb2d88b5740ffbe2c964bd571cb": {
+      "mean_logprob": -1.546875,
+      "sum_logprob": -77.5,
+      "token_count": 50
+    },
+    "034478d8ca8a8ad74d74168ed3dcc7fe43524711175d63cc6007beb44c3bde03": {
+      "mean_logprob": -2.015625,
+      "sum_logprob": -74.5,
+      "token_count": 37
+    },
+    "75c2bd79d440a72111af24bfe1a64122f0295692174129e366b998813ecd42cf": {
+      "mean_logprob": -1.4375,
+      "sum_logprob": -70.5,
+      "token_count": 49
+    },
+    "7f490ff53229b398834f6f05bc5696e17d7c3703705ae944f2a34e5ed3a24e14": {
+      "mean_logprob": -1.109375,
+      "sum_logprob": -62.0,
+      "token_count": 56
+    },
+    "b8f1ed16134243d1764b3918d4f3011d4c4bca6cf1c1caef657900d4b522d088": {
+      "mean_logprob": -1.3125,
+      "sum_logprob": -79.0,
+      "token_count": 60
+    },
+    "d23d1fb90fdaaa8424e9c846e31558e07eb20b988b691caf1936b8d2f0804139": {
+      "mean_logprob": -2.234375,
+      "sum_logprob": -76.0,
+      "token_count": 34
+    },
+    "455c6dc725d1a693442e16009a5cd212cb23b1b994848095a4787f268cbec294": {
+      "mean_logprob": -1.1171875,
+      "sum_logprob": -54.75,
+      "token_count": 49
+    }
+  },
+  "dpo_scores": {
+    "907e62020716552253b497b508cc2a60b32e191c123841a8f1398f8be4adf57c": {
+      "mean_logprob": -2.046875,
+      "sum_logprob": -88.5,
+      "token_count": 43
+    },
+    "01f8dd08963ede5851d6c96d7f715788f79edfe52d0df408977ae242cc1b9353": {
+      "mean_logprob": -6.28125,
+      "sum_logprob": -201.0,
+      "token_count": 32
+    },
+    "709dca5e4c3f500fa9040ffa9f237b2a3bb0ce5719e391a2e9d7cb9347552d70": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -97.5,
+      "token_count": 40
+    },
+    "ca7332a4befba7c503736e9de0d5d2b17f78889252c97136d20a019f501e72be": {
+      "mean_logprob": -1.5390625,
+      "sum_logprob": -64.5,
+      "token_count": 42
+    },
+    "f8b497a61747c7c4af1ea2a9b46054a8f6f82ec8c09111ee7ce91c52f996c3fa": {
+      "mean_logprob": -2.8125,
+      "sum_logprob": -121.0,
+      "token_count": 43
+    },
+    "e4131f0a937517dcc0374a94107b8c4f71011301c38436f40f09b59490f097dc": {
+      "mean_logprob": -5.5625,
+      "sum_logprob": -184.0,
+      "token_count": 33
+    },
+    "0c7f697c352f8d244b1c62f7dbad2022adaa111ccb02a25a923395c855be4ba4": {
+      "mean_logprob": -2.625,
+      "sum_logprob": -107.5,
+      "token_count": 41
+    },
+    "0e0d639009d8728a6730d1d88011a237ed4f27fa9d03dab5fdcc092e5fe8da7e": {
+      "mean_logprob": -1.9921875,
+      "sum_logprob": -87.5,
+      "token_count": 44
+    },
+    "b5e1db893166050fcf432700061a78384657a59c60541485d4bf5fcfc4dadfb7": {
+      "mean_logprob": -1.59375,
+      "sum_logprob": -75.0,
+      "token_count": 47
+    },
+    "b0d67819b97e0c4902db361a8caea2537f733920c3b39e7fe7f7b39038e7438f": {
+      "mean_logprob": -4.71875,
+      "sum_logprob": -151.0,
+      "token_count": 32
+    },
+    "4d3f624f8937701e70f5f1b602067e606fc8d0068de4b08fb1e31121456de1f1": {
+      "mean_logprob": -2.140625,
+      "sum_logprob": -105.0,
+      "token_count": 49
+    },
+    "7689a0e50a75124a02114290ad77e68ac6c9218f503e4634a2282b0e0d2d9278": {
+      "mean_logprob": -1.6484375,
+      "sum_logprob": -79.0,
+      "token_count": 48
+    },
+    "d8c05fe5496d4605e8715de3e5dd54c2a31fe654e4e2cee22afed86c678b7fc8": {
+      "mean_logprob": -1.8828125,
+      "sum_logprob": -92.0,
+      "token_count": 49
+    },
+    "aed17309feae0645f4c0fb3bbd915fab8ccee26f484302bce543e443df031be4": {
+      "mean_logprob": -4.1875,
+      "sum_logprob": -147.0,
+      "token_count": 35
+    },
+    "8408c90d2121da28bcc5cecd05c3b815033808c802b96c62404ac03178a9a89c": {
+      "mean_logprob": -1.65625,
+      "sum_logprob": -86.0,
+      "token_count": 52
+    },
+    "00ef3c1e5433d278b8ae52b7e1832f2b39511b1d7892da66884f1dfa0ca01af9": {
+      "mean_logprob": -2.03125,
+      "sum_logprob": -99.5,
+      "token_count": 49
+    },
+    "2dfb70889aff02564da6d4b3a4b4a8acbecbdabd7328d3cc68ed24047d122e11": {
+      "mean_logprob": -2.125,
+      "sum_logprob": -114.5,
+      "token_count": 54
+    },
+    "6cd7aa2f79750d17d4aa2be3f0c66e76ab1ac46a7a5dad5d503a83994c011d57": {
+      "mean_logprob": -1.9140625,
+      "sum_logprob": -107.5,
+      "token_count": 56
+    },
+    "2a77d367d20b578b346741674ec1e109948163a0ff81acfb1563756829485e7e": {
+      "mean_logprob": -1.5390625,
+      "sum_logprob": -92.0,
+      "token_count": 60
+    },
+    "2e34e9467441190d45be5297fa7e3c0fbb67e590ef2f9fcfedeb2fefd55a64a1": {
+      "mean_logprob": -4.84375,
+      "sum_logprob": -160.0,
+      "token_count": 33
+    },
+    "f404b850762fcb89e09c7f6c8b16f47117cae4cb0ad150cb3a50a4f088c502d3": {
+      "mean_logprob": -1.65625,
+      "sum_logprob": -96.0,
+      "token_count": 58
+    },
+    "5f1b4234f41ef5409a71c571812dc7f057ca679ef7f85d9d06e757b6aad813a4": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -144.0,
+      "token_count": 59
+    },
+    "3d1b0a2cc883d2a084e96925c31810c41296b13ea558b2c1b8cfa60e88197441": {
+      "mean_logprob": -5.03125,
+      "sum_logprob": -172.0,
+      "token_count": 34
+    },
+    "0619766299436cef0e9b6a1468f0506672a5709103c013234d6d1578b0a2cef2": {
+      "mean_logprob": -2.078125,
+      "sum_logprob": -133.0,
+      "token_count": 64
+    },
+    "18eba5dc2c10ff2e009d2daa2eac0ce7cf09f3e776f1e3b4f09dffb468be0dca": {
+      "mean_logprob": -1.609375,
+      "sum_logprob": -114.5,
+      "token_count": 71
+    },
+    "d7a3c2a31bb46efc17a4d4ab45fb36e9f74b451397c788ece0b0ca67d53681b7": {
+      "mean_logprob": -5.6875,
+      "sum_logprob": -182.0,
+      "token_count": 32
+    },
+    "10c8a1c32060a10b3e619dcd2560ac14f9b685a1494a30a8e02ae4d43c5254cc": {
+      "mean_logprob": -2.0,
+      "sum_logprob": -134.0,
+      "token_count": 67
+    },
+    "ade496aff057579515d54ba1bed55473294166e6a102c7b993b44ced4a8f31eb": {
+      "mean_logprob": -1.8046875,
+      "sum_logprob": -95.5,
+      "token_count": 53
+    },
+    "7f8bc2b059d638fedfe633c7e1a5b6400313489bfe3d44e3757abd6554de4408": {
+      "mean_logprob": -2.3125,
+      "sum_logprob": -127.5,
+      "token_count": 55
+    },
+    "51b4e1ce61612ab012d40b9142a21f2314f96375031026d73390e4508c1d0a53": {
+      "mean_logprob": -2.1875,
+      "sum_logprob": -156.0,
+      "token_count": 71
+    },
+    "7a719c9be24279229cba8851ed5692e61e4a8f4e520108fc2c570b761d5018ea": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -171.0,
+      "token_count": 71
+    },
+    "12d5c63e30d3fdccfb1c7ec61c4ffc8326a508c71a9f740cdd34f701fd8c7ba3": {
+      "mean_logprob": -4.8125,
+      "sum_logprob": -168.0,
+      "token_count": 35
+    },
+    "0e2b3074fb0dad4ae52b7cfc571a2284b6c9134e9b3c4d2842f052a884874eb9": {
+      "mean_logprob": -6.28125,
+      "sum_logprob": -201.0,
+      "token_count": 32
+    },
+    "13eb8c078829312cea9130faa663f7444402da4d13c67802c26b7c08db3b7006": {
+      "mean_logprob": -1.5859375,
+      "sum_logprob": -67.0,
+      "token_count": 42
+    },
+    "026d3b046059597245eafe5714dcf4a25686d65a6f2212a416968f50894630a3": {
+      "mean_logprob": -2.46875,
+      "sum_logprob": -98.5,
+      "token_count": 40
+    },
+    "7370ef5485951542fab2af36b6ceb13340553f60cc571d3d4c06d7b45d2a0d9e": {
+      "mean_logprob": -2.046875,
+      "sum_logprob": -88.0,
+      "token_count": 43
+    },
+    "5ac155fa67310d4a4235b6b8813f89e3559ad1f31bf2585a92e0578140754ac8": {
+      "mean_logprob": -2.625,
+      "sum_logprob": -107.5,
+      "token_count": 41
+    },
+    "5f8d07624e3c020f8914efde2918b56d7780d46f214992f9a5f4a9d5e004cb1a": {
+      "mean_logprob": -2.78125,
+      "sum_logprob": -119.5,
+      "token_count": 43
+    },
+    "5a46c36b8c73deebb123b96b9de85540ea5dd28bd69b0f846929e584301567ea": {
+      "mean_logprob": -1.984375,
+      "sum_logprob": -87.0,
+      "token_count": 44
+    },
+    "e723d1398a653a642d2de6296ca9a16d67e4582605300c986428b64d7af6175b": {
+      "mean_logprob": -5.625,
+      "sum_logprob": -186.0,
+      "token_count": 33
+    },
+    "ef0e42e0718e58a30873c485b00936800ac2efeb52ab84fff4878f2b7c23b910": {
+      "mean_logprob": -4.75,
+      "sum_logprob": -152.0,
+      "token_count": 32
+    },
+    "c19fb9082f5a4cfb9d0e72bf7cfa6b90980585b5e2341d04a14405caf4639348": {
+      "mean_logprob": -1.5859375,
+      "sum_logprob": -74.5,
+      "token_count": 47
+    },
+    "7ce19c44a63bacd27bde8d2816455ee6c612e8c383160a448c27037469980029": {
+      "mean_logprob": -1.6640625,
+      "sum_logprob": -80.0,
+      "token_count": 48
+    },
+    "c4360692df4afdb4a4e037233a2d8fe4528e9767660f5d17ebd6a9f5526ccb12": {
+      "mean_logprob": -2.15625,
+      "sum_logprob": -105.5,
+      "token_count": 49
+    },
+    "1abb35ed64428489930fe198fb40c1c9ec268b4991649e123a7dc7ccfd59ff70": {
+      "mean_logprob": -2.046875,
+      "sum_logprob": -100.5,
+      "token_count": 49
+    },
+    "add7aca40c2e140d12c3321c4f59dc69dcc78003514f54194b6c96942a5abfe3": {
+      "mean_logprob": -4.21875,
+      "sum_logprob": -148.0,
+      "token_count": 35
+    },
+    "1ac09ac07e89511377ff5db0ef85693456ca22fbcecbcf8af3e415b5bc84eaf1": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -85.5,
+      "token_count": 52
+    },
+    "c379af8d9d78278fb268fed2ba2ddd735d15e9ba84142f35a349277c71df77eb": {
+      "mean_logprob": -1.875,
+      "sum_logprob": -92.0,
+      "token_count": 49
+    },
+    "71f6cdd17f3cdec4aa8101a3c5b52c9041e58192f495c5a15704b4c865f1f136": {
+      "mean_logprob": -2.109375,
+      "sum_logprob": -114.0,
+      "token_count": 54
+    },
+    "c9b355a460ad980154471055405029fcfae593a41cbb3299ba91270a36aefcd9": {
+      "mean_logprob": -1.5546875,
+      "sum_logprob": -93.5,
+      "token_count": 60
+    },
+    "17c27188b28f9239645247686f3c7962f358ef112f5eda47e4ab0d1452d92977": {
+      "mean_logprob": -1.9296875,
+      "sum_logprob": -108.0,
+      "token_count": 56
+    },
+    "9a8b18019f8cd7ce55fbd8c96d4575be8299a5c2ac73e2d16757aaefb201b533": {
+      "mean_logprob": -4.84375,
+      "sum_logprob": -160.0,
+      "token_count": 33
+    },
+    "0990c4a0a0f046c0fa4d91c8c2d1af0ad57dbf0bbf7882a6887543aa94e094bd": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -132.0,
+      "token_count": 64
+    },
+    "e27b62d07ba20e9a8588fdd8c34aa5de8a6c1283703fb8363a1dd20d99aa17cc": {
+      "mean_logprob": -1.6875,
+      "sum_logprob": -98.0,
+      "token_count": 58
+    },
+    "ef26935614c9c47cbc21bc95d5e0100825b175f4a46f01de6514bb0950e06827": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -143.0,
+      "token_count": 59
+    },
+    "cb3fd7cde21bca94efb9b121eb64cb6977979c83ff7d2e656f1c8c002c19487e": {
+      "mean_logprob": -5.125,
+      "sum_logprob": -174.0,
+      "token_count": 34
+    },
+    "1a26c253ae44584dce825797b92645eb7cb79bdec843035ebc5d185903cb6c89": {
+      "mean_logprob": -1.8203125,
+      "sum_logprob": -96.5,
+      "token_count": 53
+    },
+    "1742263894ee239723d47d51f3e079438860fddd4ff001c5319a66bc3fba27ca": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -116.5,
+      "token_count": 71
+    },
+    "7a7be89506ee8b56e6c1a8c94f6b01d26b88e8907d6dc889e6b503a876b5a15a": {
+      "mean_logprob": -1.9765625,
+      "sum_logprob": -132.0,
+      "token_count": 67
+    },
+    "7c40ff088f2061424161b85af483cc972210a12706e8a3c803e5c9ca97abe455": {
+      "mean_logprob": -5.6875,
+      "sum_logprob": -182.0,
+      "token_count": 32
+    },
+    "48e584a884b19d726c7d3c49ff2d063b2258217acd14e66fe34f52de1d6a1328": {
+      "mean_logprob": -2.421875,
+      "sum_logprob": -172.0,
+      "token_count": 71
+    },
+    "5026a5a634dc7eec191da98f0bcd593054b22b20a3eaabe1a665bf4c715a3f50": {
+      "mean_logprob": -2.359375,
+      "sum_logprob": -130.0,
+      "token_count": 55
+    },
+    "09d882e2ca951ce69a57d5dd11173f662754b008573e2430940b5cf0fd7b167a": {
+      "mean_logprob": -4.8125,
+      "sum_logprob": -168.0,
+      "token_count": 35
+    },
+    "fe5d3cc8e932c121931945195dc0f338cd44edf7286dc7c22163bf8d57e31472": {
+      "mean_logprob": -2.234375,
+      "sum_logprob": -158.0,
+      "token_count": 71
+    },
+    "f69b1e669c50b41d39fe75f4484850c568c5496c5b2d865d8c99efdf45eb90d6": {
+      "mean_logprob": -1.5546875,
+      "sum_logprob": -65.5,
+      "token_count": 42
+    },
+    "8373fe22b32639eac31ed7397d176e3a678a9a0890d9f0c1ad9ee014e9445125": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -97.5,
+      "token_count": 40
+    },
+    "bd28d1e16f9394ebb92ea0cf2a08e0487e2fb6e51807a19e98430d262a4bc17b": {
+      "mean_logprob": -6.125,
+      "sum_logprob": -196.0,
+      "token_count": 32
+    },
+    "a1acc096285ff84f7bc860d2bb63dec96125f66a39cc452c7387134a9ea7caaa": {
+      "mean_logprob": -2.046875,
+      "sum_logprob": -88.0,
+      "token_count": 43
+    },
+    "e1488c308bbdd16af24627ab14ebb85d4113141ceadb455e658524155152f0a1": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -105.5,
+      "token_count": 41
+    },
+    "004827ba20329264960e26e31cbca1120b7c34c1b1d0330e8cf5783af5acd938": {
+      "mean_logprob": -5.5625,
+      "sum_logprob": -184.0,
+      "token_count": 33
+    },
+    "5b528a198c9f83a3ff645b6188bfe615db02ba2c79a0fa038e51ba7537431166": {
+      "mean_logprob": -2.71875,
+      "sum_logprob": -116.5,
+      "token_count": 43
+    },
+    "932e49fbc4e14e7291e19aac2fb47139cae6ccf8650ea82401a1f8f76bbd99a3": {
+      "mean_logprob": -1.96875,
+      "sum_logprob": -86.5,
+      "token_count": 44
+    },
+    "790ca47022b6074b10093277d8353318ee802c932cf51490ee405b3de3835d53": {
+      "mean_logprob": -1.65625,
+      "sum_logprob": -79.5,
+      "token_count": 48
+    },
+    "656dcb92e05d597818d4796d898fa7b0a420da943af74313e17260420088fc26": {
+      "mean_logprob": -2.21875,
+      "sum_logprob": -108.5,
+      "token_count": 49
+    },
+    "806413b9d4accefbb3118977fc4752184f8ea28a13673073a0736d27c170fdfa": {
+      "mean_logprob": -4.78125,
+      "sum_logprob": -153.0,
+      "token_count": 32
+    },
+    "c3d9fd5ab076993cc808eb982e9a9c7bad6604fb1e16f055093d00f5ec7baea5": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -75.0,
+      "token_count": 47
+    },
+    "89e38b12295bc0665aa92417df9c9e2e393bb613a09a574fdd52f6bd556f77f6": {
+      "mean_logprob": -1.8828125,
+      "sum_logprob": -92.5,
+      "token_count": 49
+    },
+    "71141fdbece62201d1631f8fac174e5cb69d6d914a0b5072ad0b7f7cdc6fbd05": {
+      "mean_logprob": -1.6640625,
+      "sum_logprob": -86.5,
+      "token_count": 52
+    },
+    "5daebc18c361bca41310d05026fa3c11199f1c4031ef05c187eec21ba375fbb0": {
+      "mean_logprob": -2.078125,
+      "sum_logprob": -102.0,
+      "token_count": 49
+    },
+    "2ac95d2c6f2adc3021ec5da1cde39af6eaf4017db4bf02a3d71f5723e4dc2516": {
+      "mean_logprob": -4.25,
+      "sum_logprob": -149.0,
+      "token_count": 35
+    },
+    "8f2ebbade7a8edc9f1d6469a6c4de6cec92cf0a3e2d84d76dde1fbaab5766e53": {
+      "mean_logprob": -1.5625,
+      "sum_logprob": -93.5,
+      "token_count": 60
+    },
+    "b9390ccbf1de9bb3d29ac0ca9574541938d9277a1a1a1b5cab134f0c6cbc1387": {
+      "mean_logprob": -4.875,
+      "sum_logprob": -161.0,
+      "token_count": 33
+    },
+    "05de2e6ba4e0e04fad4973d68e81fdb87aa9574f79ba1604194665402b1b1d31": {
+      "mean_logprob": -1.9375,
+      "sum_logprob": -108.5,
+      "token_count": 56
+    },
+    "2765f501eca3b7b0bf8e4eb4c2f272169e523684abc1d09bc444ee810c32d0f8": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -111.5,
+      "token_count": 54
+    },
+    "267213b7cd8106d52264ce64255ef3a4d665ded7a63fc00161c9ca874ff45d2f": {
+      "mean_logprob": -5.09375,
+      "sum_logprob": -173.0,
+      "token_count": 34
+    },
+    "602e0746038a0dbbffa97067b0c1417d1510916fdff4b2d21e46c233d9ae04eb": {
+      "mean_logprob": -2.046875,
+      "sum_logprob": -131.0,
+      "token_count": 64
+    },
+    "1aee387417e4dba4d7689567899c3fdb6db3ca3d2b5cf37ec521313b42170474": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -144.0,
+      "token_count": 59
+    },
+    "addb6c832873f4ef4e95095c34005d392f55769cf474f40317eced70bc8fc70c": {
+      "mean_logprob": -1.65625,
+      "sum_logprob": -96.0,
+      "token_count": 58
+    },
+    "5e4c4eee5d0007b3c4c0e6259bb2e9db5a4301b550f151856d5f7b8ae214f2d8": {
+      "mean_logprob": -5.75,
+      "sum_logprob": -184.0,
+      "token_count": 32
+    },
+    "e68de0756a8194db101f18e5d41e15dfa61a6286d32df8ff96c4b420cdb6854c": {
+      "mean_logprob": -1.984375,
+      "sum_logprob": -133.0,
+      "token_count": 67
+    },
+    "b856379a22c1ffa3958ab0d1289bfdd0e0362fb9558e6f7179116d96b5781629": {
+      "mean_logprob": -1.625,
+      "sum_logprob": -115.5,
+      "token_count": 71
+    },
+    "bcca691eb8943b8465b0f55d50a07b3d9d2a8a4cfb2445632639b05cd6279377": {
+      "mean_logprob": -1.8125,
+      "sum_logprob": -96.5,
+      "token_count": 53
+    },
+    "5467d82a1a6dd10a05d118eead09ff7966b772aef6ebab140e4a42b3eeae3207": {
+      "mean_logprob": -2.234375,
+      "sum_logprob": -158.0,
+      "token_count": 71
+    },
+    "345cb9fa67ca6c6d5415c99508610ca06c21c197acbcdd1eebbb6eb1e52e4e8f": {
+      "mean_logprob": -4.8125,
+      "sum_logprob": -168.0,
+      "token_count": 35
+    },
+    "fcc13b138b4a38074348473743ccb7d01c3ab0d10870fbcb8dd34e0002864675": {
+      "mean_logprob": -2.359375,
+      "sum_logprob": -130.0,
+      "token_count": 55
+    },
+    "60de22888d69a2d921b405418e58bb1c82fd3dbe1e62e65895632e50247dfdb7": {
+      "mean_logprob": -2.375,
+      "sum_logprob": -168.0,
+      "token_count": 71
+    },
+    "331f54eff44bc3263fc32bf49c04c1510a883c751861f8d8962748485063f59a": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -97.5,
+      "token_count": 40
+    },
+    "dfe800576ea20f37502d09f3a41b16d79fa5f2d42a0cf11f3b86b00a4a7b0440": {
+      "mean_logprob": -2.03125,
+      "sum_logprob": -87.5,
+      "token_count": 43
+    },
+    "49fe238fa5295463af03b8cb12dfa8827565f6d4ad52c973ceb7a38d2cc61e7a": {
+      "mean_logprob": -1.5390625,
+      "sum_logprob": -64.5,
+      "token_count": 42
+    },
+    "6f2ab836276f79968266ed97f839fcbb4f50c27a689b372124d15cdaa8402848": {
+      "mean_logprob": -6.15625,
+      "sum_logprob": -197.0,
+      "token_count": 32
+    },
+    "e611817fa594d5a6022f03d9132bbcb9539d9fa687bda19e921cdcac50a46f70": {
+      "mean_logprob": -2.71875,
+      "sum_logprob": -117.0,
+      "token_count": 43
+    },
+    "4401c54bfccf5f52c1828cbb6b6792e78270bc2494ae5980853b34b3d36bf388": {
+      "mean_logprob": -5.5625,
+      "sum_logprob": -184.0,
+      "token_count": 33
+    },
+    "09f79475334be129ee4c89427f222ba32bdf3ff77bec57e2d0ff94927291d2d5": {
+      "mean_logprob": -2.59375,
+      "sum_logprob": -106.0,
+      "token_count": 41
+    },
+    "317c6cd3e231fe1c26458233acfbee2848691b02ab90448af66505095258c9dc": {
+      "mean_logprob": -1.9609375,
+      "sum_logprob": -86.5,
+      "token_count": 44
+    },
+    "1319b17a187bc844d914df9c79307ea39e9e5b4b622f3bc5bff5663560a33037": {
+      "mean_logprob": -1.5859375,
+      "sum_logprob": -74.5,
+      "token_count": 47
+    },
+    "e41edfd030d49a5aeb0319dc56f151d7f649ac5b423e269a71317b8fc01df5f5": {
+      "mean_logprob": -2.21875,
+      "sum_logprob": -109.0,
+      "token_count": 49
+    },
+    "fd211d2403606b65f6bd37ca32dd7ffbd3aec36f6df8e26fc96d7c5b9640daf4": {
+      "mean_logprob": -4.78125,
+      "sum_logprob": -153.0,
+      "token_count": 32
+    },
+    "340ea0b5fe255fd9a126a26d338bdc111314f09854ac2f144029373d25b30f2c": {
+      "mean_logprob": -1.6640625,
+      "sum_logprob": -80.0,
+      "token_count": 48
+    },
+    "638983c5160b78235772828025c89f44152e3ab0fac655373045e6686fd17524": {
+      "mean_logprob": -1.6640625,
+      "sum_logprob": -86.5,
+      "token_count": 52
+    },
+    "06856aac0e44181ec1740253dfad40e955a1e95b34b3a00ff4ac3e93e5955bfc": {
+      "mean_logprob": -2.078125,
+      "sum_logprob": -102.0,
+      "token_count": 49
+    },
+    "a1af6d992a6ccfcabdf8573a0df85b53a784766ed7e98146499910bdf659bee0": {
+      "mean_logprob": -4.25,
+      "sum_logprob": -149.0,
+      "token_count": 35
+    },
+    "bf21ff7aa766c3c25136cffc47ee30f3fece3d30cf00c5b0d3e76b553b42dfd6": {
+      "mean_logprob": -1.8828125,
+      "sum_logprob": -92.5,
+      "token_count": 49
+    },
+    "6af2dc10ff01985ade8244283f008edb3e27ed60df9c768a1fabfa76c17e8f8d": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -96.0,
+      "token_count": 60
+    },
+    "7579f38aac2593f2d618ef7b398916f031521ba16358b7c740e946981ae9142f": {
+      "mean_logprob": -2.125,
+      "sum_logprob": -114.5,
+      "token_count": 54
+    },
+    "c604637e7604298f9ba4d15b03b9e5b9b433dc4fdcfdf42672c12c492f8bc189": {
+      "mean_logprob": -4.875,
+      "sum_logprob": -161.0,
+      "token_count": 33
+    },
+    "d70c95c8593d55230b7129c349858a5dbfa3b8d48912cfb79810d0fc8f6cbaff": {
+      "mean_logprob": -1.96875,
+      "sum_logprob": -110.5,
+      "token_count": 56
+    },
+    "1fe058f1529229f6f321bc44e47e27f6b34baf1399a34749951792dd0ecc0853": {
+      "mean_logprob": -2.125,
+      "sum_logprob": -136.0,
+      "token_count": 64
+    },
+    "708ecf27881128a2310542fc4b07851e8bd927f1cf3bb4af55dae9133bff67cb": {
+      "mean_logprob": -2.484375,
+      "sum_logprob": -146.0,
+      "token_count": 59
+    },
+    "36a6fb37af49237d64a6e196485c552d5fa0e611ba7dd2f6596ef8b521a028f4": {
+      "mean_logprob": -1.6953125,
+      "sum_logprob": -98.5,
+      "token_count": 58
+    },
+    "757302c2960a8811f375a887d87d98548cb31e80a09715c757b4041e7cecaf5b": {
+      "mean_logprob": -5.125,
+      "sum_logprob": -174.0,
+      "token_count": 34
+    },
+    "4c4647d85a5338f7a7e957dec66a6e353e61d6300818d482fd96540c46691f1b": {
+      "mean_logprob": -1.8203125,
+      "sum_logprob": -96.5,
+      "token_count": 53
+    },
+    "bddffd72767a32654b75ce0e588bff1c23cff69ad60a1de9f49c973f02de888a": {
+      "mean_logprob": -1.609375,
+      "sum_logprob": -114.0,
+      "token_count": 71
+    },
+    "5dcf6d275e747aee2563eacc01aa4048033a4338108f0c7b0d47634eb9d8dd50": {
+      "mean_logprob": -1.9453125,
+      "sum_logprob": -130.0,
+      "token_count": 67
+    },
+    "77f99dbab7884be94376508421207c9f7fb22ef464c94c421ba3767dd4e7180d": {
+      "mean_logprob": -5.6875,
+      "sum_logprob": -182.0,
+      "token_count": 32
+    },
+    "f6f0fe975f59508f186adb770fb032557d98f12fbbb23f9e2ed2fcb185fb3550": {
+      "mean_logprob": -4.78125,
+      "sum_logprob": -167.0,
+      "token_count": 35
+    },
+    "41dcb91f37e2e2e82e57f44a2ad58426dff74de90c8dd2ba3a3c9d9053721ad2": {
+      "mean_logprob": -2.1875,
+      "sum_logprob": -156.0,
+      "token_count": 71
+    },
+    "76bcd11aec9d81938ffce07b69edebf9b8a31fc7bb9ad2b9d0874ccd45df48d9": {
+      "mean_logprob": -2.375,
+      "sum_logprob": -169.0,
+      "token_count": 71
+    },
+    "eec54169bd610be38bfb37203149128f68ea83c359dc854809921f3caa2564a0": {
+      "mean_logprob": -2.359375,
+      "sum_logprob": -130.0,
+      "token_count": 55
+    },
+    "97320d23741f712d69e40543df1378a5af720cdd63946e98e7176e5a4a7392db": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -96.0,
+      "token_count": 40
+    },
+    "7a3df03243496a90d9682ebf0fc2406bd0068d545b87273dcad5191422df42b9": {
+      "mean_logprob": -2.015625,
+      "sum_logprob": -86.5,
+      "token_count": 43
+    },
+    "2149b041de72ad24bfc7eea611b854ac52041d952af2f64fb5133caa8e72c19d": {
+      "mean_logprob": -6.09375,
+      "sum_logprob": -195.0,
+      "token_count": 32
+    },
+    "1572cd028f33d584718e0164257fc26c8cd5216c73f3295d54a4d5e3509a8a42": {
+      "mean_logprob": -1.4921875,
+      "sum_logprob": -62.75,
+      "token_count": 42
+    },
+    "35ac887c48ceaf98ee491ab21b71ef5dbfed808e948b4147ca409ad9f72bdc10": {
+      "mean_logprob": -2.53125,
+      "sum_logprob": -104.0,
+      "token_count": 41
+    },
+    "306d336f7b91496af3d86af6db91a8667de3c3c3658120f4bb4534f647cc0440": {
+      "mean_logprob": -2.6875,
+      "sum_logprob": -115.5,
+      "token_count": 43
+    },
+    "5008ed7679752fa54da05223d4d53a2e6cffa492a23552ce3c3c3d3a76e385db": {
+      "mean_logprob": -5.5625,
+      "sum_logprob": -184.0,
+      "token_count": 33
+    },
+    "2db3963417456a1e4a1bf90fb1ebdb002272d0ef79c0f3121845cabb9aa80e19": {
+      "mean_logprob": -1.953125,
+      "sum_logprob": -86.0,
+      "token_count": 44
+    },
+    "e32d130d6cb0d32bb6da37553f97bd767c65d4777af750f31e5408061fc01dd6": {
+      "mean_logprob": -1.578125,
+      "sum_logprob": -74.5,
+      "token_count": 47
+    },
+    "5e0258d317cc5543c3a3143a36134c17444668b7534b02532916fa8f4abc5a13": {
+      "mean_logprob": -2.1875,
+      "sum_logprob": -107.0,
+      "token_count": 49
+    },
+    "0592d4d53015902f995df39dda70f20ee7540ebb638a5ae494ff989cab6ece01": {
+      "mean_logprob": -4.71875,
+      "sum_logprob": -151.0,
+      "token_count": 32
+    },
+    "435175a3935a659b15ec3eb967e19755f4e6913d3334c303bf4bc62f1132b206": {
+      "mean_logprob": -1.6328125,
+      "sum_logprob": -78.5,
+      "token_count": 48
+    },
+    "49481e9d1dc4beb0f7853433e684bc6a4b060369a3e9a01610de9fd1ccd738b3": {
+      "mean_logprob": -1.859375,
+      "sum_logprob": -91.0,
+      "token_count": 49
+    },
+    "0bc60139022e35ac1559ba1a271db59c8a3cf5981aa5cdd60cee9c7b41ca6dad": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -85.5,
+      "token_count": 52
+    },
+    "c2ac52d78dc88960f29945eed88cfa5d5f2b3c35aea4378d2715b46f52372bf7": {
+      "mean_logprob": -4.15625,
+      "sum_logprob": -146.0,
+      "token_count": 35
+    },
+    "13719d5cc67f76337d711c0bdb8ec73c1a880337302a7ca0d53881420f09fc4b": {
+      "mean_logprob": -2.078125,
+      "sum_logprob": -101.5,
+      "token_count": 49
+    },
+    "dfe30026f9e1204c7758909840f116621e458286d59d81aad7e469a504fda41c": {
+      "mean_logprob": -2.09375,
+      "sum_logprob": -113.0,
+      "token_count": 54
+    },
+    "847f44fafc98d4dd9ed2aa3ffdc854778119ab248629579c8f5518066b50b003": {
+      "mean_logprob": -1.5703125,
+      "sum_logprob": -94.5,
+      "token_count": 60
+    },
+    "fe2b2fded4235064c6c0223572008c6f995ee30fecbdcd8671dad64a51f0cb74": {
+      "mean_logprob": -4.875,
+      "sum_logprob": -161.0,
+      "token_count": 33
+    },
+    "d5408190fd16f2d88d504a5f818ba55f02f5f56454dcb8ca277644fdad761202": {
+      "mean_logprob": -1.953125,
+      "sum_logprob": -109.5,
+      "token_count": 56
+    },
+    "fe3a54e930871d5dc505e6f152288b5f39b1c3442604b4152b7f6f84410a0d1d": {
+      "mean_logprob": -2.421875,
+      "sum_logprob": -143.0,
+      "token_count": 59
+    },
+    "b8ed395430f4e1f175ab0bc5a62d66fbf2551119f3a29fa88bf750472c3fd46b": {
+      "mean_logprob": -2.0625,
+      "sum_logprob": -132.0,
+      "token_count": 64
+    },
+    "eb95ae5d4ee80fb17e765c99c9de7ec328bd598e2601f4d15afeb80f1ae7a2a1": {
+      "mean_logprob": -5.15625,
+      "sum_logprob": -175.0,
+      "token_count": 34
+    },
+    "d2f89378ae98f6d2e193a3174b76da9ac486c2c82dbd4b85269814cb84a60a1c": {
+      "mean_logprob": -1.6953125,
+      "sum_logprob": -98.5,
+      "token_count": 58
+    },
+    "ec933b9464d73e5e329fc375a9b08362aaab1cce0df72ecbe3d7493adf3ffaaa": {
+      "mean_logprob": -5.71875,
+      "sum_logprob": -183.0,
+      "token_count": 32
+    },
+    "a8e3f3be1edddda13d40c5680e69ce7dbce9c1f4b350e8bff227e79ed341fed0": {
+      "mean_logprob": -1.96875,
+      "sum_logprob": -132.0,
+      "token_count": 67
+    },
+    "7bf2335aa21790f77a5961f4d3fae08d2b0b370d93524c9b7bff2fec7ef31c72": {
+      "mean_logprob": -1.8203125,
+      "sum_logprob": -96.5,
+      "token_count": 53
+    },
+    "99aa2a3c838caae8bf9e53a97db9ac548b604d2e49cd1cb216e48033adcc7249": {
+      "mean_logprob": -1.6171875,
+      "sum_logprob": -115.0,
+      "token_count": 71
+    },
+    "0e42a7ef679485b65f81f31a676bd318970b88b2e8a47ea43aa8127dcf4aeaab": {
+      "mean_logprob": -4.78125,
+      "sum_logprob": -168.0,
+      "token_count": 35
+    },
+    "81e92ce388b4670ae27198f5eac668bedfc7f412e78bbd6832a4fcad2041cbbf": {
+      "mean_logprob": -2.171875,
+      "sum_logprob": -155.0,
+      "token_count": 71
+    },
+    "4d000c1ca9276b01b4dc7d74f53e33d92e1dabac4e6128266be6101f653d7fcb": {
+      "mean_logprob": -2.359375,
+      "sum_logprob": -130.0,
+      "token_count": 55
+    },
+    "f104c246dbef5e891aeaab305f49eeb18d514b2b97bad3c6010e3498bded7256": {
+      "mean_logprob": -2.359375,
+      "sum_logprob": -168.0,
+      "token_count": 71
+    },
+    "6f833cf7f09bd8fd5f667385f461ecc4b78fbedbd684f0686bb0f88bcf21ea6a": {
+      "mean_logprob": -1.5625,
+      "sum_logprob": -65.5,
+      "token_count": 42
+    },
+    "d23c459a3315f31888c9707801a5bbff4ff6e8033c9701a65c8e279899932a4e": {
+      "mean_logprob": -2.015625,
+      "sum_logprob": -87.0,
+      "token_count": 43
+    },
+    "981c0389da870b6c43fa0335fad0c217e3ba13a7fb23f72f1d269157d6d2db1c": {
+      "mean_logprob": -6.125,
+      "sum_logprob": -196.0,
+      "token_count": 32
+    },
+    "f6af62a10a101789ec83c7ccd3c65334c6a5f8ccbe33a8bcf4768aed291f91f7": {
+      "mean_logprob": -2.453125,
+      "sum_logprob": -98.0,
+      "token_count": 40
+    },
+    "3f54050094181953d7a891765c97a6eb44926d4030cdeff59eaee8e36a1e76a6": {
+      "mean_logprob": -2.75,
+      "sum_logprob": -118.0,
+      "token_count": 43
+    },
+    "e1618513c7eb6461c4fc28f51898714f0980d36c299ab5ccf88ef9999127178b": {
+      "mean_logprob": -2.578125,
+      "sum_logprob": -105.5,
+      "token_count": 41
+    },
+    "56c9d90afcc31fc27237b8649dd22d51f6f83562a7a7bf5ebe9d279fd6b68a79": {
+      "mean_logprob": -5.625,
+      "sum_logprob": -186.0,
+      "token_count": 33
+    },
+    "6b3fa1e0d53621c2c3d78a79a034b4014e2e2bcd8ff889339f888339d0cf006f": {
+      "mean_logprob": -1.96875,
+      "sum_logprob": -86.5,
+      "token_count": 44
+    },
+    "04d20215ea5a8c49a19ea88d4a0cd7a5bb6e43a9670bf8f052f217d73ee135ca": {
+      "mean_logprob": -4.75,
+      "sum_logprob": -152.0,
+      "token_count": 32
+    },
+    "b35959176e1f45b1c70249203aae085bd6a93d11356b7ea2b9875a06f888208e": {
+      "mean_logprob": -1.578125,
+      "sum_logprob": -74.0,
+      "token_count": 47
+    },
+    "2dec657bc54f3aa6d107a53b68750e13847413eb014276b834e291d72f078496": {
+      "mean_logprob": -2.21875,
+      "sum_logprob": -108.5,
+      "token_count": 49
+    },
+    "b6daaa0297cda05c5d6d3f260bb4cbf08aaa3ef8b87df441b67e9e62bd29c88e": {
+      "mean_logprob": -1.640625,
+      "sum_logprob": -78.5,
+      "token_count": 48
+    },
+    "f85be4a57a97effd26cbea80ce12e75caa27a28c55084dfcba1b719f94855d69": {
+      "mean_logprob": -2.078125,
+      "sum_logprob": -102.0,
+      "token_count": 49
+    },
+    "1d4134a1e1c7377dd44dda0b51ff659202788e883058ea17744b80dec29f1587": {
+      "mean_logprob": -1.875,
+      "sum_logprob": -92.0,
+      "token_count": 49
+    },
+    "8bd00bce7e4bc057752375fbc90703f8dbc966601eb325c4243f812b41dcbbb7": {
+      "mean_logprob": -4.25,
+      "sum_logprob": -148.0,
+      "token_count": 35
+    },
+    "c5328e5c9367ec67f26afb67a372b691cd5a732ce7d5cfa88db8a98c7c6a7156": {
+      "mean_logprob": -1.6640625,
+      "sum_logprob": -86.5,
+      "token_count": 52
+    },
+    "796c63459090ed26d1d95087e7a21e86e3ffa97783973d8f3b757df2d090f100": {
+      "mean_logprob": -1.5703125,
+      "sum_logprob": -94.5,
+      "token_count": 60
+    },
+    "f5ddbb335f5dea3e563ef17122abea206248bb5a148fefef1be53a65f7e2ab71": {
+      "mean_logprob": -2.109375,
+      "sum_logprob": -114.0,
+      "token_count": 54
+    },
+    "d2949fa8c63430e026ec631ab6ef8ffec4292ba3e63164ab52d631b763704b82": {
+      "mean_logprob": -4.90625,
+      "sum_logprob": -162.0,
+      "token_count": 33
+    },
+    "53e6220e33839a508dcac053e23c1619ac4a094d5cc6bd549b5f85acbb6a3570": {
+      "mean_logprob": -1.9453125,
+      "sum_logprob": -109.0,
+      "token_count": 56
+    },
+    "069518d276ff961b8e5a4e5dacb97a703d50c8c3593de08fb20232686e503a21": {
+      "mean_logprob": -2.4375,
+      "sum_logprob": -143.0,
+      "token_count": 59
+    },
+    "cdbdf780723677c9a443045d800df83500389815a2e7a9c852ec9f5c88814762": {
+      "mean_logprob": -5.09375,
+      "sum_logprob": -174.0,
+      "token_count": 34
+    },
+    "3e1b1967112cc240e8c1217fd40b8aca21a3d15875b85b018d668f471f5e462f": {
+      "mean_logprob": -1.6796875,
+      "sum_logprob": -97.5,
+      "token_count": 58
+    },
+    "e627966142e3df92a8c0f1e9e67606dd0aba3f28067e7bbf436fee8e5fd71da4": {
+      "mean_logprob": -2.09375,
+      "sum_logprob": -134.0,
+      "token_count": 64
+    },
+    "64b07f4e9cc5a45aa5ddb0684f91baf1ecdb17c370d74039e3046e0091c6e86f": {
+      "mean_logprob": -1.8125,
+      "sum_logprob": -96.0,
+      "token_count": 53
+    },
+    "d2fc6cf398162b9dcf0e39b73d6bf909649d8fd582618e8fac30229ebdcb2736": {
+      "mean_logprob": -1.9609375,
+      "sum_logprob": -132.0,
+      "token_count": 67
+    },
+    "2876112fc3f59391741614253d396bcb247dbfe6dc3c5235909de2ff8c6a224a": {
+      "mean_logprob": -1.625,
+      "sum_logprob": -115.5,
+      "token_count": 71
+    },
+    "93108c05ec09400ce5e560fb7e6189db24599a0bdc42f7b6d634557b1938dca8": {
+      "mean_logprob": -5.65625,
+      "sum_logprob": -181.0,
+      "token_count": 32
+    },
+    "d94a64880d97a8da5da0af0c5bbfb734e45636f786bd8052063f788ee4bc2bde": {
+      "mean_logprob": -4.8125,
+      "sum_logprob": -168.0,
+      "token_count": 35
+    },
+    "7d8762ffee5e4ca9139dc548f39c589e4543ca61ff645665263ac33c1b4d7ba2": {
+      "mean_logprob": -2.40625,
+      "sum_logprob": -170.0,
+      "token_count": 71
+    },
+    "257eee630b4cf6ba8f0f29440cac53c12ad78a5769f8a9f8f2530aee9bb9de4a": {
+      "mean_logprob": -2.375,
+      "sum_logprob": -131.0,
+      "token_count": 55
+    },
+    "b0a4028e7992ecd997561f416b8c0d747c0dfadf8f3c132a3d77292ab3b17c1a": {
+      "mean_logprob": -2.203125,
+      "sum_logprob": -156.0,
+      "token_count": 71
+    },
+    "6afddb13b7b9abdc315c03dc52e4e0a5af783b77dec7396128b7c0180fb034f0": {
+      "mean_logprob": -2.734375,
+      "sum_logprob": -126.0,
+      "token_count": 46
+    },
+    "d54a8e9740d21529345e6e68b2e2feb32f3d7871d1627169d1efbc10973349f9": {
+      "mean_logprob": -2.421875,
+      "sum_logprob": -94.5,
+      "token_count": 39
+    },
+    "30ca3793a75829a55ab100378a10502761ad8d88755e92f69b699c4eb0d73421": {
+      "mean_logprob": -2.09375,
+      "sum_logprob": -83.5,
+      "token_count": 40
+    },
+    "ee7395c710ecca09b4f3a00a403595f2c7e694e01b85248c400a64fff1f18b4c": {
+      "mean_logprob": -4.875,
+      "sum_logprob": -180.0,
+      "token_count": 37
+    },
+    "dbbe2df3b71bbaae4aa5644dd2d26a17ff36d3d4092a838e5f31c31c64dd3b12": {
+      "mean_logprob": -1.5703125,
+      "sum_logprob": -73.5,
+      "token_count": 47
+    },
+    "c52a5f33ebedaebab2160e811918cea6f74f7c8c310ab6250c9a96ea30f0badf": {
+      "mean_logprob": -2.109375,
+      "sum_logprob": -105.5,
+      "token_count": 50
+    },
+    "5335e53bedbea42ac38f0f6f4218fad4b69ad1e71564562a00a2aca6ba15fa14": {
+      "mean_logprob": -4.8125,
+      "sum_logprob": -158.0,
+      "token_count": 33
+    },
+    "1f5f08171ff004ef17863500fd89e1800948a112f7730b3c3bd16eaa0a429f2a": {
+      "mean_logprob": -1.9921875,
+      "sum_logprob": -97.5,
+      "token_count": 49
+    },
+    "f1ea1079e921a42729532b7cbf5034021219721c97719e9fa9e4a7098d14fd10": {
+      "mean_logprob": -1.59375,
+      "sum_logprob": -78.0,
+      "token_count": 49
+    },
+    "45c97cbd1aef0644c02c48931cc6ecd67e7b8feb2664baadf8a00ce2b63f1fbf": {
+      "mean_logprob": -4.34375,
+      "sum_logprob": -161.0,
+      "token_count": 37
+    },
+    "5f4d8bcfebba1cba846bc5070aa228fd2b2c1a19c5580e29af1ffb6f212a51f7": {
+      "mean_logprob": -1.6953125,
+      "sum_logprob": -85.0,
+      "token_count": 50
+    },
+    "a4d5e240ccbd38291c26f7b2015f5e77799b9cd86b294a0b86b981280c05bbca": {
+      "mean_logprob": -1.875,
+      "sum_logprob": -88.0,
+      "token_count": 47
+    },
+    "b416bb03b661d04763f6ca5e2773f3b68803452da5b78ac37a9f02898ae39851": {
+      "mean_logprob": -1.5859375,
+      "sum_logprob": -95.0,
+      "token_count": 60
+    },
+    "d485189d8853635f675383788d6494b9b0f3df4385d5f18d3b234da8b12a7d48": {
+      "mean_logprob": -1.984375,
+      "sum_logprob": -111.0,
+      "token_count": 56
+    },
+    "49da0fbef849675ba1ee222d149aabd6bb530c7c6f8d8216772cf8d2e8eb262b": {
+      "mean_logprob": -1.8515625,
+      "sum_logprob": -90.5,
+      "token_count": 49
+    },
+    "5f3f3831f7f2cca55f0cd7e5740312e7152150cb3ea622294c7184418bebe24f": {
+      "mean_logprob": -4.9375,
+      "sum_logprob": -168.0,
+      "token_count": 34
+    },
+    "019e667ad03f91e8dfcc55c77f5d8073fe68ff3cbe8d2cd98f480aaaab347b2e": {
+      "mean_logprob": -2.109375,
+      "sum_logprob": -84.5,
+      "token_count": 40
+    },
+    "151229d3fd45cd72535d64b9fd7e9ac83c36036647167f7d238db0f85ee3a81c": {
+      "mean_logprob": -4.90625,
+      "sum_logprob": -182.0,
+      "token_count": 37
+    },
+    "7cd10326fde9522fa6860ec48533658d140903efc86bf30b4d8523882e8d29fe": {
+      "mean_logprob": -2.5,
+      "sum_logprob": -97.5,
+      "token_count": 39
+    },
+    "d2e9ee10a567af6c358e0f71ff0942ad957d90802439d16a9cf235f715573e4d": {
+      "mean_logprob": -2.75,
+      "sum_logprob": -126.5,
+      "token_count": 46
+    },
+    "a3874edef4d0ce2e930360b3fc1bf5c70fb88b8b3f593f0a8f1f739e8e57cdfa": {
+      "mean_logprob": -1.578125,
+      "sum_logprob": -74.0,
+      "token_count": 47
+    },
+    "1091960e4f5549d34f6b2e35b6710b6a3cd8d35265b9fca750b83014d1e80536": {
+      "mean_logprob": -2.046875,
+      "sum_logprob": -100.5,
+      "token_count": 49
+    },
+    "c971d48cf146a9552cd26c403b2d19d736ec12c61582dd1194184c0d58cef592": {
+      "mean_logprob": -2.109375,
+      "sum_logprob": -105.5,
+      "token_count": 50
+    },
+    "18a9ca1149e06dd42309883e1117f6459fa44e58f95c8e11a173fbcc01a1e916": {
+      "mean_logprob": -4.875,
+      "sum_logprob": -161.0,
+      "token_count": 33
+    },
+    "9ae47a001b699148e21da37cad2765843ddf77a8cd4b9e9d9c09977d1556090c": {
+      "mean_logprob": -1.8828125,
+      "sum_logprob": -88.5,
+      "token_count": 47
+    },
+    "74b6e0d5788a110e12a2ec7c186549fb0f71ddb2d88b5740ffbe2c964bd571cb": {
+      "mean_logprob": -1.703125,
+      "sum_logprob": -85.5,
+      "token_count": 50
+    },
+    "034478d8ca8a8ad74d74168ed3dcc7fe43524711175d63cc6007beb44c3bde03": {
+      "mean_logprob": -4.34375,
+      "sum_logprob": -160.0,
+      "token_count": 37
+    },
+    "75c2bd79d440a72111af24bfe1a64122f0295692174129e366b998813ecd42cf": {
+      "mean_logprob": -1.6015625,
+      "sum_logprob": -78.5,
+      "token_count": 49
+    },
+    "7f490ff53229b398834f6f05bc5696e17d7c3703705ae944f2a34e5ed3a24e14": {
+      "mean_logprob": -1.9609375,
+      "sum_logprob": -109.5,
+      "token_count": 56
+    },
+    "b8f1ed16134243d1764b3918d4f3011d4c4bca6cf1c1caef657900d4b522d088": {
+      "mean_logprob": -1.546875,
+      "sum_logprob": -93.0,
+      "token_count": 60
+    },
+    "d23d1fb90fdaaa8424e9c846e31558e07eb20b988b691caf1936b8d2f0804139": {
+      "mean_logprob": -4.84375,
+      "sum_logprob": -165.0,
+      "token_count": 34
+    },
+    "455c6dc725d1a693442e16009a5cd212cb23b1b994848095a4787f268cbec294": {
+      "mean_logprob": -1.859375,
+      "sum_logprob": -91.0,
+      "token_count": 49
+    }
+  }
+}

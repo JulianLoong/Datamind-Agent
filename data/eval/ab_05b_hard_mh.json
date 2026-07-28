@@ -1,0 +1,2963 @@
+{
+  "benchmark": "recovery_bench_hard",
+  "repeats": 1,
+  "splits": [
+    "test_unseen"
+  ],
+  "max_tasks": 0,
+  "task_count": 20,
+  "llm_cache_path": null,
+  "strict_llm_candidates": false,
+  "llm_provider": "fake",
+  "llm_model": null,
+  "baseline_configs": {
+    "dpo_pm": {
+      "max_retries_per_step": 1,
+      "candidate_count": null
+    }
+  },
+  "summaries": {
+    "dpo_pm": {
+      "tasks": 20,
+      "failure_tasks": 20,
+      "recovery_success_rate": 1.0,
+      "avg_recovery_attempts": 1.0,
+      "avg_total_recovery_tokens": 626.75
+    }
+  },
+  "split_summaries": {
+    "dpo_pm": {
+      "test_unseen": {
+        "tasks": 20,
+        "failure_tasks": 20,
+        "recovery_success_rate": 1.0,
+        "avg_recovery_attempts": 1.0,
+        "avg_total_recovery_tokens": 626.75
+      }
+    }
+  },
+  "failure_type_summaries": {
+    "dpo_pm": {
+      "no_rows": {
+        "tasks": 20,
+        "failure_tasks": 20,
+        "recovery_success_rate": 1.0,
+        "avg_recovery_attempts": 1.0,
+        "avg_total_recovery_tokens": 626.75
+      }
+    }
+  },
+  "failure_family_summaries": {
+    "dpo_pm": {
+      "contextual_filter": {
+        "tasks": 20,
+        "failure_tasks": 20,
+        "recovery_success_rate": 1.0,
+        "avg_recovery_attempts": 1.0,
+        "avg_total_recovery_tokens": 626.75
+      }
+    }
+  },
+  "records": [
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.26560015976428986,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 11",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 11",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "shipped",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.26560015976428986,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.21875,
+            -1.7421875,
+            -2.09375,
+            -2.234375,
+            -2.140625,
+            -2.9375
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.06180000491440296,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 7",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 7",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "cancelled",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.06180000491440296,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.265625,
+            -1.796875,
+            -2.359375,
+            -2.296875,
+            -2.140625,
+            -3.03125
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.05879998207092285,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 42",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 42",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "returned",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.05879998207092285,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.28125,
+            -1.8203125,
+            -2.09375,
+            -2.125,
+            -2.15625,
+            -3.0625
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.06330013275146484,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 11",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 11",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "refunded",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.06330013275146484,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.34375,
+            -1.78125,
+            -2.171875,
+            -2.3125,
+            -2.234375,
+            -3.015625
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.06640003994107246,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 7",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 7",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "shipped",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.06640003994107246,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.25,
+            -1.75,
+            -2.125,
+            -2.28125,
+            -2.15625,
+            -2.953125
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 628,
+      "recovery_latency_ms": 0.08470006287097931,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 42",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 42",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "cancelled",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 628,
+          "candidate_latency_ms": 0.08470006287097931,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.328125,
+            -1.8046875,
+            -2.375,
+            -2.328125,
+            -2.203125,
+            -3.109375
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.05969987250864506,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 11",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 11",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "returned",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.05969987250864506,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.28125,
+            -1.8046875,
+            -2.078125,
+            -2.125,
+            -2.140625,
+            -3.046875
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.06330013275146484,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 7",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 7",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "refunded",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.06330013275146484,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.328125,
+            -1.828125,
+            -2.15625,
+            -2.3125,
+            -2.234375,
+            -3.03125
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.08759996853768826,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 42",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 42",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "shipped",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.08759996853768826,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.25,
+            -1.7265625,
+            -2.109375,
+            -2.234375,
+            -2.15625,
+            -2.96875
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 628,
+      "recovery_latency_ms": 0.07690000347793102,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 11",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 11",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "cancelled",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 628,
+          "candidate_latency_ms": 0.07690000347793102,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.28125,
+            -1.8046875,
+            -2.359375,
+            -2.296875,
+            -2.171875,
+            -3.09375
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.06340001709759235,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 7",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 7",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "returned",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.06340001709759235,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.265625,
+            -1.8125,
+            -2.078125,
+            -2.09375,
+            -2.140625,
+            -3.015625
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.08789985440671444,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 42",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 42",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "refunded",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.08789985440671444,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.328125,
+            -1.78125,
+            -2.125,
+            -2.265625,
+            -2.234375,
+            -2.96875
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.05959998816251755,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 11",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 11",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "shipped",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.05959998816251755,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.21875,
+            -1.7421875,
+            -2.09375,
+            -2.234375,
+            -2.140625,
+            -2.9375
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.085500068962574,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 7",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 7",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "cancelled",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.085500068962574,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.265625,
+            -1.796875,
+            -2.359375,
+            -2.296875,
+            -2.140625,
+            -3.03125
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.09029987268149853,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 42",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 42",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "returned",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.09029987268149853,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.28125,
+            -1.8203125,
+            -2.09375,
+            -2.125,
+            -2.15625,
+            -3.0625
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.08659996092319489,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 11",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 11",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "refunded",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.08659996092319489,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.34375,
+            -1.78125,
+            -2.171875,
+            -2.3125,
+            -2.234375,
+            -3.015625
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.059399986639618874,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 7",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 7",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "shipped",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='shipped'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.059399986639618874,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.25,
+            -1.75,
+            -2.125,
+            -2.28125,
+            -2.15625,
+            -2.953125
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 628,
+      "recovery_latency_ms": 0.06310013122856617,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 42",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 42\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 42",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "cancelled",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='cancelled'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 628,
+          "candidate_latency_ms": 0.06310013122856617,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.328125,
+            -1.8046875,
+            -2.375,
+            -2.328125,
+            -2.203125,
+            -3.109375
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 627,
+      "recovery_latency_ms": 0.0646000262349844,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 11",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 11\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 11",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "returned",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='returned'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 627,
+          "candidate_latency_ms": 0.0646000262349844,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.28125,
+            -1.8046875,
+            -2.078125,
+            -2.125,
+            -2.140625,
+            -3.046875
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    },
+    {
+      "baseline": "dpo_pm",
+      "goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+      "split": "test_unseen",
+      "expected_error_type": "no_rows",
+      "failure_family": "contextual_filter",
+      "status": "success",
+      "recovery_attempts": 1,
+      "tool_calls": 2,
+      "tokens": 0,
+      "latency_ms": 1.0,
+      "recovery_tokens": 626,
+      "recovery_latency_ms": 0.09030010551214218,
+      "recovery_trace": [
+        {
+          "step_index": 0,
+          "step_description": "Find the delivered orders for customer 7",
+          "attempt_index": 0,
+          "chosen_index": 1,
+          "outcome": "success",
+          "error_context": {
+            "task_goal": "rpl_task {\"description\": \"Find the delivered orders for customer 7\", \"params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}, \"tool_name\": \"db_query\"}",
+            "step_description": "Find the delivered orders for customer 7",
+            "tool_name": "db_query",
+            "tool_params": {
+              "filter_field": "status",
+              "filter_value": "refunded",
+              "table": "orders"
+            },
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "recent_history": []
+          },
+          "initial_result": {
+            "success": false,
+            "data": null,
+            "error_type": "no_rows",
+            "error_message": "No orders matched status='refunded'.",
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "final_result": {
+            "success": true,
+            "data": {
+              "table": "orders",
+              "rows": [
+                {
+                  "id": 4,
+                  "customer": 7,
+                  "status": "delivered",
+                  "total": 300
+                }
+              ],
+              "count": 1
+            },
+            "error_type": null,
+            "error_message": null,
+            "tokens_used": 0,
+            "latency_ms": 1.0
+          },
+          "candidate_tokens": 626,
+          "candidate_latency_ms": 0.09030010551214218,
+          "selector_tokens": 0,
+          "selector_evals": 6,
+          "pm_scores": [
+            -2.328125,
+            -1.828125,
+            -2.15625,
+            -2.3125,
+            -2.234375,
+            -3.03125
+          ],
+          "candidates": [
+            {
+              "reasoning": "Maybe the status is shipped.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "shipped",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is shipped.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"shipped\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Goal asks for delivered; set status=delivered.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "delivered",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Goal asks for delivered; set status=delivered.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"delivered\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is cancelled.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "cancelled",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is cancelled.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"cancelled\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is returned.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "returned",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is returned.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"returned\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "Maybe the status is refunded.",
+              "action": "fix_filter_value",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"Maybe the status is refunded.\", \"action\": \"fix_filter_value\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            },
+            {
+              "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
+              "action": "retry_same_tool",
+              "tool_name": "db_query",
+              "tool_params": {
+                "filter_field": "status",
+                "filter_value": "refunded",
+                "table": "orders"
+              },
+              "raw_text": "{\"reasoning\": \"The failure might be transient, so retry once with unchanged parameters.\", \"action\": \"retry_same_tool\", \"tool_name\": \"db_query\", \"tool_params\": {\"filter_field\": \"status\", \"filter_value\": \"refunded\", \"table\": \"orders\"}}"
+            }
+          ]
+        }
+      ],
+      "selector_tokens": 0,
+      "selector_evals": 6
+    }
+  ]
+}
