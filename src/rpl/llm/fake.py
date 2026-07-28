@@ -15,7 +15,10 @@ class FakeLLMClient(LLMClient):
         failed_tool = self._extract_field(request.prompt, "Failed Tool")
         tool_params = self._extract_json_field(request.prompt, "Tool Params")
         error_message = self._extract_field(request.prompt, "Error Message")
-        candidates = self._build_candidates(error_type, failed_tool, tool_params, error_message)
+        task_goal = self._extract_field(request.prompt, "Task Goal")
+        candidates = self._build_candidates(
+            error_type, failed_tool, tool_params, error_message, task_goal
+        )
         return LLMResponse(
             text=json.dumps({"candidates": candidates}, ensure_ascii=False),
             tokens_used=len(request.prompt) // 4,
@@ -27,6 +30,7 @@ class FakeLLMClient(LLMClient):
         failed_tool: str,
         tool_params: dict[str, Any],
         error_message: str = "",
+        task_goal: str = "",
     ) -> list[dict[str, Any]]:
         candidates: list[dict[str, Any]] = []
         if error_type == "invalid_json":
@@ -51,6 +55,8 @@ class FakeLLMClient(LLMClient):
             )
         elif error_type == "validation_error":
             candidates.extend(self._validation_error_candidates(failed_tool, tool_params, error_message))
+        elif error_type == "no_rows":
+            candidates.extend(self._no_rows_candidates(failed_tool, tool_params, task_goal))
         candidates.append(
             {
                 "reasoning": "The failure might be transient, so retry once with unchanged parameters.",
@@ -114,6 +120,62 @@ class FakeLLMClient(LLMClient):
                 }
             )
         return candidates
+
+    @staticmethod
+    def _no_rows_candidates(
+        failed_tool: str,
+        tool_params: dict[str, Any],
+        task_goal: str,
+    ) -> list[dict[str, Any]]:
+        """Controlled candidate pool for the contextual_filter hard slice.
+
+        The correct filter value is named in the task goal, not in the error
+        message ("no_rows" reveals nothing). Inject the goal-derived correct
+        value plus plausible-but-empty distractors, with the correct value placed
+        off-first so position is non-informative for position-based baselines.
+        """
+        correct = FakeLLMClient._extract_correct_filter_value(task_goal)
+        field = tool_params.get("filter_field", "status")
+        distractors = ["shipped", "cancelled", "returned", "refunded"]
+        remaining = [d for d in distractors if d != correct]
+
+        def _candidate(value: str, reason: str) -> dict[str, Any]:
+            return {
+                "reasoning": reason,
+                "action": "fix_filter_value",
+                "tool_name": failed_tool,
+                "tool_params": {**tool_params, "filter_value": value},
+            }
+
+        ordered: list[dict[str, Any]] = []
+        if remaining:
+            ordered.append(_candidate(remaining[0], f"Maybe the {field} is {remaining[0]}."))
+        if correct:
+            ordered.append(_candidate(correct, f"Goal asks for {correct}; set {field}={correct}."))
+        for value in remaining[1:]:
+            ordered.append(_candidate(value, f"Maybe the {field} is {value}."))
+        return ordered
+
+    @staticmethod
+    def _extract_correct_filter_value(task_goal: str) -> str | None:
+        """Pull the goal-named filter value from a structured ``rpl_task`` goal.
+
+        Goals look like ``rpl_task {"description": "Find the pending orders ..."} ``.
+        The token after "Find the " is the correct filter value.
+        """
+        if not task_goal.startswith("rpl_task "):
+            return None
+        try:
+            payload = json.loads(task_goal[len("rpl_task ") :])
+        except json.JSONDecodeError:
+            return None
+        description = payload.get("description", "") if isinstance(payload, dict) else ""
+        marker = "Find the "
+        if marker not in description:
+            return None
+        tail = description.split(marker, 1)[1]
+        token = tail.split(" ", 1)[0]
+        return token or None
 
     @staticmethod
     def _repair_json_text(tool_params: dict[str, Any]) -> str:

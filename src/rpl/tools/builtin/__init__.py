@@ -4,6 +4,7 @@ import random
 from typing import Any
 
 from rpl.config import ToolSettings
+from rpl.tools.builtin.db_tool import DbQueryTool
 from rpl.tools.builtin.file_tool import FileReadTool
 from rpl.tools.builtin.http_tool import HttpRequestTool
 from rpl.tools.builtin.json_tool import JsonParseTool
@@ -21,10 +22,12 @@ def build_builtin_registry(settings: ToolSettings | None = None) -> ToolRegistry
     registry.register(MathCalcTool(rng=rng, **configs.get("math_calc", {})))
     registry.register(FileReadTool(rng=rng, **configs.get("file_read", {})))
     registry.register(HttpRequestTool(rng=rng, **configs.get("http_request", {})))
+    registry.register(DbQueryTool(rng=rng, **configs.get("db_query", {})))
     return registry
 
 
 __all__ = [
+    "DbQueryTool",
     "FileReadTool",
     "HttpRequestTool",
     "JsonParseTool",

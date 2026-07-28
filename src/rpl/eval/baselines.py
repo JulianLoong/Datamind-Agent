@@ -109,7 +109,10 @@ def _build_base_baseline(
             raise ValueError("pm_path is required for base_model baseline")
         from rpl.pref_model import BaseModelPrefModel
 
-        base_model, _ = _parse_dpo_path(pm_path)
+        # base_model path is the base model name (optionally "base::adapter",
+        # adapter ignored). Do NOT use _parse_dpo_path: its no-"::" branch
+        # silently defaults to 0.5B, loading the wrong base for non-0.5B bases.
+        base_model = pm_path.split("::")[0]
         return BaselineSpec(
             name=name,
             selector=PMSelector(BaseModelPrefModel(base_model=base_model)),

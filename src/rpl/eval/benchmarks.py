@@ -86,6 +86,8 @@ def get_benchmark(name: str = "recovery_bench_lite") -> list[BenchmarkTask]:
         return generate_recovery_bench()
     if name == "recovery_gym":
         return generate_recovery_gym()
+    if name == "recovery_bench_hard":
+        return generate_recovery_bench_hard()
     raise ValueError(f"Unknown benchmark: {name}")
 
 
@@ -163,6 +165,65 @@ def generate_recovery_bench(
         tasks.append(_math_clean_task(i))
         tasks.append(_http_clean_task(i))
         tasks.append(_json_clean_task(i))
+    return tasks
+
+
+# Hard slice (F1: contextual_filter). The orders fixture is populated for a few
+# statuses only; the rest are plausible-but-empty. The failing call uses a
+# plausible-but-empty status, so the resulting "no_rows" error never reveals the
+# correct value. The correct status is named in the task goal, forcing a ranker
+# to map goal intent -> filter value rather than read it off the error message.
+_ORDERS_POPULATED = ["pending", "processing", "open", "queued", "invoiced", "delivered"]
+_ORDERS_DISTRACTORS = ["shipped", "cancelled", "returned", "refunded"]
+# Train statuses drive preference-pair collection; the held-out status is the
+# generalization eval split (the model must apply the goal -> value mapping to a
+# status word it never saw in training). Five train statuses force the model to
+# learn the goal -> value pattern rather than memorize a couple of status words.
+_HARD_TRAIN_STATUSES = ["pending", "processing", "open", "queued", "invoiced"]
+
+
+def generate_recovery_bench_hard(
+    *,
+    tasks_per_status: int = 20,
+) -> list[BenchmarkTask]:
+    """Hard slice where the correct recovery is goal-determined, not error-stated.
+
+    Every task fails ``db_query`` with ``no_rows`` because the initial call used a
+    plausible-but-empty status filter. The correct filter value is stated only in
+    the task goal ("Find the <status> orders ..."). This makes candidate ranking
+    outcome-relevant: a wrong-but-plausible candidate fails, so a ranker that
+    learned the goal -> value mapping beats one that guesses.
+
+    Splits are assigned by status: the ``_HARD_TRAIN_STATUSES`` values are
+    ``train`` (used to collect preference pairs) and the remaining status is
+    ``test_unseen`` (held-out status value for the generalization eval). Always
+    evaluate with ``--splits test_unseen`` to avoid leakage from train statuses.
+    """
+    tasks: list[BenchmarkTask] = []
+    idx = 0
+    for status in _ORDERS_POPULATED:
+        split = "train" if status in _HARD_TRAIN_STATUSES else "test_unseen"
+        for _ in range(tasks_per_status):
+            distractor = _ORDERS_DISTRACTORS[idx % len(_ORDERS_DISTRACTORS)]
+            customer = [42, 11, 7][idx % 3]
+            tasks.append(
+                BenchmarkTask(
+                    _structured_goal(
+                        f"Find the {status} orders for customer {customer}",
+                        "db_query",
+                        {
+                            "table": "orders",
+                            "filter_field": "status",
+                            "filter_value": distractor,
+                        },
+                    ),
+                    "no_rows",
+                    split,
+                    "contextual_filter",
+                    {"hard_idx": idx, "correct_value": status, "distractor": distractor},
+                )
+            )
+            idx += 1
     return tasks
 
 
